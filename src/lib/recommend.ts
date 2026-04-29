@@ -92,6 +92,18 @@ export type Filters = {
   japanLike: boolean;
 };
 
+/**
+ * Returns the rank and top-X% of a country's Japan-like score relative to
+ * all countries in the dataset. Japan (score 100) is always rank #1.
+ */
+export function getVibeRank(score: number): { rank: number; topPercent: number; total: number } {
+  const total = COUNTRIES.length;
+  const countBetter = COUNTRIES.filter((c) => c.similarityScore > score).length;
+  const rank = countBetter + 1;
+  const topPercent = Math.max(1, Math.round((rank / total) * 100));
+  return { rank, topPercent, total };
+}
+
 export function filterCountries(items: Country[], f: Filters): Country[] {
   return items.filter((c) => {
     if (f.query && !`${c.name} ${c.region} ${c.tags.join(" ")}`.toLowerCase().includes(f.query.toLowerCase())) return false;

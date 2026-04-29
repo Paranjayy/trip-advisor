@@ -10,8 +10,33 @@ import { Money, MoneyRange } from "@/components/Money";
 import { getCountry, MONTHS } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
+import { getVibeRank } from "@/lib/recommend";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
+
+/** Same emoji map as CountryCard — kept co-located for clarity */
+const TAG_EMOJI: Record<string, string> = {
+  beach: "🏖️",
+  mountains: "🏔️",
+  mountain: "🏔️",
+  ski: "⛷️",
+  desert: "🏜️",
+  nature: "🌿",
+  jungle: "🌿",
+  city: "🏙️",
+  diving: "🤿",
+  safari: "🦁",
+  wildlife: "🦁",
+  spiritual: "🛕",
+  wine: "🍷",
+  food: "🍜",
+  history: "🏛️",
+  culture: "🏛️",
+  adventure: "⚡",
+  wellness: "🧘",
+  snow: "❄️",
+  nightlife: "🌃",
+};
 
 const CountryDetail = () => {
   const { slug } = useParams();
@@ -35,6 +60,21 @@ const CountryDetail = () => {
   }
 
   const fav = isFavorite(country.slug);
+  const { rank, topPercent, total } = getVibeRank(country.similarityScore);
+
+  /** Deduplicated variety emoji from tags */
+  const varietyEmojis = (() => {
+    const seen = new Set<string>();
+    const out: { tag: string; emoji: string }[] = [];
+    for (const tag of country.tags) {
+      const emoji = TAG_EMOJI[tag];
+      if (emoji && !seen.has(emoji)) {
+        seen.add(emoji);
+        out.push({ tag, emoji });
+      }
+    }
+    return out;
+  })();
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,6 +98,15 @@ const CountryDetail = () => {
                 </div>
               </div>
               <p className="text-lg text-muted-foreground max-w-2xl">{country.blurb}</p>
+              {varietyEmojis.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {varietyEmojis.map(({ tag, emoji }) => (
+                    <span key={tag} className="inline-flex items-center gap-1 chip bg-secondary text-secondary-foreground text-sm">
+                      <span aria-hidden>{emoji}</span>{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             <Button
               onClick={() => toggle(country.slug)}
@@ -114,9 +163,19 @@ const CountryDetail = () => {
           <h2 className="font-display text-xl font-bold mb-4">Key destinations</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {country.highlights.map((h) => (
-              <div key={h.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors">
+              <div key={h.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors space-y-2">
                 <h3 className="font-semibold flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {h.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{h.blurb}</p>
+                <p className="text-sm text-muted-foreground">{h.blurb}</p>
+                {h.stats && h.stats.length > 0 && (
+                  <dl className="grid grid-cols-1 gap-1 pt-1 border-t border-border/40">
+                    {h.stats.map((s) => (
+                      <div key={s.label} className="flex justify-between text-xs">
+                        <dt className="text-muted-foreground">{s.label}</dt>
+                        <dd className="font-medium text-foreground">{s.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
               </div>
             ))}
           </div>
@@ -126,7 +185,7 @@ const CountryDetail = () => {
         <article className="glass-card p-6 space-y-5">
           <div>
             <h2 className="font-display text-xl font-bold flex items-center gap-2 mb-3">
-              <Sparkles className="h-5 w-5 text-primary" /> Japan similarity
+              <Sparkles className="h-5 w-5 text-primary" /> Japan-like vibe
             </h2>
             <div className="flex items-center gap-3">
               <div className="text-4xl font-display font-extrabold text-primary">{country.similarityScore}</div>
@@ -137,6 +196,11 @@ const CountryDetail = () => {
                 <p className="text-xs text-muted-foreground mt-1">/ 100 vs. Japan vibe</p>
               </div>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {rank === 1
+                ? "🌸 The benchmark — this is Japan itself"
+                : `Ranks #${rank} of ${total} countries · top ${topPercent}% for Japan-like feel`}
+            </p>
           </div>
           <div>
             <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2 flex items-center gap-1.5">

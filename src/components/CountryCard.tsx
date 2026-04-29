@@ -4,6 +4,7 @@ import { Country } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
 import { Money, MoneyRange } from "@/components/Money";
+import { getVibeRank } from "@/lib/recommend";
 
 const vegLabel = { easy: "Veg easy", medium: "Veg medium", hard: "Veg hard" } as const;
 const vegStyle = {
@@ -12,9 +13,50 @@ const vegStyle = {
   hard: "bg-danger-soft text-danger",
 } as const;
 
+/** Map tag names to a single display emoji for the variety strip */
+const TAG_EMOJI: Record<string, string> = {
+  beach: "🏖️",
+  mountains: "🏔️",
+  mountain: "🏔️",
+  ski: "⛷️",
+  desert: "🏜️",
+  nature: "🌿",
+  jungle: "🌿",
+  city: "🏙️",
+  diving: "🤿",
+  safari: "🦁",
+  wildlife: "🦁",
+  spiritual: "🛕",
+  wine: "🍷",
+  food: "🍜",
+  history: "🏛️",
+  culture: "🏛️",
+  adventure: "⚡",
+  wellness: "🧘",
+  snow: "❄️",
+  nightlife: "🌃",
+};
+
+function varietyEmojis(tags: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const tag of tags) {
+    const emoji = TAG_EMOJI[tag];
+    if (emoji && !seen.has(emoji)) {
+      seen.add(emoji);
+      result.push(emoji);
+    }
+    if (result.length >= 4) break;
+  }
+  return result;
+}
+
 export function CountryCard({ country }: { country: Country }) {
   const { isFavorite, toggle } = useFavorites();
   const fav = isFavorite(country.slug);
+  const { rank, topPercent, total } = getVibeRank(country.similarityScore);
+  const vibeLabel = rank === 1 ? "🌸 Benchmark" : `Top ${topPercent}%`;
+  const emojis = varietyEmojis(country.tags);
 
   return (
     <article className="glass-card hover-lift group relative flex flex-col p-5 animate-fade-in">
@@ -41,6 +83,14 @@ export function CountryCard({ country }: { country: Country }) {
           </div>
         </div>
 
+        {emojis.length > 0 && (
+          <div className="flex gap-1.5 -mt-1">
+            {emojis.map((e) => (
+              <span key={e} className="text-base leading-none" aria-hidden>{e}</span>
+            ))}
+          </div>
+        )}
+
         <p className="text-sm text-muted-foreground line-clamp-2">{country.blurb}</p>
 
         <div className="grid grid-cols-2 gap-3 mt-auto">
@@ -55,10 +105,12 @@ export function CountryCard({ country }: { country: Country }) {
             <Utensils className="h-3 w-3" />
             {vegLabel[country.vegScore]}
           </span>
-          <span className="chip bg-primary-soft text-primary">JP {country.similarityScore}/100</span>
-          {country.tags.slice(0, 2).map((t) => (
-            <span key={t} className="chip bg-secondary text-secondary-foreground">{t}</span>
-          ))}
+          <span
+            className="chip bg-primary-soft text-primary"
+            title={`Ranks #${rank} of ${total} countries for Japan-like vibe`}
+          >
+            🌸 {vibeLabel}
+          </span>
         </div>
       </Link>
     </article>

@@ -1,6 +1,8 @@
 export type VegScore = "easy" | "medium" | "hard";
 export type Vibe = "chill" | "adventure" | "balanced";
 
+export type HighlightStat = { label: string; value: string };
+
 export type Country = {
   slug: string;
   name: string;
@@ -22,7 +24,7 @@ export type Country = {
   bestMonths: number[];
   cheapestMonths: number[];
   peakMonths: number[];
-  highlights: { name: string; blurb: string }[];
+  highlights: { name: string; blurb: string; stats?: HighlightStat[] }[];
   costBreakdown: { flights: number; stay: number; food: number; transport: number };
   tags: string[];
   vibe: Vibe;
@@ -415,15 +417,76 @@ export const COUNTRIES: Country[] = [
     vegScore: "easy", similarityScore: 25, touristCount: 9,
     bestMonths: [10, 11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1],
     highlights: [
-      { name: "Rajasthan", blurb: "Pink, blue, golden cities + camel desert." },
-      { name: "Kerala", blurb: "Backwater houseboats and Ayurveda." },
-      { name: "Varanasi", blurb: "Ganges ghats at sunrise." },
-      { name: "Goa", blurb: "Beach shacks and Portuguese churches." },
+      {
+        name: "Rajasthan", blurb: "Pink, blue, golden cities + camel desert.",
+        stats: [
+          { label: "Best visit", value: "Oct – Mar" },
+          { label: "Key cities", value: "Jaipur · Udaipur · Jaisalmer" },
+          { label: "Avg daily cost", value: "~$35–50" },
+        ],
+      },
+      {
+        name: "Kerala", blurb: "Backwater houseboats, Ayurveda, and spice estates.",
+        stats: [
+          { label: "Best visit", value: "Nov – Feb" },
+          { label: "Houseboat stay", value: "$60–120 / night" },
+          { label: "Top spot", value: "Alleppey backwaters" },
+        ],
+      },
+      {
+        name: "Varanasi", blurb: "Ganges ghats at sunrise — one of humanity's oldest cities.",
+        stats: [
+          { label: "Best visit", value: "Oct – Mar" },
+          { label: "Ghat count", value: "84 ghats" },
+          { label: "Avg daily", value: "~$25–40" },
+        ],
+      },
+      {
+        name: "Goa", blurb: "Beach shacks, Portuguese churches, and party & chill vibes.",
+        stats: [
+          { label: "Peak season", value: "Nov – Feb" },
+          { label: "Beach count", value: "40+ beaches" },
+          { label: "North vs South", value: "Party vs peaceful" },
+        ],
+      },
+      {
+        name: "Ladakh", blurb: "High-altitude Himalayan Buddhist desert kingdom.",
+        stats: [
+          { label: "Avg altitude", value: "3,500 m" },
+          { label: "Best months", value: "Jun – Sep" },
+          { label: "Vibe", value: "Mountains + monasteries" },
+        ],
+      },
+      {
+        name: "Mumbai", blurb: "India's maximum city — Bollywood, Marine Drive, street food.",
+        stats: [
+          { label: "Population", value: "21 M+" },
+          { label: "Best for", value: "Food · nightlife · markets" },
+          { label: "Don't miss", value: "Dharavi · Colaba Causeway" },
+        ],
+      },
+      {
+        name: "Hampi", blurb: "Ancient Vijayanagara ruins scattered across a boulder landscape.",
+        stats: [
+          { label: "Status", value: "UNESCO World Heritage" },
+          { label: "Best visit", value: "Nov – Feb" },
+          { label: "Unique", value: "Boulderscapes + 500-yr old temples" },
+        ],
+      },
+      {
+        name: "Andaman Islands", blurb: "Pristine diving beaches far off the mainland radar.",
+        stats: [
+          { label: "Best months", value: "Oct – May" },
+          { label: "Dive sites", value: "50+ sites" },
+          { label: "Vibe", value: "Tropical island escape" },
+        ],
+      },
     ],
     costBreakdown: { flights: 1100, stay: 160, food: 80, transport: 70 },
-    tags: ["culture", "food", "veg-friendly", "budget", "spiritual"], vibe: "adventure",
+    tags: ["culture", "food", "veg-friendly", "budget", "spiritual", "mountains", "beach", "city", "history", "nature"],
+    vibe: "adventure",
     monthlyPriceIndex: mp([12, 1], [5, 6, 9]),
-    blurb: "Vegetarian capital of the world — overwhelming and unforgettable.",
+    blurb: "Vegetarian capital of the world — overwhelming, kaleidoscopic, unforgettable.",
   },
   {
     slug: "nepal", name: "Nepal", region: "South Asia", flag: "🇳🇵", lat: 28.39, lng: 84.12,
