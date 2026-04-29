@@ -12,6 +12,7 @@ import { useCurrency } from "@/lib/currency";
 import { Money, MoneyRange } from "@/components/Money";
 
 const Compare = () => {
+  const { format } = useCurrency();
   useEffect(() => {
     document.title = "Compare countries — GlobeWise";
   }, []);
@@ -109,13 +110,13 @@ const Compare = () => {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={chartData}>
                   <XAxis dataKey="metric" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => format(v as number)} />
                   <Tooltip
                     contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 12 }}
                     formatter={(v: number, name) => {
                       const idx = parseInt(String(name).slice(1));
                       const c = selected[idx];
-                      return [`$${v}`, c?.name ?? ""];
+                      return [format(v), c?.name ?? ""];
                     }}
                   />
                   <Legend formatter={(value) => selected[parseInt(value.slice(1))]?.name ?? value} />
@@ -140,7 +141,7 @@ const Compare = () => {
   );
 };
 
-function Row({ label, cells, highlight }: { label: string; cells: (string | undefined | null)[]; highlight?: boolean }) {
+function Row({ label, cells, highlight }: { label: string; cells: React.ReactNode[]; highlight?: boolean }) {
   return (
     <tr className={cn("border-b border-border/40", highlight && "bg-primary-soft/30")}>
       <td className="py-3 pr-4 text-muted-foreground font-medium">{label}</td>
