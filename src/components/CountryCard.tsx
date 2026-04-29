@@ -3,6 +3,7 @@ import { Heart, Plane, Utensils, Users } from "lucide-react";
 import { Country } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
+import { Money, MoneyRange } from "@/components/Money";
 
 const vegLabel = { easy: "Veg easy", medium: "Veg medium", hard: "Veg hard" } as const;
 const vegStyle = {
@@ -43,9 +44,9 @@ export function CountryCard({ country }: { country: Country }) {
         <p className="text-sm text-muted-foreground line-clamp-2">{country.blurb}</p>
 
         <div className="grid grid-cols-2 gap-3 mt-auto">
-          <Stat label="7-day cost" value={`$${country.costRange[0]}–${country.costRange[1]}`} />
-          <Stat label="Daily" value={`$${country.dailyCost}`} />
-          <Stat label="Flights" value={`$${country.flightCostRange[0]}–${country.flightCostRange[1]}`} icon={<Plane className="h-3 w-3" />} />
+          <Stat label="7-day cost" value={<MoneyRange range={country.costRange} />} />
+          <Stat label="Daily" value={<Money usd={country.dailyCost} />} />
+          <Stat label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-3 w-3" />} />
           <Stat label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-3 w-3" />} />
         </div>
 
@@ -64,7 +65,7 @@ export function CountryCard({ country }: { country: Country }) {
   );
 }
 
-function Stat({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
+function Stat({ label, value, icon }: { label: string; value: React.ReactNode; icon?: React.ReactNode }) {
   return (
     <div className="rounded-xl bg-surface-muted px-3 py-2">
       <div className="flex items-center gap-1 text-[10px] uppercase tracking-wide text-muted-foreground">

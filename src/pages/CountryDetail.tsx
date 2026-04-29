@@ -6,6 +6,7 @@ import { CostBreakdownChart } from "@/components/CostBreakdownChart";
 import { PriceTrendChart } from "@/components/PriceTrendChart";
 import { MonthHeatmapStrip } from "@/components/MonthHeatmapStrip";
 import { Button } from "@/components/ui/button";
+import { Money, MoneyRange } from "@/components/Money";
 import { getCountry, MONTHS } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
@@ -74,9 +75,9 @@ const CountryDetail = () => {
       <div className="container mx-auto py-10 grid lg:grid-cols-3 gap-6">
         {/* Quick stats */}
         <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="7-day cost" value={`$${country.costRange[0]}–${country.costRange[1]}`} sub="per person" />
-          <StatCard label="Daily cost" value={`$${country.dailyCost}`} sub="avg" />
-          <StatCard label="Flights" value={`$${country.flightCostRange[0]}–${country.flightCostRange[1]}`} icon={<Plane className="h-4 w-4" />} />
+          <StatCard label="7-day cost" value={<MoneyRange range={country.costRange} />} sub="per person" />
+          <StatCard label="Daily cost" value={<Money usd={country.dailyCost} />} sub="avg" />
+          <StatCard label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-4 w-4" />} />
           <StatCard label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-4 w-4" />} />
         </div>
 
