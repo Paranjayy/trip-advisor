@@ -1,9 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
-import { Globe2, Heart } from "lucide-react";
+import { Globe2, Heart, Map as MapIcon } from "lucide-react";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 
 const links = [
   { to: "/", label: "Home", end: true },
   { to: "/explore", label: "Explore" },
+  { to: "/map", label: "Map", icon: MapIcon },
   { to: "/compare", label: "Compare" },
   { to: "/timing", label: "Timing" },
 ];
@@ -20,35 +22,42 @@ export function SiteNav() {
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
-          {links.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
-              className={({ isActive }) =>
-                `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary-soft text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`
-              }
-            >
-              {l.label}
-            </NavLink>
-          ))}
+          {links.map((l) => {
+            const Icon = l.icon;
+            return (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                end={l.end}
+                className={({ isActive }) =>
+                  `inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary-soft text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`
+                }
+              >
+                {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
+                {l.label}
+              </NavLink>
+            );
+          })}
         </div>
 
-        <NavLink
-          to="/favorites"
-          className={({ isActive }) =>
-            `inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              isActive ? "bg-accent-soft text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent-soft"
-            }`
-          }
-        >
-          <Heart className="h-4 w-4" />
-          <span className="hidden sm:inline">Saved</span>
-        </NavLink>
+        <div className="flex items-center gap-2">
+          <CurrencySwitcher />
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              `inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive ? "bg-accent-soft text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent-soft"
+              }`
+            }
+          >
+            <Heart className="h-4 w-4" />
+            <span className="hidden sm:inline">Saved</span>
+          </NavLink>
+        </div>
       </nav>
     </header>
   );

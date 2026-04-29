@@ -8,8 +8,11 @@ import { COUNTRIES, getCountry, MONTHS } from "@/data/countries";
 import { MonthHeatmapStrip } from "@/components/MonthHeatmapStrip";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/lib/currency";
+import { Money, MoneyRange } from "@/components/Money";
 
 const Compare = () => {
+  const { format } = useCurrency();
   useEffect(() => {
     document.title = "Compare countries — GlobeWise";
   }, []);
@@ -88,9 +91,9 @@ const Compare = () => {
                 </thead>
                 <tbody>
                   <Row label="Region" cells={selected.map((c) => c?.region)} />
-                  <Row label="7-day cost" cells={selected.map((c) => c && `$${c.costRange[0]}–${c.costRange[1]}`)} highlight />
-                  <Row label="Daily cost" cells={selected.map((c) => c && `$${c.dailyCost}`)} />
-                  <Row label="Flights" cells={selected.map((c) => c && `$${c.flightCostRange[0]}–${c.flightCostRange[1]}`)} />
+                  <Row label="7-day cost" cells={selected.map((c) => c && <MoneyRange range={c.costRange} />)} highlight />
+                  <Row label="Daily cost" cells={selected.map((c) => c && <Money usd={c.dailyCost} />)} />
+                  <Row label="Flights" cells={selected.map((c) => c && <MoneyRange range={c.flightCostRange} />)} />
                   <Row label="Vegetarian" cells={selected.map((c) => c && c.vegScore)} />
                   <Row label="Japan similarity" cells={selected.map((c) => c && `${c.similarityScore}/100`)} highlight />
                   <Row label="Vibe" cells={selected.map((c) => c && c.vibe)} />
@@ -107,13 +110,13 @@ const Compare = () => {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={chartData}>
                   <XAxis dataKey="metric" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => format(v as number)} />
                   <Tooltip
                     contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 12 }}
                     formatter={(v: number, name) => {
                       const idx = parseInt(String(name).slice(1));
                       const c = selected[idx];
-                      return [`$${v}`, c?.name ?? ""];
+                      return [format(v), c?.name ?? ""];
                     }}
                   />
                   <Legend formatter={(value) => selected[parseInt(value.slice(1))]?.name ?? value} />
@@ -138,7 +141,7 @@ const Compare = () => {
   );
 };
 
-function Row({ label, cells, highlight }: { label: string; cells: (string | undefined | null)[]; highlight?: boolean }) {
+function Row({ label, cells, highlight }: { label: string; cells: React.ReactNode[]; highlight?: boolean }) {
   return (
     <tr className={cn("border-b border-border/40", highlight && "bg-primary-soft/30")}>
       <td className="py-3 pr-4 text-muted-foreground font-medium">{label}</td>
