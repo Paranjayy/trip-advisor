@@ -84,7 +84,7 @@ const CountryDetail = () => {
         {/* Cost breakdown */}
         <article className="glass-card p-6 lg:col-span-2">
           <h2 className="font-display text-xl font-bold mb-1">Cost breakdown</h2>
-          <p className="text-sm text-muted-foreground mb-4">Estimated 7-day trip per person, in USD</p>
+          <p className="text-sm text-muted-foreground mb-4">Estimated 7-day trip per person</p>
           <CostBreakdownChart country={country} />
         </article>
 
