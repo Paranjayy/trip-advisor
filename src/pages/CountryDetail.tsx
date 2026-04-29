@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, Plane, Users, Calendar, Tag, MapPin, Utensils, Sparkles } from "lucide-react";
+import { ArrowLeft, Heart, Plane, Users, Calendar, Tag, MapPin, Utensils, Sparkles, Minus, Plus } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CostBreakdownChart } from "@/components/CostBreakdownChart";
 import { PriceTrendChart } from "@/components/PriceTrendChart";
@@ -10,7 +10,8 @@ import { Money, MoneyRange } from "@/components/Money";
 import { getCountry, MONTHS } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
-import { getVibeRank } from "@/lib/recommend";
+import { getVibeRank, getSimilarCountries } from "@/lib/recommend";
+import { CountryCard } from "@/components/CountryCard";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
 
@@ -60,7 +61,24 @@ const CountryDetail = () => {
   }
 
   const fav = isFavorite(country.slug);
+  const [tripDays, setTripDays] = useState(7);
   const { rank, topPercent, total } = getVibeRank(country.similarityScore);
+  const similarCountries = getSimilarCountries(country, 3);
+
+  // Scaled costs based on selected trip duration
+  const scaledStay = Math.round(country.costBreakdown.stay / 7 * tripDays);
+  const scaledFood = Math.round(country.costBreakdown.food / 7 * tripDays);
+  const scaledTransport = Math.round(country.costBreakdown.transport / 7 * tripDays);
+  const tripTotal = country.costBreakdown.flights + scaledStay + scaledFood + scaledTransport;
+  const scaledCountry = {
+    ...country,
+    costBreakdown: {
+      flights: country.costBreakdown.flights,
+      stay: scaledStay,
+      food: scaledFood,
+      transport: scaledTransport,
+    },
+  };
 
   /** Deduplicated variety emoji from tags */
   const varietyEmojis = (() => {
@@ -122,19 +140,60 @@ const CountryDetail = () => {
       </section>
 
       <div className="container mx-auto py-10 grid lg:grid-cols-3 gap-6">
-        {/* Quick stats */}
-        <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="7-day cost" value={<MoneyRange range={country.costRange} />} sub="per person" />
-          <StatCard label="Daily cost" value={<Money usd={country.dailyCost} />} sub="avg" />
-          <StatCard label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-4 w-4" />} />
-          <StatCard label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-4 w-4" />} />
+        {/* Trip duration picker + Quick stats */}
+        <div className="lg:col-span-3 space-y-4">
+          {/* Day picker */}
+          <div className="glass-card p-4 flex flex-wrap items-center gap-4">
+            <span className="text-sm font-medium text-muted-foreground">Trip duration:</span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline" size="icon" className="h-8 w-8 rounded-lg"
+                onClick={() => setTripDays(d => Math.max(1, d - 1))}
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </Button>
+              <span className="font-display text-xl font-bold w-16 text-center">{tripDays} {tripDays === 1 ? "day" : "days"}</span>
+              <Button
+                variant="outline" size="icon" className="h-8 w-8 rounded-lg"
+                onClick={() => setTripDays(d => Math.min(30, d + 1))}
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2 ml-2">
+              {[3, 5, 7, 10, 14, 21].map(d => (
+                <button
+                  key={d}
+                  onClick={() => setTripDays(d)}
+                  className={cn(
+                    "px-3 py-1 rounded-lg text-xs font-medium border transition-colors",
+                    tripDays === d
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border/60 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  )}
+                >
+                  {d}d
+                </button>
+              ))}
+            </div>
+            <span className="ml-auto text-sm text-muted-foreground">
+              Est. total: <span className="font-semibold text-foreground"><Money usd={tripTotal} /></span>
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard label={`${tripDays}-day cost`} value={<Money usd={tripTotal} />} sub="incl. flights" />
+            <StatCard label="Daily cost" value={<Money usd={country.dailyCost} />} sub="avg" />
+            <StatCard label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-4 w-4" />} />
+            <StatCard label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-4 w-4" />} />
+          </div>
         </div>
 
         {/* Cost breakdown */}
         <article className="glass-card p-6 lg:col-span-2">
           <h2 className="font-display text-xl font-bold mb-1">Cost breakdown</h2>
-          <p className="text-sm text-muted-foreground mb-4">Estimated 7-day trip per person</p>
-          <CostBreakdownChart country={country} />
+          <p className="text-sm text-muted-foreground mb-4">Estimated {tripDays}-day trip per person (flights + stay + food + transport)</p>
+          <CostBreakdownChart country={scaledCountry} />
         </article>
 
         {/* Months */}

@@ -51,12 +51,13 @@ function varietyEmojis(tags: string[]): string[] {
   return result;
 }
 
-export function CountryCard({ country }: { country: Country }) {
+export function CountryCard({ country, tripDays = 7 }: { country: Country; tripDays?: number }) {
   const { isFavorite, toggle } = useFavorites();
   const fav = isFavorite(country.slug);
   const { rank, topPercent, total } = getVibeRank(country.similarityScore);
   const vibeLabel = rank === 1 ? "🌸 Benchmark" : `Top ${topPercent}%`;
   const emojis = varietyEmojis(country.tags);
+  const tripCost = country.dailyCost * tripDays;
 
   return (
     <article className="glass-card hover-lift group relative flex flex-col p-5 animate-fade-in">
@@ -94,7 +95,7 @@ export function CountryCard({ country }: { country: Country }) {
         <p className="text-sm text-muted-foreground line-clamp-2">{country.blurb}</p>
 
         <div className="grid grid-cols-2 gap-3 mt-auto">
-          <Stat label="7-day cost" value={<MoneyRange range={country.costRange} />} />
+          <Stat label={`${tripDays}d cost`} value={<Money usd={tripCost} />} />
           <Stat label="Daily" value={<Money usd={country.dailyCost} />} />
           <Stat label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-3 w-3" />} />
           <Stat label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-3 w-3" />} />

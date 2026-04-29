@@ -61,15 +61,34 @@ export function FilterPanel({ filters, setFilters, layout = "horizontal" }: Prop
         </Select>
       </div>
 
+      {/* Trip duration */}
       <div className={isSidebar ? "" : "lg:col-span-2"}>
         <div className="flex justify-between items-baseline">
-          <Label className="text-xs font-medium text-muted-foreground">Max 7-day budget</Label>
+          <Label className="text-xs font-medium text-muted-foreground">Trip duration</Label>
+          <span className="text-sm font-semibold text-primary">{filters.tripDays} {filters.tripDays === 1 ? "day" : "days"}</span>
+        </div>
+        <Slider
+          value={[filters.tripDays]}
+          min={1}
+          max={30}
+          step={1}
+          onValueChange={(v) => update("tripDays", v[0])}
+          className="mt-3"
+        />
+      </div>
+
+      {/* Total budget */}
+      <div className={isSidebar ? "" : "lg:col-span-2"}>
+        <div className="flex justify-between items-baseline">
+          <Label className="text-xs font-medium text-muted-foreground">
+            Total budget ({filters.tripDays}d)
+          </Label>
           <span className="text-sm font-semibold text-primary">{format(filters.budgetMax)}</span>
         </div>
         <Slider
           value={[filters.budgetMax]}
-          min={500}
-          max={3500}
+          min={100}
+          max={10000}
           step={100}
           onValueChange={(v) => update("budgetMax", v[0])}
           className="mt-3"

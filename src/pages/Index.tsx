@@ -14,6 +14,7 @@ const Index = () => {
     query: "",
     region: "all",
     budgetMax: 2000,
+    tripDays: 7,
     vegFriendly: false,
     vibe: "any",
     japanLike: false,
@@ -134,7 +135,7 @@ const Index = () => {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {filtered.slice(0, 8).map((c) => (
-            <CountryCard key={c.slug} country={c} />
+            <CountryCard key={c.slug} country={c} tripDays={filters.tripDays} />
           ))}
         </div>
         <div className="text-center mt-8">

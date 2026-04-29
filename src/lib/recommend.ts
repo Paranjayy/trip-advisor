@@ -87,6 +87,7 @@ export type Filters = {
   query: string;
   region: string; // "all" or region name
   budgetMax: number;
+  tripDays: number; // 1-30
   vegFriendly: boolean;
   vibe: "any" | "chill" | "adventure" | "balanced";
   japanLike: boolean;
@@ -108,10 +109,50 @@ export function filterCountries(items: Country[], f: Filters): Country[] {
   return items.filter((c) => {
     if (f.query && !`${c.name} ${c.region} ${c.tags.join(" ")}`.toLowerCase().includes(f.query.toLowerCase())) return false;
     if (f.region !== "all" && c.region !== f.region) return false;
-    if (c.costRange[0] > f.budgetMax) return false;
+    // Budget check: does dailyCost × tripDays fit within budgetMax?
+    if (c.dailyCost * f.tripDays > f.budgetMax) return false;
     if (f.vegFriendly && c.vegScore === "hard") return false;
     if (f.vibe !== "any" && c.vibe !== f.vibe && c.vibe !== "balanced") return false;
     if (f.japanLike && c.similarityScore < 60) return false;
     return true;
   });
+}
+
+/**
+ * Find the N most-similar countries to the given one.
+ * Scores by: shared tags, same region, same vibe, similar daily cost, similar similarity score.
+ */
+export function getSimilarCountries(current: Country, n = 3): { country: Country; reasons: string[] }[] {
+  return COUNTRIES
+    .filter((c) => c.slug !== current.slug)
+    .map((c) => {
+      let score = 0;
+      const reasons: string[] = [];
+
+      // Tag overlap
+      const sharedTags = c.tags.filter((t) => current.tags.includes(t));
+      score += sharedTags.length * 8;
+      if (sharedTags.length >= 2) reasons.push(`Shares ${sharedTags.slice(0, 3).join(", ")} vibe`);
+
+      // Same region
+      if (c.region === current.region) { score += 25; reasons.push(`Same region: ${c.region}`); }
+
+      // Same vibe
+      if (c.vibe === current.vibe) { score += 15; reasons.push(`Same "${c.vibe}" travel style`); }
+
+      // Similar daily cost (within 40%)
+      const costDiff = Math.abs(c.dailyCost - current.dailyCost) / current.dailyCost;
+      if (costDiff < 0.2) { score += 20; reasons.push("Very similar daily budget"); }
+      else if (costDiff < 0.4) { score += 10; }
+
+      // Similar similarity score (Japan-like)
+      const simDiff = Math.abs(c.similarityScore - current.similarityScore);
+      if (simDiff < 10) score += 15;
+      else if (simDiff < 25) score += 7;
+
+      return { country: c, score, reasons: reasons.slice(0, 2) };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, n)
+    .map(({ country, reasons }) => ({ country, reasons }));
 }

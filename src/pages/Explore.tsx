@@ -14,6 +14,7 @@ const Explore = () => {
     query: "",
     region: "all",
     budgetMax: 3500,
+    tripDays: 7,
     vegFriendly: false,
     vibe: "any",
     japanLike: false,
@@ -40,7 +41,7 @@ const Explore = () => {
           <div>
             <p className="text-sm text-muted-foreground mb-4">{filtered.length} of {COUNTRIES.length} countries match</p>
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-              {filtered.map((c) => <CountryCard key={c.slug} country={c} />)}
+              {filtered.map((c) => <CountryCard key={c.slug} country={c} tripDays={filters.tripDays} />)}
             </div>
             {filtered.length === 0 && (
               <div className="glass-card p-12 text-center">
