@@ -8,6 +8,8 @@ import { COUNTRIES, getCountry, MONTHS } from "@/data/countries";
 import { MonthHeatmapStrip } from "@/components/MonthHeatmapStrip";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/lib/currency";
+import { Money, MoneyRange } from "@/components/Money";
 
 const Compare = () => {
   useEffect(() => {
@@ -88,9 +90,9 @@ const Compare = () => {
                 </thead>
                 <tbody>
                   <Row label="Region" cells={selected.map((c) => c?.region)} />
-                  <Row label="7-day cost" cells={selected.map((c) => c && `$${c.costRange[0]}–${c.costRange[1]}`)} highlight />
-                  <Row label="Daily cost" cells={selected.map((c) => c && `$${c.dailyCost}`)} />
-                  <Row label="Flights" cells={selected.map((c) => c && `$${c.flightCostRange[0]}–${c.flightCostRange[1]}`)} />
+                  <Row label="7-day cost" cells={selected.map((c) => c && <MoneyRange range={c.costRange} />)} highlight />
+                  <Row label="Daily cost" cells={selected.map((c) => c && <Money usd={c.dailyCost} />)} />
+                  <Row label="Flights" cells={selected.map((c) => c && <MoneyRange range={c.flightCostRange} />)} />
                   <Row label="Vegetarian" cells={selected.map((c) => c && c.vegScore)} />
                   <Row label="Japan similarity" cells={selected.map((c) => c && `${c.similarityScore}/100`)} highlight />
                   <Row label="Vibe" cells={selected.map((c) => c && c.vibe)} />
