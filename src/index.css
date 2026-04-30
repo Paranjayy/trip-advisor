@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* GlobeWise design system — light, airy, Notion + Google Flights inspired.
+/* TripAdvisor design system — light, airy, Notion + Google Flights inspired.
    All colors are HSL. Use semantic tokens only. */
 
 @layer base {
