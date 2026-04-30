@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, Plane, Users, Calendar, Tag, MapPin, Utensils, Sparkles, Compass } from "lucide-react";
+import { ArrowLeft, Heart, Plane, Users, Calendar, Tag, MapPin, Utensils, Sparkles, Compass, Route } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CostBreakdownChart } from "@/components/CostBreakdownChart";
 import { PriceTrendChart } from "@/components/PriceTrendChart";
@@ -14,7 +14,8 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
 import { terrainsFor, difficultyFor, DIFFICULTY_META, TERRAIN_META } from "@/lib/terrains";
 import { japanVibe, similarCountries } from "@/lib/japanVibe";
-import { localTripsFor } from "@/lib/localTrips";
+import { localTripsFor, type LocalTrip } from "@/lib/localTrips";
+import { ItineraryDrawer } from "@/components/ItineraryDrawer";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
 
@@ -45,6 +46,7 @@ const CountryDetail = () => {
   const jp = japanVibe(country.slug);
   const similar = similarCountries(country.slug, 4);
   const trips = localTripsFor(country);
+  const [activeItinerary, setActiveItinerary] = useState<LocalTrip | null>(null);
 
   return (
     <div className="min-h-screen bg-background">
@@ -190,7 +192,7 @@ const CountryDetail = () => {
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {trips.map((t) => (
-              <div key={t.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors">
+              <div key={t.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors flex flex-col">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3 className="font-semibold">{t.name}</h3>
@@ -198,15 +200,29 @@ const CountryDetail = () => {
                   </div>
                   <span className="chip bg-primary-soft text-primary whitespace-nowrap">{t.days} days</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">{t.blurb}</p>
+                <p className="text-sm text-muted-foreground mt-2 flex-1">{t.blurb}</p>
                 {t.terrains.length > 0 && (
                   <div className="mt-3"><TerrainChips terrains={t.terrains} max={4} /></div>
                 )}
-                <div className="mt-3 text-sm font-bold text-primary"><Money usd={t.budgetUsd} /> <span className="font-normal text-xs text-muted-foreground">est. budget</span></div>
+                <div className="mt-3 flex items-center justify-between">
+                  <div className="text-sm font-bold text-primary"><Money usd={t.budgetUsd} /> <span className="font-normal text-xs text-muted-foreground">est. budget</span></div>
+                  {t.itinerary && t.itinerary.length > 0 && (
+                    <button
+                      onClick={() => setActiveItinerary(t)}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                    >
+                      <Route className="h-3 w-3" /> Day-by-day plan
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </article>
+
+        {activeItinerary && (
+          <ItineraryDrawer trip={activeItinerary} onClose={() => setActiveItinerary(null)} />
+        )}
 
         {/* Highlights */}
         <article className="glass-card p-6 lg:col-span-2">
