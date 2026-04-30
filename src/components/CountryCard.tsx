@@ -4,6 +4,9 @@ import { Country } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
 import { Money, MoneyRange } from "@/components/Money";
+import { TerrainChips } from "@/components/TerrainChips";
+import { terrainsFor, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
+import { japanVibe } from "@/lib/japanVibe";
 
 const vegLabel = { easy: "Veg easy", medium: "Veg medium", hard: "Veg hard" } as const;
 const vegStyle = {
@@ -50,15 +53,17 @@ export function CountryCard({ country }: { country: Country }) {
           <Stat label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-3 w-3" />} />
         </div>
 
+        <TerrainChips terrains={terrainsFor(country)} max={5} />
+
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
           <span className={cn("chip", vegStyle[country.vegScore])}>
             <Utensils className="h-3 w-3" />
             {vegLabel[country.vegScore]}
           </span>
-          <span className="chip bg-primary-soft text-primary">JP {country.similarityScore}/100</span>
-          {country.tags.slice(0, 2).map((t) => (
-            <span key={t} className="chip bg-secondary text-secondary-foreground">{t}</span>
-          ))}
+          <span className="chip bg-primary-soft text-primary">JP {japanVibe(country.slug)}/100</span>
+          <span className={cn("chip", DIFFICULTY_META[difficultyFor(country)].tone)}>
+            {DIFFICULTY_META[difficultyFor(country)].label}
+          </span>
         </div>
       </Link>
     </article>
