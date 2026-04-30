@@ -94,6 +94,33 @@ export function FilterPanel({ filters, setFilters, layout = "horizontal" }: Prop
         </Label>
         <Switch id="jp" checked={filters.japanLike} onCheckedChange={(v) => update("japanLike", v)} />
       </div>
+
+      <div className={isSidebar ? "" : "lg:col-span-4"}>
+        <Label className="text-xs font-medium text-muted-foreground mb-2 block">Terrain / variety {activeTerrains.size > 0 && <span className="text-primary">· {activeTerrains.size} on</span>}</Label>
+        <div className="flex flex-wrap gap-1.5">
+          {TERRAIN_LIST.map((t) => {
+            const m = TERRAIN_META[t];
+            const Icon = m.icon;
+            const active = activeTerrains.has(t);
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => toggleTerrain(t)}
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium border transition-colors",
+                  active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-surface hover:border-primary/40",
+                )}
+              >
+                <Icon className="h-3 w-3" /> {m.label}
+              </button>
+            );
+          })}
+          {activeTerrains.size > 0 && (
+            <button type="button" onClick={() => update("terrains", [])} className="text-[11px] text-primary px-2 hover:underline">Clear</button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
