@@ -1,4 +1,5 @@
 import { Country, COUNTRIES, MONTHS } from "@/data/countries";
+import { japanVibe } from "@/lib/japanVibe";
 
 export type RecInput = {
   budget: number; // 7-day USD per person target
@@ -69,10 +70,11 @@ export function recommend(input: RecInput): Recommendation[] {
       score += 5;
     }
 
-    // Japan-likeness (max 15)
+    // Japan-likeness (max 15) — uses dynamic similarity
+    const jp = japanVibe(c.slug);
     if (input.japanLike) {
-      score += Math.round((c.similarityScore / 100) * 15);
-      if (c.similarityScore >= 70) reasons.push(`Strong Japan-like vibe (${c.similarityScore}/100)`);
+      score += Math.round((jp / 100) * 15);
+      if (jp >= 70) reasons.push(`Strong Japan-like vibe (${jp}/100)`);
     } else {
       score += 7;
     }
@@ -99,7 +101,7 @@ export function filterCountries(items: Country[], f: Filters): Country[] {
     if (c.costRange[0] > f.budgetMax) return false;
     if (f.vegFriendly && c.vegScore === "hard") return false;
     if (f.vibe !== "any" && c.vibe !== f.vibe && c.vibe !== "balanced") return false;
-    if (f.japanLike && c.similarityScore < 60) return false;
+    if (f.japanLike && japanVibe(c.slug) < 60) return false;
     return true;
   });
 }
