@@ -1,17 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, ZoomControl } from "react-leaflet";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, ZoomControl, useMap } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { SiteNav } from "@/components/SiteNav";
-import { COUNTRIES, REGIONS } from "@/data/countries";
+import { CountryTable } from "@/components/CountryTable";
+import { TerrainChips } from "@/components/TerrainChips";
+import { COUNTRIES, REGIONS, type Country } from "@/data/countries";
 import { useCurrency } from "@/lib/currency";
 import { Money, MoneyRange } from "@/components/Money";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Globe2, MapPin } from "lucide-react";
+import { TERRAIN_LIST, TERRAIN_META, terrainsFor, type Terrain, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
+import { japanVibe } from "@/lib/japanVibe";
+import { cn } from "@/lib/utils";
 
-/** Color buckets for daily-cost dots (USD/day). */
 function costColor(daily: number): string {
   if (daily <= 60) return "hsl(var(--success))";
   if (daily <= 110) return "hsl(var(--primary))";
@@ -19,23 +26,61 @@ function costColor(daily: number): string {
   return "hsl(var(--accent))";
 }
 
-const MapPage = () => {
+/** Pin radius scales with international tourist arrivals. */
+function pinRadius(c: Country): number {
+  return 5 + Math.min(12, Math.sqrt(c.touristCount));
+}
+
+function FlyTo({ country }: { country: Country | null }) {
+  const map = useMap();
   useEffect(() => {
-    document.title = "World map — GlobeWise";
-  }, []);
+    if (country) map.flyTo([country.lat, country.lng], 5, { duration: 1.2 });
+  }, [country, map]);
+  return null;
+}
+
+const MapPage = () => {
+  useEffect(() => { document.title = "World map — TripAdvisor"; }, []);
 
   const { format } = useCurrency();
+  const [params] = useSearchParams();
+  const focusSlug = params.get("focus");
+  const focusCountry = useMemo(() => COUNTRIES.find((c) => c.slug === focusSlug) ?? null, [focusSlug]);
+
   const [region, setRegion] = useState<string>("all");
   const [budgetMax, setBudgetMax] = useState<number>(4000);
+  const [japanOnly, setJapanOnly] = useState(false);
+  const [terrainFilter, setTerrainFilter] = useState<Set<Terrain>>(new Set());
+  const popupRefs = useRef<Record<string, L.CircleMarker | null>>({});
 
   const visible = useMemo(
-    () => COUNTRIES.filter(
-      (c) =>
-        (region === "all" || c.region === region) &&
-        c.costRange[0] <= budgetMax,
-    ),
-    [region, budgetMax],
+    () => COUNTRIES.filter((c) => {
+      if (region !== "all" && c.region !== region) return false;
+      if (c.costRange[0] > budgetMax) return false;
+      if (japanOnly && japanVibe(c.slug) < 70) return false;
+      if (terrainFilter.size > 0) {
+        const ts = new Set(terrainsFor(c));
+        if (![...terrainFilter].some((t) => ts.has(t))) return false;
+      }
+      return true;
+    }),
+    [region, budgetMax, japanOnly, terrainFilter],
   );
+
+  const toggleTerrain = (t: Terrain) => {
+    setTerrainFilter((prev) => {
+      const next = new Set(prev);
+      next.has(t) ? next.delete(t) : next.add(t);
+      return next;
+    });
+  };
+
+  // Open the focused country's popup once map has rendered
+  useEffect(() => {
+    if (focusSlug && popupRefs.current[focusSlug]) {
+      setTimeout(() => popupRefs.current[focusSlug]?.openPopup(), 1400);
+    }
+  }, [focusSlug]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,7 +93,7 @@ const MapPage = () => {
             </p>
             <h1 className="font-display text-3xl md:text-4xl font-bold">Where in the world?</h1>
             <p className="text-muted-foreground mt-2 max-w-2xl">
-              Pan, zoom, and click any country pin for a full price + timing snapshot. Pin colour = daily cost.
+              Pan, zoom, and click any pin. Pin <strong>color</strong> = daily cost · <strong>size</strong> = tourist popularity.
             </p>
           </div>
           <div className="text-sm text-muted-foreground">
@@ -74,18 +119,44 @@ const MapPage = () => {
                 <span>Max 7-day budget</span>
                 <span className="text-foreground normal-case tracking-normal font-bold">{format(budgetMax)}</span>
               </div>
-              <Slider
-                className="mt-3"
-                value={[budgetMax]}
-                min={500}
-                max={5000}
-                step={100}
-                onValueChange={(v) => setBudgetMax(v[0])}
-              />
+              <Slider className="mt-3" value={[budgetMax]} min={500} max={5000} step={100} onValueChange={(v) => setBudgetMax(v[0])} />
+            </div>
+
+            <label className="flex items-center justify-between rounded-xl bg-surface-muted px-3 py-2.5 cursor-pointer">
+              <span className="text-sm font-medium">Japan-like vibe ≥ 70</span>
+              <Switch checked={japanOnly} onCheckedChange={setJapanOnly} />
+            </label>
+
+            <div>
+              <p className="text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-2">Terrain / variety</p>
+              <div className="flex flex-wrap gap-1">
+                {TERRAIN_LIST.map((t) => {
+                  const active = terrainFilter.has(t);
+                  const m = TERRAIN_META[t];
+                  const Icon = m.icon;
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => toggleTerrain(t)}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium border transition-colors",
+                        active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-surface hover:border-primary/40",
+                      )}
+                    >
+                      <Icon className="h-3 w-3" /> {m.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {terrainFilter.size > 0 && (
+                <button onClick={() => setTerrainFilter(new Set())} className="text-[11px] text-primary mt-2 hover:underline">
+                  Clear terrain filter
+                </button>
+              )}
             </div>
 
             <div className="space-y-2 pt-2 border-t border-border/60">
-              <p className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Pin legend (per day)</p>
+              <p className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Pin color (per day)</p>
               <LegendDot color="hsl(var(--success))" label={`Up to ${format(60)}`} />
               <LegendDot color="hsl(var(--primary))" label={`${format(60)} – ${format(110)}`} />
               <LegendDot color="hsl(var(--warn))" label={`${format(110)} – ${format(170)}`} />
@@ -93,68 +164,94 @@ const MapPage = () => {
             </div>
           </aside>
 
-          <div className="glass-card overflow-hidden p-0">
-            <div className="h-[70vh] min-h-[480px] w-full">
-              <MapContainer
-                center={[20, 20]}
-                zoom={2}
-                minZoom={2}
-                maxZoom={6}
-                worldCopyJump
-                scrollWheelZoom
-                zoomControl={false}
-                style={{ height: "100%", width: "100%", background: "hsl(var(--surface-muted))" }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &middot; <a href="https://carto.com/attributions">CARTO</a>'
-                  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                />
-                <ZoomControl position="bottomright" />
-                {visible.map((c) => (
-                  <CircleMarker
-                    key={c.slug}
-                    center={[c.lat, c.lng]}
-                    radius={9}
-                    pathOptions={{
-                      color: costColor(c.dailyCost),
-                      fillColor: costColor(c.dailyCost),
-                      fillOpacity: 0.7,
-                      weight: 2,
-                    }}
-                  >
-                    <Tooltip direction="top" offset={[0, -6]} opacity={1}>
-                      <span className="font-semibold">{c.flag} {c.name}</span> · <Money usd={c.dailyCost} />/day
-                    </Tooltip>
-                    <Popup minWidth={220} maxWidth={260}>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl">{c.flag}</span>
-                          <div>
-                            <div className="font-display font-bold leading-tight">{c.name}</div>
-                            <div className="text-xs opacity-70 flex items-center gap-1">
-                              <MapPin className="h-3 w-3" /> {c.region}
-                            </div>
-                          </div>
-                        </div>
-                        <p className="text-xs leading-snug">{c.blurb}</p>
-                        <div className="grid grid-cols-2 gap-1.5 text-xs pt-1">
-                          <Pop label="7 days"><MoneyRange range={c.costRange} /></Pop>
-                          <Pop label="Daily"><Money usd={c.dailyCost} /></Pop>
-                          <Pop label="Flights"><MoneyRange range={c.flightCostRange} /></Pop>
-                          <Pop label="Veg">{c.vegScore}</Pop>
-                        </div>
-                        <Link
-                          to={`/country/${c.slug}`}
-                          className="block text-center mt-2 rounded-md bg-primary text-primary-foreground text-xs font-semibold py-1.5 hover:opacity-90"
-                        >
-                          Open guide →
-                        </Link>
-                      </div>
-                    </Popup>
-                  </CircleMarker>
-                ))}
-              </MapContainer>
-            </div>
+          <div>
+            <Tabs defaultValue="map">
+              <TabsList className="mb-4">
+                <TabsTrigger value="map">🗺️ Map</TabsTrigger>
+                <TabsTrigger value="table">📊 Table view</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="map" className="m-0">
+                <div className="glass-card overflow-hidden p-0">
+                  <div className="h-[70vh] min-h-[480px] w-full">
+                    <MapContainer
+                      center={focusCountry ? [focusCountry.lat, focusCountry.lng] : [20, 20]}
+                      zoom={focusCountry ? 4 : 2}
+                      minZoom={2}
+                      maxZoom={6}
+                      worldCopyJump
+                      scrollWheelZoom
+                      zoomControl={false}
+                      style={{ height: "100%", width: "100%", background: "hsl(var(--surface-muted))" }}
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &middot; <a href="https://carto.com/attributions">CARTO</a>'
+                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      />
+                      <ZoomControl position="bottomright" />
+                      <FlyTo country={focusCountry} />
+                      {visible.map((c) => {
+                        const ts = terrainsFor(c).slice(0, 3);
+                        return (
+                          <CircleMarker
+                            key={c.slug}
+                            ref={(ref) => { popupRefs.current[c.slug] = ref; }}
+                            center={[c.lat, c.lng]}
+                            radius={pinRadius(c)}
+                            pathOptions={{
+                              color: costColor(c.dailyCost),
+                              fillColor: costColor(c.dailyCost),
+                              fillOpacity: 0.7,
+                              weight: 2,
+                            }}
+                          >
+                            <Tooltip direction="top" offset={[0, -6]} opacity={1}>
+                              <span className="font-semibold">{c.flag} {c.name}</span> · <Money usd={c.dailyCost} />/day · JP {japanVibe(c.slug)}
+                            </Tooltip>
+                            <Popup minWidth={240} maxWidth={280}>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-2xl">{c.flag}</span>
+                                  <div>
+                                    <div className="font-display font-bold leading-tight">{c.name}</div>
+                                    <div className="text-xs opacity-70 flex items-center gap-1">
+                                      <MapPin className="h-3 w-3" /> {c.region}
+                                    </div>
+                                  </div>
+                                </div>
+                                <p className="text-xs leading-snug">{c.blurb}</p>
+                                <div className="grid grid-cols-2 gap-1.5 text-xs pt-1">
+                                  <Pop label="7 days"><MoneyRange range={c.costRange} /></Pop>
+                                  <Pop label="Daily"><Money usd={c.dailyCost} /></Pop>
+                                  <Pop label="Flights"><MoneyRange range={c.flightCostRange} /></Pop>
+                                  <Pop label="JP vibe">{japanVibe(c.slug)}/100</Pop>
+                                </div>
+                                <div className="flex items-center justify-between pt-1">
+                                  <TerrainChips terrains={ts} />
+                                  <span className={cn("chip text-[10px]", DIFFICULTY_META[difficultyFor(c)].tone)}>
+                                    {DIFFICULTY_META[difficultyFor(c)].label}
+                                  </span>
+                                </div>
+                                <Link
+                                  to={`/country/${c.slug}`}
+                                  className="block text-center mt-2 rounded-md bg-primary text-primary-foreground text-xs font-semibold py-1.5 hover:opacity-90"
+                                >
+                                  Open guide →
+                                </Link>
+                              </div>
+                            </Popup>
+                          </CircleMarker>
+                        );
+                      })}
+                    </MapContainer>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="table" className="m-0">
+                <CountryTable countries={visible} />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
 

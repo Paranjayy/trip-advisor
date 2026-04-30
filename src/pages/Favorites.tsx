@@ -9,7 +9,7 @@ import { COUNTRIES } from "@/data/countries";
 
 const Favorites = () => {
   useEffect(() => {
-    document.title = "Saved trips — GlobeWise";
+    document.title = "Saved trips — TripAdvisor";
   }, []);
 
   const { favorites } = useFavorites();

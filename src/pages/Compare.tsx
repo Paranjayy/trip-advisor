@@ -10,11 +10,12 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } fro
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/lib/currency";
 import { Money, MoneyRange } from "@/components/Money";
+import { japanVibe } from "@/lib/japanVibe";
 
 const Compare = () => {
   const { format } = useCurrency();
   useEffect(() => {
-    document.title = "Compare countries — GlobeWise";
+    document.title = "Compare countries — TripAdvisor";
   }, []);
 
   const [slots, setSlots] = useState<(string | null)[]>(["japan", "taiwan", "vietnam"]);
@@ -95,7 +96,7 @@ const Compare = () => {
                   <Row label="Daily cost" cells={selected.map((c) => c && <Money usd={c.dailyCost} />)} />
                   <Row label="Flights" cells={selected.map((c) => c && <MoneyRange range={c.flightCostRange} />)} />
                   <Row label="Vegetarian" cells={selected.map((c) => c && c.vegScore)} />
-                  <Row label="Japan similarity" cells={selected.map((c) => c && `${c.similarityScore}/100`)} highlight />
+                  <Row label="Japan similarity" cells={selected.map((c) => c && `${japanVibe(c.slug)}/100`)} highlight />
                   <Row label="Vibe" cells={selected.map((c) => c && c.vibe)} />
                   <Row label="Tourists / yr" cells={selected.map((c) => c && `${c.touristCount}M`)} />
                   <Row label="Best months" cells={selected.map((c) => c?.bestMonths.map((m) => MONTHS[m - 1].slice(0, 3)).join(", "))} />
