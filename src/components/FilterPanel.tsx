@@ -6,6 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { REGIONS } from "@/data/countries";
 import { Filters } from "@/lib/recommend";
+import { TERRAIN_LIST, TERRAIN_META, type Terrain } from "@/lib/terrains";
+import { useCurrency } from "@/lib/currency";
+import { cn } from "@/lib/utils";
 
 type Props = {
   filters: Filters;
@@ -15,7 +18,13 @@ type Props = {
 
 export function FilterPanel({ filters, setFilters, layout = "horizontal" }: Props) {
   const update = <K extends keyof Filters>(k: K, v: Filters[K]) => setFilters({ ...filters, [k]: v });
-
+  const { format } = useCurrency();
+  const activeTerrains = new Set<Terrain>(filters.terrains ?? []);
+  const toggleTerrain = (t: Terrain) => {
+    const next = new Set(activeTerrains);
+    next.has(t) ? next.delete(t) : next.add(t);
+    update("terrains", [...next]);
+  };
   const isSidebar = layout === "sidebar";
 
   return (
@@ -62,12 +71,12 @@ export function FilterPanel({ filters, setFilters, layout = "horizontal" }: Prop
       <div className={isSidebar ? "" : "lg:col-span-2"}>
         <div className="flex justify-between items-baseline">
           <Label className="text-xs font-medium text-muted-foreground">Max 7-day budget</Label>
-          <span className="text-sm font-semibold text-primary">${filters.budgetMax}</span>
+          <span className="text-sm font-semibold text-primary">{format(filters.budgetMax)}</span>
         </div>
         <Slider
           value={[filters.budgetMax]}
           min={500}
-          max={3500}
+          max={5000}
           step={100}
           onValueChange={(v) => update("budgetMax", v[0])}
           className="mt-3"
