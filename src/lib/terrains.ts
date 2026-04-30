@@ -1,6 +1,6 @@
 import {
   Mountain, Waves, Building2, Trees, Snowflake, Utensils, Music, Landmark,
-  Bird, Anchor, Sparkles, Sun, Tent, Flame, Compass, Bike, GlassWater, Ship,
+  Bird, Anchor, Sparkles, Sun, Flame, Compass, GlassWater, Ship,
   type LucideIcon,
 } from "lucide-react";
 import type { Country } from "@/data/countries";
