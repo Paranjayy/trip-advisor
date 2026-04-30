@@ -1,43 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, Plane, Users, Calendar, Tag, MapPin, Utensils, Sparkles, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Heart, Plane, Users, Calendar, Tag, MapPin, Utensils, Sparkles, Compass } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CostBreakdownChart } from "@/components/CostBreakdownChart";
 import { PriceTrendChart } from "@/components/PriceTrendChart";
 import { MonthHeatmapStrip } from "@/components/MonthHeatmapStrip";
 import { Button } from "@/components/ui/button";
 import { Money, MoneyRange } from "@/components/Money";
+import { TerrainChips } from "@/components/TerrainChips";
+import { TripCalculator } from "@/components/TripCalculator";
 import { getCountry, MONTHS } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
-import { getVibeRank, getSimilarCountries } from "@/lib/recommend";
-import { CountryCard } from "@/components/CountryCard";
+import { terrainsFor, difficultyFor, DIFFICULTY_META, TERRAIN_META } from "@/lib/terrains";
+import { japanVibe, similarCountries } from "@/lib/japanVibe";
+import { localTripsFor } from "@/lib/localTrips";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
-
-/** Same emoji map as CountryCard — kept co-located for clarity */
-const TAG_EMOJI: Record<string, string> = {
-  beach: "🏖️",
-  mountains: "🏔️",
-  mountain: "🏔️",
-  ski: "⛷️",
-  desert: "🏜️",
-  nature: "🌿",
-  jungle: "🌿",
-  city: "🏙️",
-  diving: "🤿",
-  safari: "🦁",
-  wildlife: "🦁",
-  spiritual: "🛕",
-  wine: "🍷",
-  food: "🍜",
-  history: "🏛️",
-  culture: "🏛️",
-  adventure: "⚡",
-  wellness: "🧘",
-  snow: "❄️",
-  nightlife: "🌃",
-};
 
 const CountryDetail = () => {
   const { slug } = useParams();
@@ -45,7 +24,7 @@ const CountryDetail = () => {
   const { isFavorite, toggle } = useFavorites();
 
   useEffect(() => {
-    if (country) document.title = `${country.name} travel guide — GlobeWise`;
+    if (country) document.title = `${country.name} travel guide — TripAdvisor`;
   }, [country]);
 
   if (!country) {
@@ -61,44 +40,16 @@ const CountryDetail = () => {
   }
 
   const fav = isFavorite(country.slug);
-  const [tripDays, setTripDays] = useState(7);
-  const { rank, topPercent, total } = getVibeRank(country.similarityScore);
-  const similarCountries = getSimilarCountries(country, 3);
-
-  // Scaled costs based on selected trip duration
-  const scaledStay = Math.round(country.costBreakdown.stay / 7 * tripDays);
-  const scaledFood = Math.round(country.costBreakdown.food / 7 * tripDays);
-  const scaledTransport = Math.round(country.costBreakdown.transport / 7 * tripDays);
-  const tripTotal = country.costBreakdown.flights + scaledStay + scaledFood + scaledTransport;
-  const scaledCountry = {
-    ...country,
-    costBreakdown: {
-      flights: country.costBreakdown.flights,
-      stay: scaledStay,
-      food: scaledFood,
-      transport: scaledTransport,
-    },
-  };
-
-  /** Deduplicated variety emoji from tags */
-  const varietyEmojis = (() => {
-    const seen = new Set<string>();
-    const out: { tag: string; emoji: string }[] = [];
-    for (const tag of country.tags) {
-      const emoji = TAG_EMOJI[tag];
-      if (emoji && !seen.has(emoji)) {
-        seen.add(emoji);
-        out.push({ tag, emoji });
-      }
-    }
-    return out;
-  })();
+  const terrains = terrainsFor(country);
+  const diff = difficultyFor(country);
+  const jp = japanVibe(country.slug);
+  const similar = similarCountries(country.slug, 4);
+  const trips = localTripsFor(country);
 
   return (
     <div className="min-h-screen bg-background">
       <SiteNav />
 
-      {/* Hero band */}
       <section className="bg-gradient-hero border-b border-border/60">
         <div className="container mx-auto py-10">
           <Link to="/explore" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
@@ -116,15 +67,13 @@ const CountryDetail = () => {
                 </div>
               </div>
               <p className="text-lg text-muted-foreground max-w-2xl">{country.blurb}</p>
-              {varietyEmojis.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {varietyEmojis.map(({ tag, emoji }) => (
-                    <span key={tag} className="inline-flex items-center gap-1 chip bg-secondary text-secondary-foreground text-sm">
-                      <span aria-hidden>{emoji}</span>{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <div className="flex flex-wrap items-center gap-2 mt-4">
+                <span className={cn("chip", DIFFICULTY_META[diff].tone)}>{DIFFICULTY_META[diff].label} difficulty</span>
+                <span className="chip bg-primary-soft text-primary">JP vibe {jp}/100</span>
+                <Link to={`/map?focus=${country.slug}`} className="chip bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                  <Compass className="h-3 w-3" /> Show on map
+                </Link>
+              </div>
             </div>
             <Button
               onClick={() => toggle(country.slug)}
@@ -140,63 +89,36 @@ const CountryDetail = () => {
       </section>
 
       <div className="container mx-auto py-10 grid lg:grid-cols-3 gap-6">
-        {/* Trip duration picker + Quick stats */}
-        <div className="lg:col-span-3 space-y-4">
-          {/* Day picker */}
-          <div className="glass-card p-4 flex flex-wrap items-center gap-4">
-            <span className="text-sm font-medium text-muted-foreground">Trip duration:</span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline" size="icon" className="h-8 w-8 rounded-lg"
-                onClick={() => setTripDays(d => Math.max(1, d - 1))}
-              >
-                <Minus className="h-3.5 w-3.5" />
-              </Button>
-              <span className="font-display text-xl font-bold w-16 text-center">{tripDays} {tripDays === 1 ? "day" : "days"}</span>
-              <Button
-                variant="outline" size="icon" className="h-8 w-8 rounded-lg"
-                onClick={() => setTripDays(d => Math.min(30, d + 1))}
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 ml-2">
-              {[3, 5, 7, 10, 14, 21].map(d => (
-                <button
-                  key={d}
-                  onClick={() => setTripDays(d)}
-                  className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-medium border transition-colors",
-                    tripDays === d
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border/60 text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                  )}
-                >
-                  {d}d
-                </button>
-              ))}
-            </div>
-            <span className="ml-auto text-sm text-muted-foreground">
-              Est. total: <span className="font-semibold text-foreground"><Money usd={tripTotal} /></span>
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label={`${tripDays}-day cost`} value={<Money usd={tripTotal} />} sub="incl. flights" />
-            <StatCard label="Daily cost" value={<Money usd={country.dailyCost} />} sub="avg" />
-            <StatCard label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-4 w-4" />} />
-            <StatCard label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-4 w-4" />} />
-          </div>
+        <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard label="7-day cost" value={<MoneyRange range={country.costRange} />} sub="per person" />
+          <StatCard label="Daily cost" value={<Money usd={country.dailyCost} />} sub="avg" />
+          <StatCard label="Flights" value={<MoneyRange range={country.flightCostRange} />} icon={<Plane className="h-4 w-4" />} />
+          <StatCard label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-4 w-4" />} />
         </div>
 
-        {/* Cost breakdown */}
-        <article className="glass-card p-6 lg:col-span-2">
-          <h2 className="font-display text-xl font-bold mb-1">Cost breakdown</h2>
-          <p className="text-sm text-muted-foreground mb-4">Estimated {tripDays}-day trip per person (flights + stay + food + transport)</p>
-          <CostBreakdownChart country={scaledCountry} />
+        {/* Terrains & variety */}
+        <article className="glass-card p-6 lg:col-span-3">
+          <h2 className="font-display text-xl font-bold mb-1">Variety & terrain</h2>
+          <p className="text-sm text-muted-foreground mb-4">What kind of trip you can build here.</p>
+          <div className="flex flex-wrap gap-2">
+            {terrains.map((t) => {
+              const m = TERRAIN_META[t];
+              const Icon = m.icon;
+              return (
+                <span key={t} className={cn("inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium", m.tone)}>
+                  <Icon className="h-4 w-4" /> {m.label}
+                </span>
+              );
+            })}
+          </div>
         </article>
 
-        {/* Months */}
+        <article className="glass-card p-6 lg:col-span-2">
+          <h2 className="font-display text-xl font-bold mb-1">Cost breakdown</h2>
+          <p className="text-sm text-muted-foreground mb-4">Estimated 7-day trip per person</p>
+          <CostBreakdownChart country={country} />
+        </article>
+
         <article className="glass-card p-6 space-y-4">
           <h2 className="font-display text-xl font-bold flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" /> Timing
@@ -207,59 +129,31 @@ const CountryDetail = () => {
           <p className="text-xs text-muted-foreground pt-1">{country.vegScore === "easy" ? "🌱 Vegetarian-friendly" : country.vegScore === "medium" ? "🥗 Some veg options" : "🍖 Limited veg options"}</p>
         </article>
 
-        {/* Price trend */}
-        <article className="glass-card p-6 lg:col-span-3">
-          <h2 className="font-display text-xl font-bold mb-1">Monthly price trend</h2>
-          <p className="text-sm text-muted-foreground mb-4">Relative price index by month — 100 is average. Lower = cheaper.</p>
-          <PriceTrendChart country={country} />
-          <div className="mt-6">
-            <MonthHeatmapStrip monthlyPriceIndex={country.monthlyPriceIndex} bestMonths={country.bestMonths} />
-          </div>
-        </article>
-
-        {/* Highlights */}
+        {/* Calculator */}
         <article className="glass-card p-6 lg:col-span-2">
-          <h2 className="font-display text-xl font-bold mb-4">Key destinations</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {country.highlights.map((h) => (
-              <div key={h.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors space-y-2">
-                <h3 className="font-semibold flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {h.name}</h3>
-                <p className="text-sm text-muted-foreground">{h.blurb}</p>
-                {h.stats && h.stats.length > 0 && (
-                  <dl className="grid grid-cols-1 gap-1 pt-1 border-t border-border/40">
-                    {h.stats.map((s) => (
-                      <div key={s.label} className="flex justify-between text-xs">
-                        <dt className="text-muted-foreground">{s.label}</dt>
-                        <dd className="font-medium text-foreground">{s.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </div>
-            ))}
-          </div>
+          <TripCalculator country={country} />
         </article>
 
-        {/* Tags + similarity */}
+        {/* Key stats */}
         <article className="glass-card p-6 space-y-5">
           <div>
             <h2 className="font-display text-xl font-bold flex items-center gap-2 mb-3">
-              <Sparkles className="h-5 w-5 text-primary" /> Japan-like vibe
+              <Sparkles className="h-5 w-5 text-primary" /> Japan similarity
             </h2>
             <div className="flex items-center gap-3">
-              <div className="text-4xl font-display font-extrabold text-primary">{country.similarityScore}</div>
+              <div className="text-4xl font-display font-extrabold text-primary">{jp}</div>
               <div className="flex-1">
                 <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                  <div className="h-full bg-gradient-primary" style={{ width: `${country.similarityScore}%` }} />
+                  <div className="h-full bg-gradient-primary" style={{ width: `${jp}%` }} />
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">/ 100 vs. Japan vibe</p>
+                <p className="text-xs text-muted-foreground mt-1">/ 100 — relative to all 79 countries</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              {rank === 1
-                ? "🌸 The benchmark — this is Japan itself"
-                : `Ranks #${rank} of ${total} countries · top ${topPercent}% for Japan-like feel`}
-            </p>
+          </div>
+          <div>
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">Difficulty</h3>
+            <span className={cn("chip", DIFFICULTY_META[diff].tone)}>{DIFFICULTY_META[diff].label}</span>
+            <p className="text-xs text-muted-foreground mt-2">{DIFFICULTY_META[diff].blurb}</p>
           </div>
           <div>
             <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2 flex items-center gap-1.5">
@@ -277,8 +171,74 @@ const CountryDetail = () => {
               ))}
             </div>
           </div>
-          <div className="text-xs text-muted-foreground">
-            Best months: <span className="text-foreground font-medium">{monthNames(country.bestMonths)}</span>
+        </article>
+
+        <article className="glass-card p-6 lg:col-span-3">
+          <h2 className="font-display text-xl font-bold mb-1">Monthly price trend</h2>
+          <p className="text-sm text-muted-foreground mb-4">Relative price index by month — 100 is average. Lower = cheaper.</p>
+          <PriceTrendChart country={country} />
+          <div className="mt-6">
+            <MonthHeatmapStrip monthlyPriceIndex={country.monthlyPriceIndex} bestMonths={country.bestMonths} />
+          </div>
+        </article>
+
+        {/* Local trips */}
+        <article className="glass-card p-6 lg:col-span-3">
+          <h2 className="font-display text-xl font-bold mb-1">Local trips & sub-destinations</h2>
+          <p className="text-sm text-muted-foreground mb-5">
+            {trips.length} curated mini-trips inside {country.name}. Budget shown is per person, in your selected currency.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {trips.map((t) => (
+              <div key={t.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="font-semibold">{t.name}</h3>
+                    <p className="text-xs text-muted-foreground">{t.region} · {t.vibe}</p>
+                  </div>
+                  <span className="chip bg-primary-soft text-primary whitespace-nowrap">{t.days} days</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">{t.blurb}</p>
+                {t.terrains.length > 0 && (
+                  <div className="mt-3"><TerrainChips terrains={t.terrains} max={4} /></div>
+                )}
+                <div className="mt-3 text-sm font-bold text-primary"><Money usd={t.budgetUsd} /> <span className="font-normal text-xs text-muted-foreground">est. budget</span></div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Highlights */}
+        <article className="glass-card p-6 lg:col-span-2">
+          <h2 className="font-display text-xl font-bold mb-4">Key destinations</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {country.highlights.map((h) => (
+              <div key={h.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors">
+                <h3 className="font-semibold flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {h.name}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{h.blurb}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Similar countries */}
+        <article className="glass-card p-6">
+          <h2 className="font-display text-xl font-bold mb-1">Similar vibe</h2>
+          <p className="text-sm text-muted-foreground mb-4">Countries with overlapping terrain, cost & feel.</p>
+          <div className="space-y-2">
+            {similar.map(({ country: s, score }) => (
+              <Link key={s.slug} to={`/country/${s.slug}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-secondary/60 transition-colors">
+                <span className="text-2xl">{s.flag}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold truncate">{s.name}</div>
+                  <div className="text-xs text-muted-foreground"><Money usd={s.dailyCost} />/day · {s.region}</div>
+                </div>
+                <span className="chip bg-primary-soft text-primary">{score}%</span>
+              </Link>
+            ))}
+          </div>
+          <div className="text-xs text-muted-foreground pt-3">
+            Best months here: <span className="text-foreground font-medium">{monthNames(country.bestMonths)}</span>
           </div>
         </article>
       </div>

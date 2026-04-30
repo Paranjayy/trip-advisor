@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { Globe2, Heart, Map as MapIcon } from "lucide-react";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
+import { TranslateMenu } from "@/components/TranslateMenu";
 
 const links = [
   { to: "/", label: "Home", end: true },
@@ -18,7 +19,7 @@ export function SiteNav() {
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
             <Globe2 className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display text-lg font-bold tracking-tight">GlobeWise</span>
+          <span className="font-display text-lg font-bold tracking-tight notranslate" translate="no">TripAdvisor</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
@@ -45,6 +46,7 @@ export function SiteNav() {
         </div>
 
         <div className="flex items-center gap-2">
+          <TranslateMenu />
           <CurrencySwitcher />
           <NavLink
             to="/favorites"

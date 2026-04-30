@@ -4,7 +4,9 @@ import { Country } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
 import { Money, MoneyRange } from "@/components/Money";
-import { getVibeRank } from "@/lib/recommend";
+import { TerrainChips } from "@/components/TerrainChips";
+import { terrainsFor, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
+import { japanVibe } from "@/lib/japanVibe";
 
 const vegLabel = { easy: "Veg easy", medium: "Veg medium", hard: "Veg hard" } as const;
 const vegStyle = {
@@ -54,8 +56,6 @@ function varietyEmojis(tags: string[]): string[] {
 export function CountryCard({ country, tripDays = 7 }: { country: Country; tripDays?: number }) {
   const { isFavorite, toggle } = useFavorites();
   const fav = isFavorite(country.slug);
-  const { rank, topPercent, total } = getVibeRank(country.similarityScore);
-  const vibeLabel = rank === 1 ? "🌸 Benchmark" : `Top ${topPercent}%`;
   const emojis = varietyEmojis(country.tags);
   const tripCost = country.dailyCost * tripDays;
 
@@ -101,16 +101,16 @@ export function CountryCard({ country, tripDays = 7 }: { country: Country; tripD
           <Stat label="Tourists" value={`${country.touristCount}M/yr`} icon={<Users className="h-3 w-3" />} />
         </div>
 
+        <TerrainChips terrains={terrainsFor(country)} max={5} />
+
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
           <span className={cn("chip", vegStyle[country.vegScore])}>
             <Utensils className="h-3 w-3" />
             {vegLabel[country.vegScore]}
           </span>
-          <span
-            className="chip bg-primary-soft text-primary"
-            title={`Ranks #${rank} of ${total} countries for Japan-like vibe`}
-          >
-            🌸 {vibeLabel}
+          <span className="chip bg-primary-soft text-primary">JP {japanVibe(country.slug)}/100</span>
+          <span className={cn("chip", DIFFICULTY_META[difficultyFor(country)].tone)}>
+            {DIFFICULTY_META[difficultyFor(country)].label}
           </span>
         </div>
       </Link>

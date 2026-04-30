@@ -7,7 +7,7 @@ import { Filters, filterCountries } from "@/lib/recommend";
 
 const Explore = () => {
   useEffect(() => {
-    document.title = "Explore countries — GlobeWise";
+    document.title = "Explore countries — TripAdvisor";
   }, []);
 
   const [filters, setFilters] = useState<Filters>({
@@ -18,6 +18,7 @@ const Explore = () => {
     vegFriendly: false,
     vibe: "any",
     japanLike: false,
+    terrains: [],
   });
 
   const filtered = useMemo(() => filterCountries(COUNTRIES, filters), [filters]);

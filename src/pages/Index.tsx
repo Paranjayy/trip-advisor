@@ -18,6 +18,7 @@ const Index = () => {
     vegFriendly: false,
     vibe: "any",
     japanLike: false,
+    terrains: [],
   });
 
   const filtered = useMemo(() => filterCountries(COUNTRIES, filters), [filters]);
@@ -52,8 +53,8 @@ const Index = () => {
               By budget, by month, by vibe.
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl">
-              Compare 25+ countries on real costs, weather windows, vegetarian-friendliness,
-              and how Japan-like they feel — in one calm dashboard.
+              Compare 79+ countries on real costs, weather windows, vegetarian-friendliness,
+              terrain variety, and how Japan-like they feel — in one calm dashboard.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-xl bg-primary hover:bg-primary/90 shadow-glow">
@@ -65,7 +66,7 @@ const Index = () => {
             </div>
 
             <div className="flex flex-wrap gap-6 pt-4 text-sm">
-              <Stat icon={<Wallet className="h-4 w-4 text-primary" />} value="25+" label="Countries" />
+              <Stat icon={<Wallet className="h-4 w-4 text-primary" />} value="79+" label="Countries" />
               <Stat icon={<TrendingUp className="h-4 w-4 text-accent" />} value="12-mo" label="Price trends" />
               <Stat icon={<Sparkles className="h-4 w-4 text-success" />} value="Smart" label="Recommendations" />
             </div>
@@ -146,7 +147,7 @@ const Index = () => {
       </section>
 
       <footer className="border-t border-border/60 py-8 text-center text-sm text-muted-foreground">
-        Built for travelers who like decisions made simple. © GlobeWise
+        Built for travelers who like decisions made simple. © TripAdvisor
       </footer>
     </div>
   );

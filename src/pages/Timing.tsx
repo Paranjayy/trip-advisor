@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 const Timing = () => {
   useEffect(() => {
-    document.title = "Best months to travel — GlobeWise";
+    document.title = "Best months to travel — TripAdvisor";
   }, []);
 
   const [sortBy, setSortBy] = useState<"alpha" | "cheap" | "expensive">("alpha");
