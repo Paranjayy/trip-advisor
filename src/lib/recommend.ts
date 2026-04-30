@@ -85,6 +85,8 @@ export function recommend(input: RecInput): Recommendation[] {
   return scored.sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
+import { terrainsFor, type Terrain } from "@/lib/terrains";
+
 export type Filters = {
   query: string;
   region: string; // "all" or region name
@@ -92,6 +94,7 @@ export type Filters = {
   vegFriendly: boolean;
   vibe: "any" | "chill" | "adventure" | "balanced";
   japanLike: boolean;
+  terrains?: Terrain[]; // any-of match
 };
 
 export function filterCountries(items: Country[], f: Filters): Country[] {
@@ -102,6 +105,10 @@ export function filterCountries(items: Country[], f: Filters): Country[] {
     if (f.vegFriendly && c.vegScore === "hard") return false;
     if (f.vibe !== "any" && c.vibe !== f.vibe && c.vibe !== "balanced") return false;
     if (f.japanLike && japanVibe(c.slug) < 60) return false;
+    if (f.terrains && f.terrains.length > 0) {
+      const ts = new Set(terrainsFor(c));
+      if (!f.terrains.some((t) => ts.has(t))) return false;
+    }
     return true;
   });
 }
