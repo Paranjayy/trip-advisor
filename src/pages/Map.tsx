@@ -19,6 +19,7 @@ import { Globe2, MapPin } from "lucide-react";
 import { TERRAIN_LIST, TERRAIN_META, terrainsFor, type Terrain, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
 import { japanVibe } from "@/lib/japanVibe";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/lib/theme";
 
 function costColor(daily: number): string {
   if (daily <= 60) return "hsl(var(--success))";
@@ -42,6 +43,10 @@ function FlyTo({ country }: { country: Country | null }) {
 
 const MapPage = () => {
   useEffect(() => { document.title = "World map — TripAdvisor"; }, []);
+  const { theme } = useTheme();
+  const tileUrl = theme === "dark"
+    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 
   const { format } = useCurrency();
   const [params] = useSearchParams();
@@ -187,7 +192,7 @@ const MapPage = () => {
                     >
                       <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &middot; <a href="https://carto.com/attributions">CARTO</a>'
-                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                        url={tileUrl}
                       />
                       <ZoomControl position="bottomright" />
                       <FlyTo country={focusCountry} />
