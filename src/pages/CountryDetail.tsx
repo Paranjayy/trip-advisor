@@ -20,6 +20,7 @@ import { ITINERARIES } from "@/lib/itineraries";
 import { Route as RouteIcon, Clock as ClockIcon, CheckCircle2, AlertCircle, Info, ShieldCheck, Zap } from "lucide-react";
 import { WeatherChart } from "@/components/WeatherChart";
 import { DegreesOfSeparation } from "@/components/DegreesOfSeparation";
+import { PassportStatus } from "@/components/PassportStatus";
 import { getWeather } from "@/lib/weather";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
@@ -289,11 +290,14 @@ const CountryDetail = () => {
            <h2 className="font-display text-xl font-bold mb-6 flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-accent" /> Essential Logistics
            </h2>
-           <div className="space-y-4">
-              <LogisticsRow icon={<Plane className="h-4 w-4" />} title="Visa Policy" desc="E-visa usually required for most passports. 30-day stay." />
-              <LogisticsRow icon={<Utensils className="h-4 w-4" />} title="Water" desc="Stick to bottled water. High humidity in most regions." />
-              <LogisticsRow icon={<Info className="h-4 w-4" />} title="SIM Cards" desc="Local SIMs available at airports. Cheap 4G data." />
-              <LogisticsRow icon={<AlertCircle className="h-4 w-4" />} title="Transport" desc="Use local ride-sharing apps (Grab/Uber) for safety." />
+           <div className="space-y-6">
+              <PassportStatus destinationSlug={country.slug} />
+              <div className="space-y-3">
+                 <LogisticsRow icon={<Plane className="h-4 w-4" />} title="Visa Policy" desc="Check the passport tool above for your specific nationality." />
+                 <LogisticsRow icon={<Utensils className="h-4 w-4" />} title="Water" desc="Stick to bottled water. High humidity in most regions." />
+                 <LogisticsRow icon={<Info className="h-4 w-4" />} title="SIM Cards" desc="Local SIMs available at airports. Cheap 4G data." />
+                 <LogisticsRow icon={<AlertCircle className="h-4 w-4" />} title="Transport" desc="Use local ride-sharing apps (Grab/Uber) for safety." />
+              </div>
            </div>
            <div className="mt-8 pt-6 border-t border-border/60">
               <DegreesOfSeparation slug={country.slug} />

@@ -429,6 +429,70 @@ export const ITINERARIES: Itinerary[] = [
         ] },
     ]
   },
+  {
+    slug: "switzerland-peaks-7d",
+    title: "Swiss Peaks & Glaciers — 7 days",
+    countrySlug: "switzerland",
+    region: "Central Alps",
+    flag: "🇨🇭",
+    days: 7,
+    bestMonths: [6, 7, 8, 12, 1, 2],
+    difficulty: "moderate",
+    terrains: ["mountains", "snow", "lakes", "wellness"],
+    blurb: "The ultimate alpine loop: Zurich, Lucerne, Interlaken, and the 'Top of Europe' Jungfraujoch. Clean, fast, and stunning.",
+    totalUsd: 2100,
+    highlights: ["Jungfraujoch Sphinx Observatory", "Mt Pilatus steepest cogwheel railway", "Interlaken paragliding", "Lake Brienz turquoise waters"],
+    category: "Classic",
+    tags: ["Luxury", "Mountains", "Nature"],
+    plan: [
+      { day: 1, title: "Arrive Zurich · Lucerne", base: "Lucerne", stayUsd: 180,
+        stops: [
+          { place: "ZRH airport → Lucerne", activity: "Scenic SBB train ride", hours: 1, km: 68, mode: "train", costUsd: 35 },
+          { place: "Chapel Bridge (Kapellbrücke)", activity: "Old town walk & fondue dinner", hours: 3, km: 1, mode: "walk", costUsd: 65 },
+        ] },
+      { day: 2, title: "Mt Pilatus Gold Round Trip", base: "Lucerne", stayUsd: 180,
+        stops: [
+          { place: "Lake Lucerne boat", activity: "Cruise to Alpnachstad", hours: 1.5, km: 15, mode: "boat", costUsd: 25 },
+          { place: "Pilatus Cogwheel", activity: "World's steepest railway (48% gradient)", hours: 1, km: 4, mode: "train", costUsd: 45 },
+          { place: "Pilatus summit", activity: "Alpine views & dragon trail", hours: 2, km: 0, mode: "walk", costUsd: 0 },
+        ] },
+      { day: 3, title: "Lucerne → Interlaken", base: "Interlaken", stayUsd: 160,
+        stops: [
+          { place: "Luzern-Interlaken Express", activity: "Premium panoramic train journey", hours: 2, km: 75, mode: "train", costUsd: 42 },
+          { place: "Harder Kulm", activity: "Funicular to Interlaken's 'house mountain'", hours: 2, km: 2, mode: "train", costUsd: 35 },
+        ] },
+    ]
+  },
+  {
+    slug: "thailand-north-7d",
+    title: "Northern Thailand Loop — 7 days",
+    countrySlug: "thailand",
+    region: "Chiang Mai & Pai",
+    flag: "🇹🇭",
+    days: 7,
+    bestMonths: [11, 12, 1, 2],
+    difficulty: "moderate",
+    terrains: ["mountains", "food", "history", "wellness"],
+    blurb: "Temples in Chiang Mai, 762 curves to the bohemian paradise of Pai, and elephant sanctuaries.",
+    totalUsd: 420,
+    highlights: ["Wat Phra That Doi Suthep", "Pai Canyon at sunset", "Chiang Mai Sunday Market", "Lod Cave bamboo rafting"],
+    category: "Backpacking",
+    tags: ["Bohemian", "Mountains", "Street Food"],
+    plan: [
+      { day: 1, title: "Chiang Mai — Temple Crawl", base: "Chiang Mai", stayUsd: 22,
+        stops: [
+          { place: "Wat Chedi Luang", activity: "Ancient Lanna ruins", hours: 2, km: 5, mode: "car", costUsd: 5 },
+          { place: "Doi Suthep", activity: "Golden mountain temple at sunset", hours: 3, km: 15, mode: "car", costUsd: 12 },
+          { place: "Sunday Night Market", activity: "The ultimate street food feast", hours: 3, km: 2, mode: "walk", costUsd: 18 },
+        ] },
+      { day: 2, title: "Road to Pai (762 curves)", base: "Pai", stayUsd: 18,
+        stops: [
+          { place: "Chiang Mai → Pai", activity: "Minibus or motorbike challenge", hours: 3.5, km: 130, mode: "bus", costUsd: 8 },
+          { place: "Pai Canyon", activity: "Sunset ridge walk", hours: 2, km: 8, mode: "car", costUsd: 2 },
+          { place: "Pai Walking Street", activity: "Night bazaar dinner", hours: 2, km: 1, mode: "walk", costUsd: 12 },
+        ] },
+    ]
+  },
 ];
 
 export function getItinerary(slug: string) {
