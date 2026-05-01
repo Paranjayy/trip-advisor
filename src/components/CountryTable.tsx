@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import type { Country } from "@/data/countries";
 import { Money, MoneyRange } from "@/components/Money";
 import { TerrainChips } from "@/components/TerrainChips";
+import { Flag } from "@/components/Flag";
 import { terrainsFor, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
 import { japanVibe } from "@/lib/japanVibe";
 import { cn } from "@/lib/utils";
@@ -65,7 +66,7 @@ export function CountryTable({ countries }: { countries: Country[] }) {
                 <tr key={c.slug} className="border-t border-border/50 hover:bg-secondary/40">
                   <td className="px-3 py-2.5">
                     <Link to={`/country/${c.slug}`} className="flex items-center gap-2 font-semibold hover:text-primary">
-                      <span className="text-lg">{c.flag}</span>{c.name}
+                      <Flag emoji={c.flag} size={22} />{c.name}
                     </Link>
                   </td>
                   <td className="px-3 py-2.5 text-muted-foreground">{c.region}</td>

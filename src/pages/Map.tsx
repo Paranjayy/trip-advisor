@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { SiteNav } from "@/components/SiteNav";
 import { CountryTable } from "@/components/CountryTable";
 import { TerrainChips } from "@/components/TerrainChips";
+import { Flag } from "@/components/Flag";
 import { COUNTRIES, REGIONS, type Country } from "@/data/countries";
 import { useCurrency } from "@/lib/currency";
 import { Money, MoneyRange } from "@/components/Money";
@@ -206,12 +207,12 @@ const MapPage = () => {
                             }}
                           >
                             <Tooltip direction="top" offset={[0, -6]} opacity={1}>
-                              <span className="font-semibold">{c.flag} {c.name}</span> · <Money usd={c.dailyCost} />/day · JP {japanVibe(c.slug)}
+                              <span className="font-semibold inline-flex items-center gap-1"><Flag emoji={c.flag} size={16} /> {c.name}</span> · <Money usd={c.dailyCost} />/day · JP {japanVibe(c.slug)}
                             </Tooltip>
                             <Popup minWidth={240} maxWidth={280}>
                               <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-2xl">{c.flag}</span>
+                                  <Flag emoji={c.flag} size={28} />
                                   <div>
                                     <div className="font-display font-bold leading-tight">{c.name}</div>
                                     <div className="text-xs opacity-70 flex items-center gap-1">

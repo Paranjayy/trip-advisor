@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles, TrendingUp, Wallet } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CountryCard } from "@/components/CountryCard";
 import { FilterPanel } from "@/components/FilterPanel";
+import { Flag } from "@/components/Flag";
 import { Button } from "@/components/ui/button";
 import { COUNTRIES } from "@/data/countries";
 import { Filters, filterCountries, recommend } from "@/lib/recommend";
@@ -108,7 +109,7 @@ const Index = () => {
               <div className="absolute top-0 right-0 px-3 py-1 rounded-bl-2xl bg-gradient-primary text-primary-foreground text-xs font-bold">
                 #{i + 1} match
               </div>
-              <div className="text-5xl mb-3">{country.flag}</div>
+              <div className="mb-3"><Flag emoji={country.flag} size={48} /></div>
               <h3 className="font-display text-xl font-bold">{country.name}</h3>
               <p className="text-xs text-muted-foreground mb-4">{country.region}</p>
               <ul className="space-y-1.5 mb-5">
