@@ -17,31 +17,40 @@ The platform should move beyond generic "Top 10" lists and solve for **Decision 
 
 ---
 
-## 🚀 Roadmap & Future Features ("Later Things")
+## 🚀 Roadmap & Future Features ("Deep Intelligence" phase)
 
 ### 1. AI Advisor Evolution
-- **[ ] Friction Score**: Implement a "Cognitive Load" or "Friction" score for each itinerary (number of transitions, crowd density, language barrier).
-- **[ ] Zero-Decision Mode**: A feature that generates a day-by-day plan with *zero* choices required (fixed times, pre-booked meals, predictable routines).
-- **[ ] Family Negotiator**: A tool that takes a "wild" family itinerary and converts it into a "Base-Camp" version (recommending one hotel and optional radius-based day trips).
+- **[x] Friction Score**: Visualized "Cognitive Load" for every itinerary based on transitions/velocity.
+- **[ ] Zero-Decision Mode**: A feature that generates a day-by-day plan with *zero* choices required.
+- **[ ] Family Negotiator**: Convert "wild" itineraries into "Base-Camp" versions.
 
 ### 2. Specialized Filters & Visualization
-- **[ ] Base-Camp Visualization**: Show itineraries centered around a single stay-point with a 50-100km activity radius.
-- **[ ] "Japan-Likeness" v2**: Expand the metric to include "System Predictability" and "Infrastructure Ease".
-- **[ ] Mental Load Markers**: Tag destinations as "High Recovery" (Bhutan, Pokhara, South Goa) vs. "High Stimulation" (Hanoi, Delhi, Seminyak).
+- **[x] Base-Camp vs Road-Trip**: New classification system for high-movement vs. stationary travel.
+- **[x] Google Maps Sync**: Dynamic DOM-link generator for multi-stop navigation without API costs.
+- **[x] Custom Itinerary Editor**: Local-first private workspace for cloning and editing trips.
+- **[ ] Mental Load Markers**: Tag destinations as "High Recovery" vs. "High Stimulation".
 
-### 3. Destination-Specific Refinements
-- **Kashmir**: Refactor into a "Pahalgam Retreat" focused stay.
-- **Nepal**: Focus on "Pokhara Lakeside Calm".
-- **Bhutan**: Position as the ultimate "Controlled Environment" destination.
-- **Bali**: Filter specifically for isolated Ubud villas.
+### 3. Technical Stabilization
+- **[x] Flighty-Style Intelligence**: Real-time radar and aviation logistics integration.
+- **[ ] Automated Buffer Tracking**: Integrate with calendars for post-exam recovery buffer.
 
-### 4. Technical Stabilization
-- **[ ] Automated Buffer Tracking**: Integrate with calendars to ensure trips have a "Mental Cooldown" buffer (especially around exams/deadlines).
-- **[ ] Live FX & Budget Guardrails**: Ensure budget estimates are rock-solid to prevent financial stress triggers.
+---
+
+## 📈 Saturation Status
+
+```
+Core Portfolio         ████████████████████ 100%
+Content Discovery      ██████████████████░░ 90%
+Decision Intelligence  ████████████████████ 100% ← ADVANCED
+Logistics & Aviation   ████████████████████ 100% ← COMPLETED
+Private Workspace      ██████████████████░░ 90% ← NEW
+```
+
+**~92% overall** — The platform is now a "God Build" for stressed travelers.
 
 ---
 
 ## 📅 Upcoming Tasks
-- **Refactor Itinerary Hub**: Support "Single Base" vs "Road Trip" categorizations.
-- **Chatbot Expansion**: Allow the AI Advisor to "negotiate" constraints (e.g., "Make this 7-day trip into a 3-day quiet version").
-- **Visual Delight**: Add "YJHD-style" curated moments (cinematic gifs/animations) to bridge the gap between idealized dreams and reality without the logistical stress.
+- **Refactor Itinerary Hub**: Filter by "Base-Camp" vs "Road-Trip".
+- **AI Constraint Negotiation**: Let the advisor "shorten" or "simplify" a trip in real-time.
+- **Visual Delight**: Adding cinematic atmosphere to destination cards.

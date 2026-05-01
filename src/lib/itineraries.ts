@@ -45,8 +45,21 @@ export type Itinerary = {
   highlights: string[];
   plan: ItineraryDay[];
   category?: "Classic" | "Road Trip" | "Backpacking" | "Luxury" | "Hidden Gem";
+  type?: "base-camp" | "road-trip";
   tags?: string[];
 };
+
+export function getGoogleMapsUrl(itinerary: Itinerary) {
+  const stops = itinerary.plan.flatMap(p => p.stops.map(s => s.place));
+  const uniqueStops = Array.from(new Set(stops));
+  if (uniqueStops.length === 0) return "";
+  
+  const origin = encodeURIComponent(uniqueStops[0]);
+  const destination = encodeURIComponent(uniqueStops[uniqueStops.length - 1]);
+  const waypoints = uniqueStops.slice(1, -1).map(s => encodeURIComponent(s)).join("|");
+  
+  return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}${waypoints ? `&waypoints=${waypoints}` : ""}&travelmode=driving`;
+}
 
 /** ---------- Curated itineraries ---------- */
 

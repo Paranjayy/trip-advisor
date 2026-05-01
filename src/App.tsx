@@ -14,6 +14,7 @@ import Favorites from "./pages/Favorites.tsx";
 import MapPage from "./pages/Map.tsx";
 import Itineraries from "./pages/Itineraries.tsx";
 import ItineraryDetail from "./pages/ItineraryDetail.tsx";
+import CustomItinerary from "./pages/CustomItinerary.tsx";
 import Planner from "./pages/Planner.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { AiAdvisor } from "@/components/AiAdvisor";
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/trips" element={<Navigate to="/itinerary" replace />} />
               <Route path="/itinerary" element={<Itineraries />} />
               <Route path="/itinerary/:slug" element={<ItineraryDetail />} />
+              <Route path="/itinerary/edit/:slug" element={<CustomItinerary />} />
               <Route path="/planner" element={<Planner />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

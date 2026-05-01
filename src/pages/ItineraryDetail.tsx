@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft, Bed, Bike, Bus, Calendar, Car, Clock, Compass, MapPin,
   Plane, Route as RouteIcon, Ship, Train, Users, Footprints, Mountain,
-  Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap,
+  Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap, Navigation,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -13,13 +13,15 @@ import { Flag } from "@/components/Flag";
 import { Money } from "@/components/Money";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { getItinerary, totalCost, totalHours, totalKm, calculateFriction, getFrictionLabel, type ItineraryStop } from "@/lib/itineraries";
+import { getItinerary, totalCost, totalHours, totalKm, calculateFriction, getFrictionLabel, getGoogleMapsUrl, type ItineraryStop } from "@/lib/itineraries";
 import { DIFFICULTY_META } from "@/lib/terrains";
 import { MONTHS } from "@/data/countries";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { VibePlayer } from "@/components/VibePlayer";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { useCustomItineraries } from "@/hooks/useCustomItineraries";
 
 const MODE_ICON: Record<ItineraryStop["mode"], React.ComponentType<{ className?: string }>> = {
   walk: Footprints, car: Car, bus: Bus, train: Train, flight: Plane, boat: Ship, bike: Bike,
@@ -48,8 +50,14 @@ function FitBounds({ positions }: { positions: [number, number][] }) {
 
 const ItineraryDetail = () => {
   const { slug } = useParams();
-  const it = slug ? getItinerary(slug) : undefined;
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { saveCustom, customs } = useCustomItineraries();
+
+  // Check if this is a custom itinerary or curated
+  const curated = slug ? getItinerary(slug) : undefined;
+  const custom = customs.find(c => c.slug === slug);
+  const it = custom || curated;
 
   const [travelers, setTravelers] = useState(2);
   const [activeDay, setActiveDay] = useState(1);
@@ -63,7 +71,18 @@ const ItineraryDetail = () => {
     toast({ title: "Link copied!", description: "Itinerary link copied to clipboard." });
   };
 
+  const handleCustomize = () => {
+    if (!it) return;
+    const newSlug = it.slug.includes("-custom") ? it.slug : `${it.slug}-custom-${Date.now().toString().slice(-4)}`;
+    const cloned = { ...it, slug: newSlug, title: `My ${it.title}` };
+    saveCustom(cloned);
+    toast({ title: "Trip Cloned!", description: "Opening editor for your custom itinerary." });
+    navigate(`/itinerary/edit/${newSlug}`);
+  };
+
   const handlePrint = () => window.print();
+
+  const mapsUrl = it ? getGoogleMapsUrl(it) : "#";
 
   const scrollToDay = (day: number) => {
     const el = document.getElementById(`day-${day}`);
@@ -124,6 +143,9 @@ const ItineraryDetail = () => {
                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
                     {it.category || "Discovery"}
                   </Badge>
+                  <Badge variant="outline" className={cn("px-3 py-1 text-[10px] font-bold uppercase tracking-wider", it.type === "base-camp" ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20")}>
+                    {it.type || "Road-Trip"}
+                  </Badge>
                   <div className="h-1 w-1 rounded-full bg-border" />
                   <span className="text-xs font-bold text-muted-foreground">{it.days} Days</span>
                   <div className="h-1 w-1 rounded-full bg-border" />
@@ -148,16 +170,19 @@ const ItineraryDetail = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-6">
+                  <Button onClick={handleCustomize} className="rounded-xl bg-primary hover:bg-primary/90 shadow-glow gap-2 px-6">
+                    <Zap className="h-4 w-4" /> Customize this Trip
+                  </Button>
+                  <Button asChild variant="outline" className="rounded-xl gap-2 shadow-sm border-emerald-500/30 bg-emerald-500/5 text-emerald-700 hover:bg-emerald-500/10 transition-colors">
+                    <a href={mapsUrl} target="_blank" rel="noreferrer">
+                      <Navigation className="h-4 w-4" /> Open in Google Maps
+                    </a>
+                  </Button>
                   <Button onClick={handleShare} variant="outline" className="rounded-xl gap-2 shadow-sm">
-                    <Share2 className="h-4 w-4" /> Share Trip
+                    <Share2 className="h-4 w-4" /> Share
                   </Button>
                   <Button onClick={handlePrint} variant="outline" className="rounded-xl gap-2 shadow-sm">
-                    <Printer className="h-4 w-4" /> Print PDF
-                  </Button>
-                  <Button asChild className="rounded-xl bg-primary hover:bg-primary/90 shadow-glow">
-                    <Link to={`/country/${it.countrySlug}`} className="gap-2">
-                      <Compass className="h-4 w-4" /> Country Guide
-                    </Link>
+                    <Printer className="h-4 w-4" /> Print
                   </Button>
                 </div>
               </header>
