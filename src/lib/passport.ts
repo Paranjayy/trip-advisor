@@ -30,6 +30,28 @@ export const PASSPORTS: Record<string, PassportPower> = {
       "vietnam": { status: "e-visa", duration: 90 },
       "india": { status: "e-visa", duration: 30 },
     }
+  },
+  "uk": {
+    homeSlug: "uk",
+    access: {
+      "thailand": { status: "visa-free", duration: 30 },
+      "japan": { status: "visa-free", duration: 90 },
+      "switzerland": { status: "visa-free", duration: 90 },
+      "france": { status: "visa-free", duration: 90 },
+      "indonesia": { status: "visa-free", duration: 30 },
+      "india": { status: "e-visa", duration: 30 },
+    }
+  },
+  "germany": {
+    homeSlug: "germany",
+    access: {
+      "thailand": { status: "visa-free", duration: 30 },
+      "japan": { status: "visa-free", duration: 90 },
+      "switzerland": { status: "visa-free", duration: 90 },
+      "france": { status: "visa-free", duration: 90 },
+      "vietnam": { status: "visa-free", duration: 45 },
+      "india": { status: "e-visa", duration: 30 },
+    }
   }
 };
 

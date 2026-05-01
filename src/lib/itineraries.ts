@@ -493,6 +493,80 @@ export const ITINERARIES: Itinerary[] = [
         ] },
     ]
   },
+  {
+    slug: "italy-classic-10d",
+    title: "Italy Art & Pasta Loop — 10 days",
+    countrySlug: "italy",
+    region: "Central Italy",
+    flag: "🇮🇹",
+    days: 10,
+    bestMonths: [5, 6, 9, 10],
+    difficulty: "easy",
+    terrains: ["city", "food", "history"],
+    blurb: "Rome's ruins, Florence's art, and the floating canals of Venice. The ultimate first-time Italy route.",
+    totalUsd: 1950,
+    highlights: ["Colosseum at night", "Florence Uffizi Gallery", "Venice Gondola ride", "Roman street food tour"],
+    category: "Classic",
+    tags: ["Culture", "Food", "History"],
+    plan: [
+      { day: 1, title: "Arrive Rome", base: "Rome", stayUsd: 120,
+        stops: [
+          { place: "FCO airport → Termini", activity: "Leonardo Express train", hours: 1, km: 32, mode: "train", costUsd: 16 },
+          { place: "Trastevere", activity: "Evening food crawl: Cacio e Pepe", hours: 3, km: 2, mode: "walk", costUsd: 45 },
+        ] },
+      { day: 2, title: "Ancient Rome", base: "Rome", stayUsd: 120,
+        stops: [
+          { place: "Colosseum & Forum", activity: "Guided skip-the-line tour", hours: 4, km: 3, mode: "walk", costUsd: 55 },
+          { place: "Trevi Fountain", activity: "Coin toss & gelato break", hours: 1, km: 2, mode: "walk", costUsd: 8 },
+        ] },
+    ]
+  },
+  {
+    slug: "norway-fjords-8d",
+    title: "Norway Fjords & Peaks — 8 days",
+    countrySlug: "norway",
+    region: "Western Fjords",
+    flag: "🇳🇴",
+    days: 8,
+    bestMonths: [6, 7, 8],
+    difficulty: "moderate",
+    terrains: ["mountains", "lakes", "snow"],
+    blurb: "From Bergen's colorful wharf to the deep Geirangerfjord. Includes the world-famous Flåm railway.",
+    totalUsd: 2400,
+    highlights: ["Geirangerfjord cruise", "Preikestolen (Pulpit Rock) hike", "Flåm Railway", "Bryggen Wharf"],
+    category: "Road Trip",
+    tags: ["Nature", "Adventure", "Landscape"],
+    plan: [
+      { day: 1, title: "Bergen Arrival", base: "Bergen", stayUsd: 150,
+        stops: [
+          { place: "BGO airport → City", activity: "Light rail transfer", hours: 1, km: 18, mode: "train", costUsd: 12 },
+          { place: "Bryggen", activity: "Hanseatic wharf walk & fish market", hours: 2, km: 1, mode: "walk", costUsd: 35 },
+        ] },
+    ]
+  },
+  {
+    slug: "bali-backpacker-7d",
+    title: "Bali Spirit & Surf — 7 days",
+    countrySlug: "indonesia",
+    region: "Bali",
+    flag: "🇮🇩",
+    days: 7,
+    bestMonths: [5, 6, 7, 8, 9],
+    difficulty: "easy",
+    terrains: ["beaches", "wellness", "food", "mountains"],
+    blurb: "Ubud's rice terraces, Canggu's surf vibes, and the sacred monkeys of the forest.",
+    totalUsd: 580,
+    highlights: ["Tegalalang Rice Terrace", "Uluwatu Temple fire dance", "Canggu sunset surf", "Monkey Forest"],
+    category: "Backpacking",
+    tags: ["Spiritual", "Beach", "Budget"],
+    plan: [
+      { day: 1, title: "Ubud Arrival", base: "Ubud", stayUsd: 35,
+        stops: [
+          { place: "DPS airport → Ubud", activity: "Private car transfer", hours: 1.5, km: 38, mode: "car", costUsd: 22 },
+          { place: "Ubud Center", activity: "Nasi Campur dinner & Balinese dance", hours: 3, km: 1, mode: "walk", costUsd: 18 },
+        ] },
+    ]
+  },
 ];
 
 export function getItinerary(slug: string) {

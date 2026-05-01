@@ -21,6 +21,7 @@ import { Route as RouteIcon, Clock as ClockIcon, CheckCircle2, AlertCircle, Info
 import { WeatherChart } from "@/components/WeatherChart";
 import { DegreesOfSeparation } from "@/components/DegreesOfSeparation";
 import { PassportStatus } from "@/components/PassportStatus";
+import { SmartPack } from "@/components/SmartPack";
 import { getWeather } from "@/lib/weather";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
@@ -304,25 +305,27 @@ const CountryDetail = () => {
            </div>
         </article>
 
-        {/* Similar countries */}
-        <article className="glass-card p-6">
-          <h2 className="font-display text-xl font-bold mb-1">Similar vibe</h2>
-          <p className="text-sm text-muted-foreground mb-4">Countries with overlapping terrain, cost & feel.</p>
-          <div className="space-y-2">
-            {similar.map(({ country: s, score }) => (
-              <Link key={s.slug} to={`/country/${s.slug}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-secondary/60 transition-colors">
-                <Flag emoji={s.flag} size={28} />
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold truncate">{s.name}</div>
-                  <div className="text-xs text-muted-foreground"><Money usd={s.dailyCost} />/day · {s.region}</div>
-                </div>
-                <span className="chip bg-primary-soft text-primary">{score}%</span>
-              </Link>
-            ))}
-          </div>
-          <div className="text-xs text-muted-foreground pt-3">
-            Best months here: <span className="text-foreground font-medium">{monthNames(country.bestMonths)}</span>
-          </div>
+        <article className="lg:col-span-1 space-y-6">
+           <SmartPack terrains={terrains} slug={country.slug} />
+           <div className="glass-card p-6">
+              <h2 className="font-display text-xl font-bold mb-1">Similar vibe</h2>
+              <p className="text-sm text-muted-foreground mb-4">Countries with overlapping terrain, cost & feel.</p>
+              <div className="space-y-2">
+                {similar.map(({ country: s, score }) => (
+                  <Link key={s.slug} to={`/country/${s.slug}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-secondary/60 transition-colors">
+                    <Flag emoji={s.flag} size={28} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold truncate">{s.name}</div>
+                      <div className="text-xs text-muted-foreground"><Money usd={s.dailyCost} />/day · {s.region}</div>
+                    </div>
+                    <span className="chip bg-primary-soft text-primary">{score}%</span>
+                  </Link>
+                ))}
+              </div>
+              <div className="text-xs text-muted-foreground pt-3">
+                Best months here: <span className="text-foreground font-medium">{monthNames(country.bestMonths)}</span>
+              </div>
+           </div>
         </article>
       </div>
     </div>
