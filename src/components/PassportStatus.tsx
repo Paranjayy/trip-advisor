@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Globe, ShieldCheck, AlertCircle, Info, ChevronDown, CheckCircle2 } from "lucide-react";
-import { getVisaStatus, CITIZENSHIPS, VisaStatus } from "@/lib/passport";
+import { Globe, ShieldCheck, AlertCircle, Info, ChevronDown, CheckCircle2, BookOpen } from "lucide-react";
+import { getVisaStatus, CITIZENSHIPS, VisaStatus, VISA_JARGON } from "@/lib/passport";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +9,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const STATUS_META: Record<VisaStatus, { label: string; color: string; icon: any; blurb: string }> = {
   "visa-free": { 
@@ -44,7 +50,7 @@ export function PassportStatus({ destinationSlug }: { destinationSlug: string })
     localStorage.setItem("user-citizenship", citizenship);
   }, [citizenship]);
 
-  const { status, duration } = getVisaStatus(citizenship, destinationSlug);
+  const { status, stay, validity, entries } = getVisaStatus(citizenship, destinationSlug);
   const meta = STATUS_META[status];
   const Icon = meta.icon;
 
@@ -83,22 +89,52 @@ export function PassportStatus({ destinationSlug }: { destinationSlug: string })
           </DropdownMenu>
        </div>
 
-       <div className={cn("p-4 rounded-2xl border transition-all duration-500 flex items-start gap-4", meta.color)}>
-          <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-             <Icon className="h-6 w-6" />
-          </div>
-          <div className="flex-1">
-             <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-black uppercase tracking-tight">{meta.label}</p>
-                {duration > 0 && <span className="text-[10px] font-black">{duration} Days Max</span>}
+       <div className={cn("p-4 rounded-2xl border transition-all duration-500 flex flex-col gap-4", meta.color)}>
+          <div className="flex items-start gap-4">
+             <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                <Icon className="h-6 w-6" />
              </div>
-             <p className="text-xs leading-relaxed opacity-80">{meta.blurb}</p>
+             <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                   <p className="text-sm font-black uppercase tracking-tight">{meta.label}</p>
+                   <span className="text-[10px] font-black uppercase bg-white/10 px-2 py-0.5 rounded">{entries} Entry</span>
+                </div>
+                <p className="text-xs leading-relaxed opacity-80">{meta.blurb}</p>
+             </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/5">
+             <div className="p-2 rounded-xl bg-white/5">
+                <p className="text-[9px] font-black uppercase opacity-60 mb-0.5">Max Stay</p>
+                <p className="text-xs font-bold">{stay > 0 ? `${stay} Days` : "N/A"}</p>
+             </div>
+             <div className="p-2 rounded-xl bg-white/5">
+                <p className="text-[9px] font-black uppercase opacity-60 mb-0.5">Validity</p>
+                <p className="text-xs font-bold">{validity > 0 ? `${validity} Months` : "Indefinite"}</p>
+             </div>
           </div>
        </div>
        
-       <div className="mt-4 flex items-center gap-2 px-1">
-          <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Live Passport Integration Active</p>
+       <div className="mt-6 space-y-3 relative z-10">
+          <h4 className="text-[9px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+             <BookOpen className="h-3 w-3" /> Visa Glossary
+          </h4>
+          <div className="flex flex-wrap gap-1.5">
+             <TooltipProvider>
+                {VISA_JARGON.map((j) => (
+                   <Tooltip key={j.term}>
+                      <TooltipTrigger asChild>
+                         <button className="text-[9px] font-bold px-2 py-1 rounded-md bg-surface border border-border/40 hover:border-primary/40 transition-colors">
+                            {j.term}
+                         </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-[200px] bg-popover/95 backdrop-blur-xl border-border/40 text-[10px] p-2 leading-relaxed">
+                         <p>{j.definition}</p>
+                      </TooltipContent>
+                   </Tooltip>
+                ))}
+             </TooltipProvider>
+          </div>
        </div>
     </div>
   );

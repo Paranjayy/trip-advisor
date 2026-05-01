@@ -494,6 +494,52 @@ export const ITINERARIES: Itinerary[] = [
     ]
   },
   {
+    slug: "rajasthan-royal-9d",
+    title: "Rajasthan Royal Loop — 9 days",
+    countrySlug: "india",
+    region: "Rajasthan, India",
+    flag: "🇮🇳",
+    days: 9,
+    bestMonths: [10, 11, 12, 1, 2, 3],
+    difficulty: "moderate",
+    terrains: ["desert", "history", "city", "food"],
+    blurb: "The Land of Kings: Pink City Jaipur, Blue City Jodhpur, and the City of Lakes Udaipur. Palaces, forts, and sand dunes.",
+    totalUsd: 680,
+    highlights: ["Amer Fort elephant ride", "Jodhpur Mehrangarh Fort", "Udaipur Lake Palace boat ride", "Jaisalmer desert safari"],
+    category: "Classic",
+    tags: ["Royal", "History", "Photography"],
+    plan: [
+      { day: 1, title: "Arrive Jaipur", base: "Jaipur", stayUsd: 45,
+        stops: [
+          { place: "JAI airport → City", activity: "Transfer to heritage haveli", hours: 1, km: 12, mode: "car", costUsd: 8 },
+          { place: "Hawa Mahal", activity: "Evening walk around the Palace of Winds", hours: 2, km: 2, mode: "walk", costUsd: 5 },
+        ] },
+    ]
+  },
+  {
+    slug: "kerala-backwaters-7d",
+    title: "Kerala Backwaters & Hills — 7 days",
+    countrySlug: "india",
+    region: "Kerala, India",
+    flag: "🇮🇳",
+    days: 7,
+    bestMonths: [9, 10, 11, 12, 1, 2, 3],
+    difficulty: "easy",
+    terrains: ["wellness", "lakes", "beaches", "mountains"],
+    blurb: "God's Own Country: Kochi's history, Munnar's tea gardens, and an overnight houseboat in Alleppey.",
+    totalUsd: 540,
+    highlights: ["Munnar Tea Gardens", "Alleppey Houseboat", "Kochi Chinese Fishing Nets", "Thekkady Spice Plantation"],
+    category: "Classic",
+    tags: ["Nature", "Wellness", "Relaxation"],
+    plan: [
+      { day: 1, title: "Arrive Kochi", base: "Kochi", stayUsd: 38,
+        stops: [
+          { place: "COK airport → Fort Kochi", activity: "Transfer to historic district", hours: 1.5, km: 36, mode: "car", costUsd: 15 },
+          { place: "Chinese Fishing Nets", activity: "Sunset walk & seafood dinner", hours: 2, km: 1, mode: "walk", costUsd: 22 },
+        ] },
+    ]
+  },
+  {
     slug: "italy-classic-10d",
     title: "Italy Art & Pasta Loop — 10 days",
     countrySlug: "italy",
