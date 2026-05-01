@@ -15,6 +15,8 @@ import { japanVibe } from "@/lib/japanVibe";
 import { difficultyFor, DIFFICULTY_META, terrainsFor } from "@/lib/terrains";
 import { TerrainChips } from "@/components/TerrainChips";
 import { cn } from "@/lib/utils";
+import { Toggle } from "@/components/ui/toggle";
+import { VibeMatcher } from "@/components/VibeMatcher";
 
 type View = "grid" | "list" | "table";
 type Sort = "name" | "daily-asc" | "daily-desc" | "week-asc" | "week-desc" | "tourists" | "jp";
@@ -38,11 +40,22 @@ const Explore = () => {
   });
   const [view, setView] = useState<View>("grid");
   const [sort, setSort] = useState<Sort>("jp");
+  const [isGrouped, setIsGrouped] = useState(false);
 
   const filtered = useMemo(() => {
     const arr = filterCountries(COUNTRIES, filters);
     return [...arr].sort(SORTERS[sort]);
   }, [filters, sort]);
+
+  const grouped = useMemo(() => {
+    if (!isGrouped) return { "All Destinations": filtered };
+    const groups: Record<string, typeof COUNTRIES> = {};
+    filtered.forEach(c => {
+      if (!groups[c.region]) groups[c.region] = [];
+      groups[c.region].push(c);
+    });
+    return groups;
+  }, [filtered, isGrouped]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,9 +68,12 @@ const Explore = () => {
         </header>
 
         <div className="grid lg:grid-cols-[300px_1fr] gap-8">
-          <aside className="lg:sticky lg:top-20 self-start glass-card p-5 h-fit">
-            <h2 className="font-display font-bold text-sm uppercase tracking-wide mb-4 text-muted-foreground">Filters</h2>
-            <FilterPanel filters={filters} setFilters={setFilters} layout="sidebar" />
+          <aside className="lg:sticky lg:top-20 self-start h-fit space-y-6">
+            <VibeMatcher />
+            <div className="glass-card p-5">
+              <h2 className="font-display font-bold text-sm uppercase tracking-wide mb-4 text-muted-foreground">Filters</h2>
+              <FilterPanel filters={filters} setFilters={setFilters} layout="sidebar" />
+            </div>
           </aside>
 
           <div>
@@ -77,10 +93,17 @@ const Explore = () => {
                   </SelectContent>
                 </Select>
                 <div className="inline-flex rounded-lg border border-border/60 bg-surface p-1 gap-0.5">
-                  <ViewBtn icon={<LayoutGrid className="h-4 w-4" />} active={view === "grid"} onClick={() => setView("grid")} label="Grid" />
-                  <ViewBtn icon={<List className="h-4 w-4" />} active={view === "list"} onClick={() => setView("list")} label="List" />
-                  <ViewBtn icon={<TableIcon className="h-4 w-4" />} active={view === "table"} onClick={() => setView("table")} label="Table" />
+                   <ViewBtn icon={<LayoutGrid className="h-4 w-4" />} active={view === "grid"} onClick={() => setView("grid")} label="Grid" />
+                   <ViewBtn icon={<List className="h-4 w-4" />} active={view === "list"} onClick={() => setView("list")} label="List" />
+                   <ViewBtn icon={<TableIcon className="h-4 w-4" />} active={view === "table"} onClick={() => setView("table")} label="Table" />
                 </div>
+                <Toggle 
+                   pressed={isGrouped} 
+                   onPressedChange={setIsGrouped}
+                   className="rounded-lg h-9 border border-border/60 bg-surface text-xs font-bold data-[state=on]:bg-primary/10 data-[state=on]:text-primary"
+                >
+                   <Layers className="h-3.5 w-3.5 mr-2" /> Group
+                </Toggle>
               </div>
             </div>
 
@@ -88,16 +111,37 @@ const Explore = () => {
               <div className="glass-card p-12 text-center">
                 <p className="text-muted-foreground">No countries match these filters. Try widening your budget or vibe.</p>
               </div>
-            ) : view === "grid" ? (
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                {filtered.map((c) => <CountryCard key={c.slug} country={c} />)}
-              </div>
-            ) : view === "list" ? (
-              <div className="space-y-2">
-                {filtered.map((c) => <ListRow key={c.slug} country={c} />)}
-              </div>
             ) : (
-              <CountryTable countries={filtered} />
+              <div className="space-y-12">
+                {Object.entries(grouped).map(([groupName, groupItems]) => (
+                  <div key={groupName} className="space-y-6">
+                    {isGrouped && (
+                      <div className="flex items-center gap-4">
+                        <h2 className="font-display text-xl font-bold flex items-center gap-2">
+                           <Flag emoji={groupItems[0].flag} size={24} /> {groupName}
+                           <span className="text-xs text-muted-foreground font-medium ml-2">{groupItems.length} destinations</span>
+                        </h2>
+                        <div className="h-px bg-border/40 flex-1" />
+                        <div className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-2 py-1 rounded">
+                           Avg: <Money usd={groupItems.reduce((s, c) => s + c.dailyCost, 0) / groupItems.length} /> / day
+                        </div>
+                      </div>
+                    )}
+                    
+                    {view === "grid" ? (
+                      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                        {groupItems.map((c) => <CountryCard key={c.slug} country={c} />)}
+                      </div>
+                    ) : view === "list" ? (
+                      <div className="space-y-2">
+                        {groupItems.map((c) => <ListRow key={c.slug} country={c} />)}
+                      </div>
+                    ) : (
+                      <CountryTable countries={groupItems} />
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
