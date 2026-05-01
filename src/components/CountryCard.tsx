@@ -5,6 +5,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
 import { Money, MoneyRange } from "@/components/Money";
 import { TerrainChips } from "@/components/TerrainChips";
+import { Flag } from "@/components/Flag";
 import { terrainsFor, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
 import { japanVibe } from "@/lib/japanVibe";
 
@@ -37,7 +38,7 @@ export function CountryCard({ country }: { country: Country }) {
 
       <Link to={`/country/${country.slug}`} className="flex flex-col gap-4 flex-1">
         <div className="flex items-start gap-3">
-          <span className="text-4xl leading-none" aria-hidden>{country.flag}</span>
+          <Flag emoji={country.flag} size={36} />
           <div className="min-w-0">
             <h3 className="font-display text-lg font-bold leading-tight truncate">{country.name}</h3>
             <p className="text-xs text-muted-foreground">{country.region}</p>

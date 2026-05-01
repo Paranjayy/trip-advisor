@@ -8,6 +8,7 @@ import { MonthHeatmapStrip } from "@/components/MonthHeatmapStrip";
 import { Button } from "@/components/ui/button";
 import { Money, MoneyRange } from "@/components/Money";
 import { TerrainChips } from "@/components/TerrainChips";
+import { Flag } from "@/components/Flag";
 import { TripCalculator } from "@/components/TripCalculator";
 import { getCountry, MONTHS } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -15,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { terrainsFor, difficultyFor, DIFFICULTY_META, TERRAIN_META } from "@/lib/terrains";
 import { japanVibe, similarCountries } from "@/lib/japanVibe";
 import { localTripsFor } from "@/lib/localTrips";
+import { ITINERARIES } from "@/lib/itineraries";
+import { Route as RouteIcon, Clock as ClockIcon } from "lucide-react";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
 
@@ -45,6 +48,7 @@ const CountryDetail = () => {
   const jp = japanVibe(country.slug);
   const similar = similarCountries(country.slug, 4);
   const trips = localTripsFor(country);
+  const itineraries = ITINERARIES.filter((i) => i.countrySlug === country.slug);
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,7 +62,7 @@ const CountryDetail = () => {
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
               <div className="flex items-center gap-4 mb-3">
-                <span className="text-6xl">{country.flag}</span>
+                <Flag emoji={country.flag} size={56} />
                 <div>
                   <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">{country.name}</h1>
                   <p className="text-muted-foreground flex items-center gap-1.5 mt-1">
@@ -182,6 +186,34 @@ const CountryDetail = () => {
           </div>
         </article>
 
+        {/* Day-by-day itineraries */}
+        {itineraries.length > 0 && (
+          <article className="glass-card p-6 lg:col-span-3">
+            <div className="flex items-end justify-between mb-4 flex-wrap gap-2">
+              <div>
+                <h2 className="font-display text-xl font-bold mb-1 inline-flex items-center gap-2">
+                  <RouteIcon className="h-5 w-5 text-primary" /> Day-by-day itineraries
+                </h2>
+                <p className="text-sm text-muted-foreground">Hand-built routes with km, hours and per-day cost.</p>
+              </div>
+              <Button asChild variant="outline" size="sm"><Link to="/itinerary">Browse all</Link></Button>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {itineraries.map((it) => (
+                <Link key={it.slug} to={`/itinerary/${it.slug}`} className="rounded-xl border border-border/60 p-4 hover:border-primary/50 hover:bg-primary-soft/30 transition-colors">
+                  <h3 className="font-semibold leading-snug">{it.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{it.blurb}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-3 text-xs">
+                    <span className="chip bg-primary-soft text-primary">{it.days} days</span>
+                    <span className="chip bg-secondary text-secondary-foreground"><RouteIcon className="h-3 w-3" />{Math.round(it.plan.reduce((s,d)=>s+d.stops.reduce((s2,st)=>s2+st.km,0),0))} km</span>
+                    <span className="chip bg-secondary text-secondary-foreground"><ClockIcon className="h-3 w-3" />{Math.round(it.plan.reduce((s,d)=>s+d.stops.reduce((s2,st)=>s2+st.hours,0),0))}h</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </article>
+        )}
+
         {/* Local trips */}
         <article className="glass-card p-6 lg:col-span-3">
           <h2 className="font-display text-xl font-bold mb-1">Local trips & sub-destinations</h2>
@@ -228,7 +260,7 @@ const CountryDetail = () => {
           <div className="space-y-2">
             {similar.map(({ country: s, score }) => (
               <Link key={s.slug} to={`/country/${s.slug}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-secondary/60 transition-colors">
-                <span className="text-2xl">{s.flag}</span>
+                <Flag emoji={s.flag} size={28} />
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate">{s.name}</div>
                   <div className="text-xs text-muted-foreground"><Money usd={s.dailyCost} />/day · {s.region}</div>

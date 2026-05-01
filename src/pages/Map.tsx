@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { SiteNav } from "@/components/SiteNav";
 import { CountryTable } from "@/components/CountryTable";
 import { TerrainChips } from "@/components/TerrainChips";
+import { Flag } from "@/components/Flag";
 import { COUNTRIES, REGIONS, type Country } from "@/data/countries";
 import { useCurrency } from "@/lib/currency";
 import { Money, MoneyRange } from "@/components/Money";
@@ -18,6 +19,7 @@ import { Globe2, MapPin } from "lucide-react";
 import { TERRAIN_LIST, TERRAIN_META, terrainsFor, type Terrain, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
 import { japanVibe } from "@/lib/japanVibe";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/lib/theme";
 
 function costColor(daily: number): string {
   if (daily <= 60) return "hsl(var(--success))";
@@ -41,6 +43,10 @@ function FlyTo({ country }: { country: Country | null }) {
 
 const MapPage = () => {
   useEffect(() => { document.title = "World map — TripAdvisor"; }, []);
+  const { theme } = useTheme();
+  const tileUrl = theme === "dark"
+    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 
   const { format } = useCurrency();
   const [params] = useSearchParams();
@@ -185,8 +191,9 @@ const MapPage = () => {
                       style={{ height: "100%", width: "100%", background: "hsl(var(--surface-muted))" }}
                     >
                       <TileLayer
+                        key={tileUrl}
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &middot; <a href="https://carto.com/attributions">CARTO</a>'
-                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                        url={tileUrl}
                       />
                       <ZoomControl position="bottomright" />
                       <FlyTo country={focusCountry} />
@@ -206,12 +213,12 @@ const MapPage = () => {
                             }}
                           >
                             <Tooltip direction="top" offset={[0, -6]} opacity={1}>
-                              <span className="font-semibold">{c.flag} {c.name}</span> · <Money usd={c.dailyCost} />/day · JP {japanVibe(c.slug)}
+                              <span className="font-semibold inline-flex items-center gap-1"><Flag emoji={c.flag} size={16} /> {c.name}</span> · <Money usd={c.dailyCost} />/day · JP {japanVibe(c.slug)}
                             </Tooltip>
                             <Popup minWidth={240} maxWidth={280}>
                               <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-2xl">{c.flag}</span>
+                                  <Flag emoji={c.flag} size={28} />
                                   <div>
                                     <div className="font-display font-bold leading-tight">{c.name}</div>
                                     <div className="text-xs opacity-70 flex items-center gap-1">
