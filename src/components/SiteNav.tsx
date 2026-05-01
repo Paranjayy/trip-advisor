@@ -1,12 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
-import { Globe2, Heart, Map as MapIcon } from "lucide-react";
+import { Globe2, Heart, Map as MapIcon, Route } from "lucide-react";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { TranslateMenu } from "@/components/TranslateMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const links = [
   { to: "/", label: "Home", end: true },
   { to: "/explore", label: "Explore" },
   { to: "/map", label: "Map", icon: MapIcon },
+  { to: "/itinerary", label: "Trips", icon: Route },
   { to: "/compare", label: "Compare" },
   { to: "/timing", label: "Timing" },
 ];
@@ -46,6 +48,7 @@ export function SiteNav() {
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <TranslateMenu />
           <CurrencySwitcher />
           <NavLink
