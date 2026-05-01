@@ -44,6 +44,8 @@ export type Itinerary = {
   totalUsd: number;
   highlights: string[];
   plan: ItineraryDay[];
+  category?: "Classic" | "Road Trip" | "Backpacking" | "Luxury" | "Hidden Gem";
+  tags?: string[];
 };
 
 /** ---------- Curated itineraries ---------- */
@@ -63,6 +65,8 @@ export const ITINERARIES: Itinerary[] = [
       "Houseboats on Dal Lake, alpine meadows of Sonamarg & Pahalgam, and the Gulmarg gondola with views to K2 on a clear day.",
     totalUsd: 540,
     highlights: ["Shikara at sunrise on Dal Lake", "Gulmarg Gondola Phase II (3,979m)", "Aru & Betaab valleys", "Mughal gardens — Nishat & Shalimar"],
+    category: "Classic",
+    tags: ["Nature", "Photography", "Cultural"],
     plan: [
       {
         day: 1, title: "Arrive Srinagar — settle on Dal Lake", base: "Srinagar (houseboat)",
@@ -147,6 +151,8 @@ export const ITINERARIES: Itinerary[] = [
     blurb: "High-altitude desert circuit: Pangong, Nubra dunes, monasteries clinging to cliffs. Acclimatize for 2 days before driving.",
     totalUsd: 720,
     highlights: ["Khardung La (5,359m)", "Pangong Tso", "Nubra dunes & double-hump camels", "Hemis & Thiksey monasteries"],
+    category: "Road Trip",
+    tags: ["Adventure", "Mountains", "High Altitude"],
     plan: [
       { day: 1, title: "Arrive Leh — acclimatize", base: "Leh", stayUsd: 28,
         stops: [
@@ -214,6 +220,8 @@ export const ITINERARIES: Itinerary[] = [
     blurb: "First-timer's dream loop: neon Tokyo, Mt Fuji onsen, Kyoto temples, Osaka street food. Use a 7-day JR Pass.",
     totalUsd: 1850,
     highlights: ["Shibuya scramble at night", "Mt Fuji from Hakone Ropeway", "Fushimi Inari at dawn", "Dotonbori takoyaki crawl"],
+    category: "Classic",
+    tags: ["City", "Food", "Tech", "Zen"],
     plan: [
       { day: 1, title: "Arrive Tokyo — Shinjuku night", base: "Tokyo (Shinjuku)", stayUsd: 95,
         stops: [
@@ -291,6 +299,8 @@ export const ITINERARIES: Itinerary[] = [
     blurb: "Two days of street food in Bangkok, then sleeper train south for Krabi limestone karsts and Phi Phi snorkeling.",
     totalUsd: 780,
     highlights: ["Wat Arun at golden hour", "Railay long-tail beach", "Maya Bay (The Beach)", "Tiger Cave temple stairs"],
+    category: "Backpacking",
+    tags: ["Beach", "Islands", "Party", "Relax"],
     plan: [
       { day: 1, title: "Bangkok — Old City", base: "Bangkok", stayUsd: 32,
         stops: [
@@ -333,6 +343,91 @@ export const ITINERARIES: Itinerary[] = [
           { place: "Phi Phi → Phuket airport", activity: "Ferry + transfer", hours: 4, km: 88, mode: "boat", costUsd: 30 },
         ] },
     ],
+  },
+  {
+    slug: "iceland-ring-road-12d",
+    title: "Iceland Full Ring Road — 12 days",
+    countrySlug: "iceland",
+    region: "National circuit",
+    flag: "🇮🇸",
+    days: 12,
+    bestMonths: [6, 7, 8, 9],
+    difficulty: "moderate",
+    terrains: ["mountains", "snow", "islands"],
+    blurb: "The ultimate 1,300km drive through glaciers, volcanic black sands, and massive waterfalls. Best done in a campervan.",
+    totalUsd: 2200,
+    highlights: ["Blue Lagoon soak", "Jökulsárlón glacier lagoon", "Mývatn volcanic craters", "Skógafoss waterfall"],
+    category: "Road Trip",
+    tags: ["Adventure", "Nature", "Photography", "Camping"],
+    plan: [
+      { day: 1, title: "Arrive Reykjavik · Blue Lagoon", base: "Reykjavik", stayUsd: 110,
+        stops: [
+          { place: "KEF airport → Blue Lagoon", activity: "Geothermal spa soak", hours: 3, km: 25, mode: "car", costUsd: 85, lat: 63.8792, lng: -22.4451 },
+          { place: "Reykjavik", activity: "Hallgrimskirkja church & dinner", hours: 3, km: 50, mode: "car", costUsd: 45, lat: 64.1419, lng: -21.9266 },
+        ] },
+      { day: 2, title: "Golden Circle", base: "Hella", stayUsd: 95,
+        stops: [
+          { place: "Þingvellir", activity: "Tectonic plate walk", hours: 2, km: 50, mode: "car", costUsd: 10, lat: 64.2559, lng: -21.1295 },
+          { place: "Geysir", activity: "Strokkur eruption every 10 min", hours: 1, km: 60, mode: "car", costUsd: 0, lat: 64.3104, lng: -20.3024 },
+          { place: "Gullfoss", activity: "Massive golden waterfall", hours: 1, km: 10, mode: "car", costUsd: 0, lat: 64.3271, lng: -20.1199 },
+        ] },
+      { day: 3, title: "South Coast Waterfalls", base: "Vík", stayUsd: 120,
+        stops: [
+          { place: "Seljalandsfoss", activity: "Walk behind the waterfall", hours: 1.5, km: 95, mode: "car", costUsd: 5, lat: 63.6156, lng: -19.9886 },
+          { place: "Skógafoss", activity: "Climb the stairs to the top", hours: 1.5, km: 30, mode: "car", costUsd: 0, lat: 63.5321, lng: -19.5113 },
+          { place: "Reynisfjara", activity: "Black sand beach & basalt columns", hours: 2, km: 35, mode: "car", costUsd: 0, lat: 63.4025, lng: -19.0436 },
+        ] },
+      { day: 4, title: "East Fjords", base: "Egilsstaðir", stayUsd: 110,
+        stops: [
+          { place: "Vík → Jökulsárlón", activity: "Glacier lagoon boat tour", hours: 5, km: 190, mode: "car", costUsd: 75, lat: 64.0484, lng: -16.1778 },
+          { place: "Diamond Beach", activity: "Icebergs on black sand", hours: 1, km: 1, mode: "walk", costUsd: 0, lat: 64.0430, lng: -16.1750 },
+          { place: "Höfn", activity: "Langoustine lunch stop", hours: 1.5, km: 80, mode: "car", costUsd: 45, lat: 64.2539, lng: -15.2082 },
+        ] },
+      { day: 5, title: "Lake Mývatn", base: "Mývatn", stayUsd: 95,
+        stops: [
+          { place: "Egilsstaðir → Mývatn", activity: "Vibrant sulphur springs & craters", hours: 4, km: 165, mode: "car", costUsd: 10, lat: 65.6412, lng: -16.9112 },
+          { place: "Mývatn Nature Baths", activity: "Blue lagoon of the North", hours: 3, km: 5, mode: "car", costUsd: 55, lat: 65.6310, lng: -16.8478 },
+        ] },
+    ]
+  },
+  {
+    slug: "vietnam-north-to-south-14d",
+    title: "Vietnam North to South — 14 days",
+    countrySlug: "vietnam",
+    region: "Country-wide",
+    flag: "🇻🇳",
+    days: 14,
+    bestMonths: [2, 3, 4, 9, 10, 11],
+    difficulty: "moderate",
+    terrains: ["food", "beaches", "city", "history"],
+    blurb: "From Hanoi's old quarter to the Mekong Delta. Includes Ha Long Bay cruise and Hoi An's lantern-lit streets.",
+    totalUsd: 840,
+    highlights: ["Overnight cruise in Ha Long Bay", "Hoi An tailor-made clothes", "Cuchi Tunnels history", "Mekong Delta river life"],
+    category: "Classic",
+    tags: ["Cultural", "Food", "History", "Budget"],
+    plan: [
+      { day: 1, title: "Hanoi — Old Quarter", base: "Hanoi", stayUsd: 22,
+        stops: [
+          { place: "Noi Bai airport → Hotel", activity: "Grab car transfer", hours: 1, km: 30, mode: "car", costUsd: 12, lat: 21.2131, lng: 105.8048 },
+          { place: "Old Quarter", activity: "Street food walk & Egg Coffee", hours: 3, km: 2, mode: "walk", costUsd: 15, lat: 21.0333, lng: 105.8500 },
+        ] },
+      { day: 2, title: "Ha Long Bay Cruise", base: "Ha Long (Boat)", stayUsd: 120,
+        stops: [
+          { place: "Hanoi → Ha Long", activity: "Luxury shuttle bus", hours: 2.5, km: 160, mode: "bus", costUsd: 25, lat: 20.9416, lng: 107.0811 },
+          { place: "Halong Cruise", activity: "Kayaking & sunset on deck", hours: 6, km: 20, mode: "boat", costUsd: 80, lat: 20.8400, lng: 107.2400 },
+        ] },
+      { day: 3, title: "Flight to Da Nang · Hoi An", base: "Hoi An", stayUsd: 35,
+        stops: [
+          { place: "Ha Long → Hanoi airport", activity: "Transfer", hours: 3, km: 160, mode: "bus", costUsd: 20 },
+          { place: "Hanoi → Da Nang", activity: "Domestic flight", hours: 1.25, km: 630, mode: "flight", costUsd: 45 },
+          { place: "Hoi An Old Town", activity: "Lantern walk & custom tailoring", hours: 3, km: 30, mode: "car", costUsd: 15, lat: 15.8801, lng: 108.3271 },
+        ] },
+      { day: 4, title: "Hoi An — Cooking & Chill", base: "Hoi An", stayUsd: 35,
+        stops: [
+          { place: "Tra Que village", activity: "Bicycle tour & cooking class", hours: 4, km: 10, mode: "bike", costUsd: 25, lat: 15.9000, lng: 108.3400 },
+          { place: "An Bang beach", activity: "Seafood lunch & swimming", hours: 3, km: 5, mode: "bike", costUsd: 12, lat: 15.9122, lng: 108.3406 },
+        ] },
+    ]
   },
 ];
 

@@ -42,9 +42,16 @@ const Itineraries = () => {
             <RouteIcon className="h-3.5 w-3.5" /> Day-by-day plans
           </p>
           <h1 className="font-display text-4xl font-bold">Ready-made itineraries</h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl">
-            Hand-built routes with km, hours, and per-day cost — copy & tweak instead of starting from a blank page.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+            <p className="text-muted-foreground max-w-2xl">
+              Hand-built routes with km, hours, and per-day cost — copy & tweak instead of starting from a blank page.
+            </p>
+            <Button asChild className="rounded-xl bg-primary shadow-glow shrink-0">
+               <Link to="/planner" className="flex items-center gap-2">
+                 <Plus className="h-4 w-4" /> Build Custom Itinerary
+               </Link>
+            </Button>
+          </div>
         </header>
 
         <div className="glass-card p-4 mb-6 flex flex-wrap items-center gap-3">

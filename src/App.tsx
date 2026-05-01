@@ -14,6 +14,7 @@ import Favorites from "./pages/Favorites.tsx";
 import MapPage from "./pages/Map.tsx";
 import Itineraries from "./pages/Itineraries.tsx";
 import ItineraryDetail from "./pages/ItineraryDetail.tsx";
+import Planner from "./pages/Planner.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { AiAdvisor } from "@/components/AiAdvisor";
 
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/itinerary" element={<Itineraries />} />
               <Route path="/itinerary/:slug" element={<ItineraryDetail />} />
+              <Route path="/planner" element={<Planner />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AiAdvisor />

@@ -9,6 +9,7 @@ const links = [
   { to: "/explore", label: "Explore" },
   { to: "/map", label: "Map", icon: MapIcon },
   { to: "/itinerary", label: "Trips", icon: Route },
+  { to: "/planner", label: "Planner" },
   { to: "/compare", label: "Compare" },
   { to: "/timing", label: "Timing" },
 ];
