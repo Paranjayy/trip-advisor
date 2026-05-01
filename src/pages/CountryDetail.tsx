@@ -8,6 +8,7 @@ import { MonthHeatmapStrip } from "@/components/MonthHeatmapStrip";
 import { Button } from "@/components/ui/button";
 import { Money, MoneyRange } from "@/components/Money";
 import { TerrainChips } from "@/components/TerrainChips";
+import { Flag } from "@/components/Flag";
 import { TripCalculator } from "@/components/TripCalculator";
 import { getCountry, MONTHS } from "@/data/countries";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -58,7 +59,7 @@ const CountryDetail = () => {
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
               <div className="flex items-center gap-4 mb-3">
-                <span className="text-6xl">{country.flag}</span>
+                <Flag emoji={country.flag} size={56} />
                 <div>
                   <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">{country.name}</h1>
                   <p className="text-muted-foreground flex items-center gap-1.5 mt-1">
@@ -228,7 +229,7 @@ const CountryDetail = () => {
           <div className="space-y-2">
             {similar.map(({ country: s, score }) => (
               <Link key={s.slug} to={`/country/${s.slug}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-secondary/60 transition-colors">
-                <span className="text-2xl">{s.flag}</span>
+                <Flag emoji={s.flag} size={28} />
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate">{s.name}</div>
                   <div className="text-xs text-muted-foreground"><Money usd={s.dailyCost} />/day · {s.region}</div>
