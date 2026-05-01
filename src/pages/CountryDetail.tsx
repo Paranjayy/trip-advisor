@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { terrainsFor, difficultyFor, DIFFICULTY_META, TERRAIN_META } from "@/lib/terrains";
 import { japanVibe, similarCountries } from "@/lib/japanVibe";
 import { localTripsFor } from "@/lib/localTrips";
+import { ITINERARIES } from "@/lib/itineraries";
+import { Route as RouteIcon, Clock as ClockIcon } from "lucide-react";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
 
@@ -46,6 +48,7 @@ const CountryDetail = () => {
   const jp = japanVibe(country.slug);
   const similar = similarCountries(country.slug, 4);
   const trips = localTripsFor(country);
+  const itineraries = ITINERARIES.filter((i) => i.countrySlug === country.slug);
 
   return (
     <div className="min-h-screen bg-background">
