@@ -448,3 +448,46 @@ export function totalCost(it: Itinerary): number {
     0,
   );
 }
+
+/** 
+ * Calculates a 'Friction Score' from 1-10 
+ * based on distance, hours, and mode switches.
+ */
+export function calculateFriction(it: Itinerary): number {
+  const km = totalKm(it);
+  const hrs = totalHours(it);
+  const stops = it.plan.flatMap(d => d.stops).length;
+  const days = it.days;
+
+  // Base score from intensity (avg km/day and hrs/day)
+  const kmPerDay = km / days;
+  const hrsPerDay = hrs / days;
+  
+  let score = 1;
+  
+  // km contribution (up to 4 points)
+  if (kmPerDay > 300) score += 4;
+  else if (kmPerDay > 150) score += 3;
+  else if (kmPerDay > 50) score += 2;
+  else if (kmPerDay > 10) score += 1;
+  
+  // hrs contribution (up to 4 points)
+  if (hrsPerDay > 8) score += 4;
+  else if (hrsPerDay > 6) score += 3;
+  else if (hrsPerDay > 4) score += 2;
+  else if (hrsPerDay > 2) score += 1;
+  
+  // diversity/complexity contribution (up to 2 points)
+  const modes = new Set(it.plan.flatMap(d => d.stops).map(s => s.mode));
+  if (modes.size > 4) score += 2;
+  else if (modes.size > 2) score += 1;
+
+  return Math.min(10, Math.max(1, Math.round(score)));
+}
+
+export function getFrictionLabel(score: number): { label: string, color: string } {
+  if (score <= 3) return { label: "Zen (Relaxed)", color: "text-green-500 bg-green-500/10 border-green-500/20" };
+  if (score <= 6) return { label: "Balanced", color: "text-blue-500 bg-blue-500/10 border-blue-500/20" };
+  if (score <= 8) return { label: "High Energy", color: "text-orange-500 bg-orange-500/10 border-orange-500/20" };
+  return { label: "Extreme / Hustle", color: "text-red-500 bg-red-500/10 border-red-500/20" };
+}

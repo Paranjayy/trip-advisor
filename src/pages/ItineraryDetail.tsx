@@ -13,7 +13,7 @@ import { Flag } from "@/components/Flag";
 import { Money } from "@/components/Money";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { getItinerary, totalCost, totalHours, totalKm, type ItineraryStop } from "@/lib/itineraries";
+import { getItinerary, totalCost, totalHours, totalKm, calculateFriction, getFrictionLabel, type ItineraryStop } from "@/lib/itineraries";
 import { DIFFICULTY_META } from "@/lib/terrains";
 import { MONTHS } from "@/data/countries";
 import { cn } from "@/lib/utils";
@@ -101,6 +101,8 @@ const ItineraryDetail = () => {
   const km = Math.round(totalKm(it));
   const hr = Math.round(totalHours(it));
   const cost = totalCost(it);
+  const friction = calculateFriction(it);
+  const frictionMeta = getFrictionLabel(friction);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -219,10 +221,35 @@ const ItineraryDetail = () => {
                   <StatItem icon={<Calendar className="h-4 w-4 text-primary" />} label="Duration" value={`${it.days} Days`} />
                   <StatItem icon={<RouteIcon className="h-4 w-4 text-accent" />} label="Travel" value={`${km} km`} />
                   <StatItem icon={<Clock className="h-4 w-4 text-success" />} label="Intensity" value={`${hr}h Active`} />
-                  <StatItem icon={<Luggage className="h-4 w-4 text-warn" />} label="Difficulty" value={it.difficulty} />
+                  <StatItem icon={<Mountain className="h-4 w-4 text-warn" />} label="Difficulty" value={it.difficulty} />
                 </div>
                 
-                <div className="mt-8 pt-6 border-t border-border/40 space-y-4">
+                <div className="mt-6 pt-6 border-t border-border/40">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-accent" /> Friction Score
+                    </span>
+                    <span className={cn("text-[10px] font-black px-2 py-0.5 rounded-full border", frictionMeta.color)}>
+                      {frictionMeta.label}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-surface-muted rounded-full overflow-hidden flex gap-0.5">
+                    {[...Array(10)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={cn(
+                          "h-full flex-1 transition-colors",
+                          i < friction ? (friction > 7 ? "bg-red-500" : friction > 4 ? "bg-orange-500" : "bg-green-500") : "bg-border/20"
+                        )} 
+                      />
+                    ))}
+                  </div>
+                  <p className="text-[9px] text-muted-foreground mt-2 font-medium">
+                    Based on movement velocity, mode complexity, and active hours.
+                  </p>
+                </div>
+                
+                <div className="mt-6 pt-6 border-t border-border/40 space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter flex items-center gap-1.5">
                        <Users className="h-3.5 w-3.5" /> Group Size

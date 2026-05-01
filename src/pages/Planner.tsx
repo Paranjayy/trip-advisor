@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { 
   Plus, Trash2, MapPin, Clock, Wallet, MoveRight, 
-  Sparkles, Calendar, Luggage, ArrowLeft, Save, Download
+  Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SiteNav } from "@/components/SiteNav";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Money } from "@/components/Money";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { getFrictionLabel } from "@/lib/itineraries";
 
 type PlannedStop = {
   id: string;
@@ -55,6 +56,25 @@ const Planner = () => {
     setDays([...days, newDay]);
     toast({ title: "Day Added", description: `Day ${newDay.dayNumber} has been added to your draft.` });
   };
+
+  const cloneDay = (day: PlannedDay) => {
+    const newDay: PlannedDay = {
+      ...day,
+      id: Math.random().toString(36).substr(2, 9),
+      dayNumber: days.length + 1,
+      stops: day.stops.map(s => ({ ...s, id: Math.random().toString() }))
+    };
+    setDays([...days, newDay]);
+    toast({ title: "Day Cloned", description: `Cloned ${day.title} to Day ${newDay.dayNumber}` });
+  };
+
+  const frictionScore = useMemo(() => {
+    if (days.length === 0) return 1;
+    const totalKm = days.length * 50; // Mock average
+    const totalHrs = days.reduce((sum, d) => sum + d.stops.reduce((s, st) => s + 2, 0), 0); // Mock 2h per stop
+    const score = Math.min(10, Math.round((totalKm / 100) + (totalHrs / days.length)));
+    return score;
+  }, [days]);
 
   const removeDay = (id: string) => {
     if (days.length === 1) return;
@@ -137,6 +157,10 @@ const Planner = () => {
                  <Luggage className="h-4 w-4 text-accent" />
                  <span className="text-sm font-bold">{days.flatMap(d => d.stops).length} Total Waypoints</span>
               </div>
+              <div className={cn("h-10 px-4 rounded-xl border flex items-center gap-3 transition-colors", getFrictionLabel(frictionScore).color)}>
+                 <Zap className="h-4 w-4" />
+                 <span className="text-sm font-bold">Friction: {frictionScore}/10</span>
+              </div>
            </div>
            <Button onClick={addDay} className="rounded-xl h-10 bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-bold gap-2">
               <Plus className="h-4 w-4" /> Add New Day
@@ -179,9 +203,14 @@ const Planner = () => {
                              />
                           </div>
                        </div>
-                       <Button variant="ghost" onClick={() => removeDay(day.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive p-0">
-                          <Trash2 className="h-4 w-4" />
-                       </Button>
+                       <div className="flex items-center gap-2">
+                         <Button variant="ghost" onClick={() => cloneDay(day)} className="h-8 w-8 text-muted-foreground hover:text-primary p-0">
+                            <Copy className="h-4 w-4" />
+                         </Button>
+                         <Button variant="ghost" onClick={() => removeDay(day.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive p-0">
+                            <Trash2 className="h-4 w-4" />
+                         </Button>
+                       </div>
                     </div>
 
                     <div className="p-6 space-y-6">
