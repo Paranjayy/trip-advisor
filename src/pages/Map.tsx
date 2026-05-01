@@ -191,6 +191,7 @@ const MapPage = () => {
                       style={{ height: "100%", width: "100%", background: "hsl(var(--surface-muted))" }}
                     >
                       <TileLayer
+                        key={tileUrl}
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &middot; <a href="https://carto.com/attributions">CARTO</a>'
                         url={tileUrl}
                       />
