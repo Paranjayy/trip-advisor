@@ -17,7 +17,10 @@ import { terrainsFor, difficultyFor, DIFFICULTY_META, TERRAIN_META } from "@/lib
 import { japanVibe, similarCountries } from "@/lib/japanVibe";
 import { localTripsFor } from "@/lib/localTrips";
 import { ITINERARIES } from "@/lib/itineraries";
-import { Route as RouteIcon, Clock as ClockIcon } from "lucide-react";
+import { Route as RouteIcon, Clock as ClockIcon, CheckCircle2, AlertCircle, Info, ShieldCheck, Zap } from "lucide-react";
+import { WeatherChart } from "@/components/WeatherChart";
+import { DegreesOfSeparation } from "@/components/DegreesOfSeparation";
+import { getWeather } from "@/lib/weather";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
 
@@ -123,14 +126,32 @@ const CountryDetail = () => {
           <CostBreakdownChart country={country} />
         </article>
 
-        <article className="glass-card p-6 space-y-4">
-          <h2 className="font-display text-xl font-bold flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" /> Timing
-          </h2>
-          <MonthRow label="Best months" months={country.bestMonths} tone="success" />
-          <MonthRow label="Cheapest" months={country.cheapestMonths} tone="primary" />
-          <MonthRow label="Peak / pricey" months={country.peakMonths} tone="warn" />
-          <p className="text-xs text-muted-foreground pt-1">{country.vegScore === "easy" ? "🌱 Vegetarian-friendly" : country.vegScore === "medium" ? "🥗 Some veg options" : "🍖 Limited veg options"}</p>
+        {/* Weather & Timing */}
+        <article className="glass-card p-6 lg:col-span-3">
+           <div className="grid md:grid-cols-[1fr_300px] gap-8">
+              <div>
+                 <h2 className="font-display text-xl font-bold mb-1">Weather & Seasonality</h2>
+                 <p className="text-sm text-muted-foreground mb-6">12-month climate averages — plan your packing and vibe.</p>
+                 <WeatherChart slug={country.slug} />
+              </div>
+              <div className="space-y-6 pt-4">
+                 <div className="p-4 rounded-2xl bg-secondary/30 border border-border/40">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Live Condition (Mock)</h3>
+                    <div className="flex items-center gap-4">
+                       <Zap className="h-8 w-8 text-primary animate-pulse" />
+                       <div>
+                          <p className="text-2xl font-black">{getWeather(country.slug, new Date().getMonth() + 1).tempHigh}°C</p>
+                          <p className="text-xs font-bold text-muted-foreground">Optimal Planning Window</p>
+                       </div>
+                    </div>
+                 </div>
+                 <div className="space-y-3">
+                    <MonthRow label="Best months" months={country.bestMonths} tone="success" />
+                    <MonthRow label="Cheapest" months={country.cheapestMonths} tone="primary" />
+                    <MonthRow label="Peak / pricey" months={country.peakMonths} tone="warn" />
+                 </div>
+              </div>
+           </div>
         </article>
 
         {/* Calculator */}
@@ -240,17 +261,43 @@ const CountryDetail = () => {
           </div>
         </article>
 
-        {/* Highlights */}
+        {/* Must Plan & Highlights */}
         <article className="glass-card p-6 lg:col-span-2">
-          <h2 className="font-display text-xl font-bold mb-4">Key destinations</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {country.highlights.map((h) => (
-              <div key={h.name} className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:bg-primary-soft/30 transition-colors">
-                <h3 className="font-semibold flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {h.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{h.blurb}</p>
-              </div>
-            ))}
-          </div>
+           <h2 className="font-display text-xl font-bold mb-6 flex items-center gap-2">
+              <Compass className="h-5 w-5 text-primary" /> Must See & Things to Do
+           </h2>
+           <div className="grid sm:grid-cols-2 gap-4">
+              {country.highlights.map((h, i) => (
+                <div key={h.name} className="group relative overflow-hidden rounded-2xl border border-border/60 bg-surface hover:border-primary/40 transition-all p-5">
+                   <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-125 transition-transform">
+                      <span className="text-4xl font-black">0{i+1}</span>
+                   </div>
+                   <h3 className="font-black text-lg mb-2 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-primary" /> {h.name}
+                   </h3>
+                   <p className="text-sm text-muted-foreground leading-relaxed">{h.blurb}</p>
+                   <div className="mt-4 flex items-center gap-2">
+                      <span className="text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary px-2 py-0.5 rounded">Vibe: {country.vibe}</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest bg-secondary text-secondary-foreground px-2 py-0.5 rounded">Priority: High</span>
+                   </div>
+                </div>
+              ))}
+           </div>
+        </article>
+
+        <article className="glass-card p-6">
+           <h2 className="font-display text-xl font-bold mb-6 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-accent" /> Essential Logistics
+           </h2>
+           <div className="space-y-4">
+              <LogisticsRow icon={<Plane className="h-4 w-4" />} title="Visa Policy" desc="E-visa usually required for most passports. 30-day stay." />
+              <LogisticsRow icon={<Utensils className="h-4 w-4" />} title="Water" desc="Stick to bottled water. High humidity in most regions." />
+              <LogisticsRow icon={<Info className="h-4 w-4" />} title="SIM Cards" desc="Local SIMs available at airports. Cheap 4G data." />
+              <LogisticsRow icon={<AlertCircle className="h-4 w-4" />} title="Transport" desc="Use local ride-sharing apps (Grab/Uber) for safety." />
+           </div>
+           <div className="mt-8 pt-6 border-t border-border/60">
+              <DegreesOfSeparation slug={country.slug} />
+           </div>
         </article>
 
         {/* Similar countries */}
@@ -302,6 +349,20 @@ function MonthRow({ label, months, tone }: { label: string; months: number[]; to
           <span key={m} className={cn("chip", toneCls)}>{MONTHS[m - 1]}</span>
         ))}
       </div>
+    </div>
+  );
+}
+
+function LogisticsRow({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="flex items-start gap-3 p-3 rounded-xl bg-surface-muted/50 border border-border/40 hover:border-accent/40 transition-colors group">
+       <div className="h-8 w-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+          {icon}
+       </div>
+       <div>
+          <h4 className="text-xs font-black uppercase tracking-widest text-foreground">{title}</h4>
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{desc}</p>
+       </div>
     </div>
   );
 }
