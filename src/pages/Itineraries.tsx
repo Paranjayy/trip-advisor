@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, Clock, MapPin, Mountain, Search, Route as RouteIcon } from "lucide-react";
+import { Calendar, Clock, MapPin, Mountain, Search, Route as RouteIcon, Plus } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { Flag } from "@/components/Flag";
 import { Money } from "@/components/Money";
 import { TerrainChips } from "@/components/TerrainChips";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ITINERARIES, totalCost, totalHours, totalKm } from "@/lib/itineraries";
 import { DIFFICULTY_META } from "@/lib/terrains";

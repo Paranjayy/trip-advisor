@@ -18,6 +18,7 @@ import { DIFFICULTY_META } from "@/lib/terrains";
 import { MONTHS } from "@/data/countries";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { VibePlayer } from "@/components/VibePlayer";
 import { Badge } from "@/components/ui/badge";
 
 const MODE_ICON: Record<ItineraryStop["mode"], React.ComponentType<{ className?: string }>> = {
@@ -446,6 +447,7 @@ const ItineraryDetail = () => {
             </Button>
          </div>
       </div>
+      <VibePlayer />
     </div>
   );
 };
