@@ -186,6 +186,34 @@ const CountryDetail = () => {
           </div>
         </article>
 
+        {/* Day-by-day itineraries */}
+        {itineraries.length > 0 && (
+          <article className="glass-card p-6 lg:col-span-3">
+            <div className="flex items-end justify-between mb-4 flex-wrap gap-2">
+              <div>
+                <h2 className="font-display text-xl font-bold mb-1 inline-flex items-center gap-2">
+                  <RouteIcon className="h-5 w-5 text-primary" /> Day-by-day itineraries
+                </h2>
+                <p className="text-sm text-muted-foreground">Hand-built routes with km, hours and per-day cost.</p>
+              </div>
+              <Button asChild variant="outline" size="sm"><Link to="/itinerary">Browse all</Link></Button>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {itineraries.map((it) => (
+                <Link key={it.slug} to={`/itinerary/${it.slug}`} className="rounded-xl border border-border/60 p-4 hover:border-primary/50 hover:bg-primary-soft/30 transition-colors">
+                  <h3 className="font-semibold leading-snug">{it.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{it.blurb}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-3 text-xs">
+                    <span className="chip bg-primary-soft text-primary">{it.days} days</span>
+                    <span className="chip bg-secondary text-secondary-foreground"><RouteIcon className="h-3 w-3" />{Math.round(it.plan.reduce((s,d)=>s+d.stops.reduce((s2,st)=>s2+st.km,0),0))} km</span>
+                    <span className="chip bg-secondary text-secondary-foreground"><ClockIcon className="h-3 w-3" />{Math.round(it.plan.reduce((s,d)=>s+d.stops.reduce((s2,st)=>s2+st.hours,0),0))}h</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </article>
+        )}
+
         {/* Local trips */}
         <article className="glass-card p-6 lg:col-span-3">
           <h2 className="font-display text-xl font-bold mb-1">Local trips & sub-destinations</h2>
