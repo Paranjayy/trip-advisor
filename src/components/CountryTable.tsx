@@ -52,16 +52,16 @@ export function CountryTable({ countries }: { countries: Country[] }) {
               <Th k="name" sort={sort} dir={dir} onClick={click("name")}>Country</Th>
               <Th k="region" sort={sort} dir={dir} onClick={click("region")}>Region</Th>
               <Th k="daily" sort={sort} dir={dir} onClick={click("daily")} className="text-right">Daily</Th>
-              <Th k="week" sort={sort} dir={dir} onClick={click("week")} className="text-right">7-day</Th>
-              <Th k="flights" sort={sort} dir={dir} onClick={click("flights")} className="text-right">Flights</Th>
               <Th k="jp" sort={sort} dir={dir} onClick={click("jp")} className="text-right">JP vibe</Th>
-              <Th k="difficulty" sort={sort} dir={dir} onClick={click("difficulty")}>Difficulty</Th>
+              <th className="px-3 py-3 text-left">Friction</th>
+              <th className="px-3 py-3 text-left">Pulse</th>
               <th className="px-3 py-3 text-left">Variety</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((c) => {
               const d = difficultyFor(c);
+              const friction = c.dailyCost > 200 || d === "hard" ? 85 : d === "moderate" ? 45 : 20;
               return (
                 <tr key={c.slug} className="border-t border-border/50 hover:bg-secondary/40">
                   <td className="px-3 py-2.5">
@@ -71,13 +71,28 @@ export function CountryTable({ countries }: { countries: Country[] }) {
                   </td>
                   <td className="px-3 py-2.5 text-muted-foreground">{c.region}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums"><Money usd={c.dailyCost} /></td>
-                  <td className="px-3 py-2.5 text-right tabular-nums"><MoneyRange range={c.costRange} /></td>
-                  <td className="px-3 py-2.5 text-right tabular-nums"><MoneyRange range={c.flightCostRange} /></td>
                   <td className="px-3 py-2.5 text-right font-bold text-primary tabular-nums">{japanVibe(c.slug)}</td>
                   <td className="px-3 py-2.5">
-                    <span className={cn("chip", DIFFICULTY_META[d].tone)}>{DIFFICULTY_META[d].label}</span>
+                     <div className="flex items-center gap-2">
+                        <div className="h-1 w-12 rounded-full bg-border/40 overflow-hidden">
+                           <div 
+                              className={cn(
+                                 "h-full rounded-full transition-all duration-1000",
+                                 friction > 70 ? "bg-red-500" : friction > 40 ? "bg-orange-500" : "bg-green-500"
+                              )} 
+                              style={{ width: `${friction}%` }} 
+                           />
+                        </div>
+                        <span className="text-[9px] font-black opacity-60">{friction}%</span>
+                     </div>
                   </td>
-                  <td className="px-3 py-2.5"><TerrainChips terrains={terrainsFor(c)} max={4} /></td>
+                  <td className="px-3 py-2.5">
+                     <div className="flex items-center gap-2">
+                        <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", friction < 50 ? "bg-green-500" : "bg-blue-500")} />
+                        <span className="text-[9px] font-bold uppercase opacity-60 tracking-tighter">Stable</span>
+                     </div>
+                  </td>
+                  <td className="px-3 py-2.5"><TerrainChips terrains={terrainsFor(c)} max={3} /></td>
                 </tr>
               );
             })}

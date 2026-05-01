@@ -24,6 +24,7 @@ import { PassportStatus } from "@/components/PassportStatus";
 import { SmartPack } from "@/components/SmartPack";
 import { TravelPulse } from "@/components/TravelPulse";
 import { LanguageQuickStart } from "@/components/LanguageQuickStart";
+import { FlightIntelligence } from "@/components/FlightIntelligence";
 import { getWeather } from "@/lib/weather";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
@@ -309,6 +310,7 @@ const CountryDetail = () => {
 
         <article className="lg:col-span-1 space-y-6">
            <TravelPulse slug={country.slug} />
+           <FlightIntelligence slug={country.slug} flag={country.flag} />
            <SmartPack terrains={terrains} slug={country.slug} />
            <LanguageQuickStart slug={country.slug} />
            <div className="glass-card p-6">
