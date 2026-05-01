@@ -3,7 +3,11 @@ import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft, Bed, Bike, Bus, Calendar, Car, Clock, Compass, MapPin,
   Plane, Route as RouteIcon, Ship, Train, Users, Footprints, Mountain,
+  Share2, Printer,
 } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { SiteNav } from "@/components/SiteNav";
 import { Flag } from "@/components/Flag";
 import { Money } from "@/components/Money";
@@ -14,6 +18,7 @@ import { getItinerary, totalCost, totalHours, totalKm, type ItineraryStop } from
 import { DIFFICULTY_META } from "@/lib/terrains";
 import { MONTHS } from "@/data/countries";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const MODE_ICON: Record<ItineraryStop["mode"], React.ComponentType<{ className?: string }>> = {
   walk: Footprints, car: Car, bus: Bus, train: Train, flight: Plane, boat: Ship, bike: Bike,
@@ -22,15 +27,41 @@ const MODE_LABEL: Record<ItineraryStop["mode"], string> = {
   walk: "Walk", car: "Car", bus: "Bus", train: "Train", flight: "Flight", boat: "Boat", bike: "Bike",
 };
 
+const markerIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+function FitBounds({ positions }: { positions: [number, number][] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (positions.length > 0) {
+      map.fitBounds(positions, { padding: [50, 50] });
+    }
+  }, [positions, map]);
+  return null;
+}
+
 const ItineraryDetail = () => {
   const { slug } = useParams();
   const it = slug ? getItinerary(slug) : undefined;
+  const { toast } = useToast();
 
   const [travelers, setTravelers] = useState(2);
 
   useEffect(() => {
     if (it) document.title = `${it.title} — TripAdvisor`;
   }, [it]);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({ title: "Link copied!", description: "Itinerary link copied to clipboard." });
+  };
+
+  const handlePrint = () => window.print();
 
   if (!it) {
     return (
@@ -44,46 +75,107 @@ const ItineraryDetail = () => {
     );
   }
 
+  const allStops = it.plan.flatMap((d) => d.stops);
+  const routePoints = allStops
+    .filter((s) => s.lat !== undefined && s.lng !== undefined)
+    .map((s) => [s.lat!, s.lng!] as [number, number]);
+
   const km = Math.round(totalKm(it));
   const hr = Math.round(totalHours(it));
   const cost = totalCost(it);
-  const d = DIFFICULTY_META[it.difficulty];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       <SiteNav />
 
       <section className="bg-gradient-hero border-b border-border/60">
         <div className="container mx-auto py-10">
-          <Link to="/itinerary" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="h-4 w-4" /> All itineraries
+          <Link to="/itinerary" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6 group transition-colors">
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to hub
           </Link>
-          <div className="flex flex-wrap items-start justify-between gap-6">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-3 mb-2">
-                <Flag emoji={it.flag} size={42} />
-                <p className="text-muted-foreground flex items-center gap-1.5"><MapPin className="h-4 w-4" />{it.region}</p>
-              </div>
-              <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">{it.title}</h1>
-              <p className="text-lg text-muted-foreground mt-3">{it.blurb}</p>
-              <div className="flex flex-wrap items-center gap-2 mt-4">
-                <span className={cn("chip", d.tone)}>{d.label} difficulty</span>
-                <span className="chip bg-secondary text-secondary-foreground">
-                  <Calendar className="h-3 w-3" /> Best: {it.bestMonths.map((m) => MONTHS[m - 1]).join(", ")}
-                </span>
-                <Link to={`/country/${it.countrySlug}`} className="chip bg-primary-soft text-primary hover:bg-primary-soft/70">
-                  <Compass className="h-3 w-3" /> Country guide
-                </Link>
-              </div>
-              <div className="mt-4"><TerrainChips terrains={it.terrains} max={8} /></div>
+
+          <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
+            <div className="space-y-8">
+              <header className="space-y-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="chip bg-primary-soft text-primary font-bold px-3 py-1 text-xs">{it.days} Days</span>
+                  <span className={cn("chip text-xs font-bold px-3 py-1", DIFFICULTY_META[it.difficulty].tone)}>{DIFFICULTY_META[it.difficulty].label}</span>
+                  <div className="flex gap-1">
+                    {it.bestMonths.map((m) => (
+                      <span key={m} className="text-[10px] font-bold uppercase text-muted-foreground bg-surface-muted px-1.5 py-0.5 rounded-sm">
+                        {MONTHS[m - 1]}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <h1 className="font-display text-4xl md:text-5xl font-black leading-tight tracking-tight">
+                  <Flag emoji={it.flag} size={48} className="inline-block mr-3 align-middle" />
+                  {it.title}
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                  {it.blurb}
+                </p>
+
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <Button onClick={handleShare} variant="outline" size="sm" className="gap-2">
+                    <Share2 className="h-4 w-4" /> Share
+                  </Button>
+                  <Button onClick={handlePrint} variant="outline" size="sm" className="gap-2">
+                    <Printer className="h-4 w-4" /> Print
+                  </Button>
+                  <Link to={`/country/${it.countrySlug}`} className="chip bg-primary-soft text-primary hover:bg-primary-soft/70 inline-flex items-center gap-1.5 h-9 px-3">
+                    <Compass className="h-4 w-4" /> Country guide
+                  </Link>
+                </div>
+              </header>
+
+              {routePoints.length > 0 && (
+                <section className="glass-card overflow-hidden p-0 border-2 border-primary/10 shadow-elevated">
+                  <div className="bg-primary/5 px-4 py-2 border-b border-primary/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+                      <RouteIcon className="h-4 w-4" /> Route Visualization
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-medium">
+                      {allStops.length} stops · {km} km total
+                    </div>
+                  </div>
+                  <div className="h-[400px] w-full relative group">
+                    <MapContainer
+                      center={routePoints[0]}
+                      zoom={9}
+                      scrollWheelZoom={false}
+                      zoomControl={false}
+                      className="h-full w-full z-10"
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <ZoomControl position="bottomright" />
+                      <FitBounds positions={routePoints} />
+                      <Polyline positions={routePoints} pathOptions={{ color: "hsl(var(--primary))", weight: 4, opacity: 0.6, dashArray: "10, 10" }} />
+                      {allStops.map((s, idx) => s.lat && s.lng && (
+                        <Marker key={`${s.place}-${idx}`} position={[s.lat, s.lng]} icon={markerIcon}>
+                          <Popup>
+                            <div className="p-1">
+                              <div className="font-bold text-sm">{s.place}</div>
+                              <div className="text-xs text-muted-foreground">{s.activity}</div>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      ))}
+                    </MapContainer>
+                  </div>
+                </section>
+              )}
             </div>
 
-            <div className="glass-card p-5 min-w-[260px]">
+            <div className="glass-card p-5 min-w-[260px] lg:sticky lg:top-24">
               <div className="grid grid-cols-2 gap-3">
                 <BigStat icon={<Calendar className="h-4 w-4" />} label="Days" value={`${it.days}`} />
                 <BigStat icon={<RouteIcon className="h-4 w-4" />} label="Distance" value={`${km} km`} />
                 <BigStat icon={<Clock className="h-4 w-4" />} label="Active" value={`${hr}h`} />
-                <BigStat icon={<Mountain className="h-4 w-4" />} label="Stops" value={`${it.plan.reduce((s, d) => s + d.stops.length, 0)}`} />
+                <BigStat icon={<Mountain className="h-4 w-4" />} label="Stops" value={`${allStops.length}`} />
               </div>
               <div className="mt-4 pt-4 border-t border-border/50">
                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">

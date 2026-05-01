@@ -22,7 +22,11 @@ export function FilterPanel({ filters, setFilters, layout = "horizontal" }: Prop
   const activeTerrains = new Set<Terrain>(filters.terrains ?? []);
   const toggleTerrain = (t: Terrain) => {
     const next = new Set(activeTerrains);
-    next.has(t) ? next.delete(t) : next.add(t);
+    if (next.has(t)) {
+      next.delete(t);
+    } else {
+      next.add(t);
+    }
     update("terrains", [...next]);
   };
   const isSidebar = layout === "sidebar";

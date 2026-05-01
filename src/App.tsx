@@ -15,6 +15,7 @@ import MapPage from "./pages/Map.tsx";
 import Itineraries from "./pages/Itineraries.tsx";
 import ItineraryDetail from "./pages/ItineraryDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { AiAdvisor } from "@/components/AiAdvisor";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/itinerary/:slug" element={<ItineraryDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <AiAdvisor />
           </BrowserRouter>
         </TooltipProvider>
       </CurrencyProvider>

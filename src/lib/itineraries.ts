@@ -15,6 +15,10 @@ export type ItineraryStop = {
   mode: "walk" | "car" | "bus" | "train" | "flight" | "boat" | "bike";
   /** Per-person USD cost (transport + activity + meals share) */
   costUsd: number;
+  /** Latitude for mapping */
+  lat?: number;
+  /** Longitude for mapping */
+  lng?: number;
 };
 
 export type ItineraryDay = {
@@ -64,67 +68,67 @@ export const ITINERARIES: Itinerary[] = [
         day: 1, title: "Arrive Srinagar — settle on Dal Lake", base: "Srinagar (houseboat)",
         stayUsd: 35,
         stops: [
-          { place: "SXR airport → Dal Lake", activity: "Transfer + houseboat check-in", hours: 1.5, km: 18, mode: "car", costUsd: 8 },
-          { place: "Dal Lake", activity: "Sunset shikara to lotus gardens", hours: 2, km: 4, mode: "boat", costUsd: 12 },
-          { place: "Lal Chowk / Polo View", activity: "Wazwan dinner & Kashmiri kahwa", hours: 2, km: 6, mode: "car", costUsd: 14 },
+          { place: "SXR airport → Dal Lake", activity: "Transfer + houseboat check-in", hours: 1.5, km: 18, mode: "car", costUsd: 8, lat: 33.9875, lng: 74.7741 },
+          { place: "Dal Lake", activity: "Sunset shikara to lotus gardens", hours: 2, km: 4, mode: "boat", costUsd: 12, lat: 34.1133, lng: 74.8686 },
+          { place: "Lal Chowk / Polo View", activity: "Wazwan dinner & Kashmiri kahwa", hours: 2, km: 6, mode: "car", costUsd: 14, lat: 34.0722, lng: 74.8111 },
         ],
       },
       {
         day: 2, title: "Old Srinagar + Mughal gardens", base: "Srinagar (houseboat)",
         stayUsd: 35,
         stops: [
-          { place: "Hazratbal & Jamia Masjid", activity: "Old town walk through papier-mâché bazaar", hours: 3, km: 9, mode: "car", costUsd: 6 },
-          { place: "Nishat Bagh", activity: "Mughal terrace garden, Zabarwan views", hours: 1.5, km: 11, mode: "car", costUsd: 4 },
-          { place: "Shalimar Bagh", activity: "Shah Jahan's chinar-lined garden", hours: 1.5, km: 4, mode: "car", costUsd: 3 },
-          { place: "Pari Mahal", activity: "Sunset over Dal from the hilltop ruin", hours: 1.5, km: 8, mode: "car", costUsd: 4 },
+          { place: "Hazratbal & Jamia Masjid", activity: "Old town walk through papier-mâché bazaar", hours: 3, km: 9, mode: "car", costUsd: 6, lat: 34.1265, lng: 74.8436 },
+          { place: "Nishat Bagh", activity: "Mughal terrace garden, Zabarwan views", hours: 1.5, km: 11, mode: "car", costUsd: 4, lat: 34.1247, lng: 74.8806 },
+          { place: "Shalimar Bagh", activity: "Shah Jahan's chinar-lined garden", hours: 1.5, km: 4, mode: "car", costUsd: 3, lat: 34.1420, lng: 74.8730 },
+          { place: "Pari Mahal", activity: "Sunset over Dal from the hilltop ruin", hours: 1.5, km: 8, mode: "car", costUsd: 4, lat: 34.0841, lng: 74.8753 },
         ],
       },
       {
         day: 3, title: "Gulmarg gondola day", base: "Gulmarg",
         stayUsd: 45,
         stops: [
-          { place: "Srinagar → Tangmarg", activity: "Drive through paddy fields & pine forest", hours: 1.75, km: 51, mode: "car", costUsd: 14 },
-          { place: "Gulmarg Gondola Phase 1", activity: "Cable-car to Kongdoori (3,080m)", hours: 1.5, km: 5, mode: "car", costUsd: 12 },
-          { place: "Gulmarg Phase 2", activity: "World's 2nd-highest gondola to Apharwat (3,979m)", hours: 2, km: 5, mode: "car", costUsd: 22 },
-          { place: "Strawberry Valley", activity: "Pony ride through alpine meadow", hours: 1.5, km: 4, mode: "walk", costUsd: 8 },
+          { place: "Srinagar → Tangmarg", activity: "Drive through paddy fields & pine forest", hours: 1.75, km: 51, mode: "car", costUsd: 14, lat: 34.0583, lng: 74.4233 },
+          { place: "Gulmarg Gondola Phase 1", activity: "Cable-car to Kongdoori (3,080m)", hours: 1.5, km: 5, mode: "car", costUsd: 12, lat: 34.0484, lng: 74.3805 },
+          { place: "Gulmarg Phase 2", activity: "World's 2nd-highest gondola to Apharwat (3,979m)", hours: 2, km: 5, mode: "car", costUsd: 22, lat: 34.0200, lng: 74.3300 },
+          { place: "Strawberry Valley", activity: "Pony ride through alpine meadow", hours: 1.5, km: 4, mode: "walk", costUsd: 8, lat: 34.0550, lng: 74.3900 },
         ],
       },
       {
         day: 4, title: "Pahalgam & Betaab Valley", base: "Pahalgam",
         stayUsd: 38,
         stops: [
-          { place: "Gulmarg → Pahalgam", activity: "Cross-valley drive via Anantnag", hours: 4.5, km: 145, mode: "car", costUsd: 28 },
-          { place: "Saffron fields, Pampore", activity: "Quick stop at the world's saffron capital", hours: 0.75, km: 0, mode: "car", costUsd: 4 },
-          { place: "Betaab Valley", activity: "Riverside walk at the Bollywood-famous valley", hours: 2, km: 15, mode: "car", costUsd: 6 },
-          { place: "Lidder River", activity: "Optional rafting (Grade II–III)", hours: 1.5, km: 3, mode: "car", costUsd: 14 },
+          { place: "Gulmarg → Pahalgam", activity: "Cross-valley drive via Anantnag", hours: 4.5, km: 145, mode: "car", costUsd: 28, lat: 34.0161, lng: 75.3150 },
+          { place: "Saffron fields, Pampore", activity: "Quick stop at the world's saffron capital", hours: 0.75, km: 0, mode: "car", costUsd: 4, lat: 33.9984, lng: 74.8762 },
+          { place: "Betaab Valley", activity: "Riverside walk at the Bollywood-famous valley", hours: 2, km: 15, mode: "car", costUsd: 6, lat: 34.0494, lng: 75.3700 },
+          { place: "Lidder River", activity: "Optional rafting (Grade II–III)", hours: 1.5, km: 3, mode: "car", costUsd: 14, lat: 34.0250, lng: 75.3300 },
         ],
       },
       {
         day: 5, title: "Aru & Chandanwari excursion", base: "Pahalgam",
         stayUsd: 38,
         stops: [
-          { place: "Aru Valley", activity: "Pine-forest meadow, gateway to Kolahoi glacier", hours: 3, km: 12, mode: "car", costUsd: 8 },
-          { place: "Chandanwari", activity: "Snow bridge & start of Amarnath yatra", hours: 2.5, km: 16, mode: "car", costUsd: 9 },
-          { place: "Pahalgam market", activity: "Walnut wood shopping, kahwa break", hours: 1.5, km: 4, mode: "walk", costUsd: 6 },
+          { place: "Aru Valley", activity: "Pine-forest meadow, gateway to Kolahoi glacier", hours: 3, km: 12, mode: "car", costUsd: 8, lat: 34.0906, lng: 75.2636 },
+          { place: "Chandanwari", activity: "Snow bridge & start of Amarnath yatra", hours: 2.5, km: 16, mode: "car", costUsd: 9, lat: 34.0536, lng: 75.4419 },
+          { place: "Pahalgam market", activity: "Walnut wood shopping, kahwa break", hours: 1.5, km: 4, mode: "walk", costUsd: 6, lat: 34.0140, lng: 75.3250 },
         ],
       },
       {
         day: 6, title: "Sonamarg — meadow of gold", base: "Srinagar (houseboat)",
         stayUsd: 35,
         stops: [
-          { place: "Pahalgam → Sonamarg", activity: "Long scenic drive via Srinagar bypass", hours: 5, km: 175, mode: "car", costUsd: 30 },
-          { place: "Thajiwas Glacier", activity: "Pony ride or 4km hike to glacier viewpoint", hours: 3, km: 4, mode: "walk", costUsd: 18 },
-          { place: "Zoji La viewpoint", activity: "Highest pass on Srinagar–Leh highway", hours: 1, km: 12, mode: "car", costUsd: 5 },
-          { place: "Sonamarg → Srinagar", activity: "Return drive along Sindh river", hours: 2.5, km: 80, mode: "car", costUsd: 14 },
+          { place: "Pahalgam → Sonamarg", activity: "Long scenic drive via Srinagar bypass", hours: 5, km: 175, mode: "car", costUsd: 30, lat: 34.3000, lng: 75.2917 },
+          { place: "Thajiwas Glacier", activity: "Pony ride or 4km hike to glacier viewpoint", hours: 3, km: 4, mode: "walk", costUsd: 18, lat: 34.2800, lng: 75.3100 },
+          { place: "Zoji La viewpoint", activity: "Highest pass on Srinagar–Leh highway", hours: 1, km: 12, mode: "car", costUsd: 5, lat: 34.2783, lng: 75.4783 },
+          { place: "Sonamarg → Srinagar", activity: "Return drive along Sindh river", hours: 2.5, km: 80, mode: "car", costUsd: 14, lat: 34.1133, lng: 74.8686 },
         ],
       },
       {
         day: 7, title: "Doodhpathri & departure", base: "Srinagar",
         stayUsd: 0,
         stops: [
-          { place: "Doodhpathri", activity: "Less-touristed milk-meadow day-trip", hours: 4, km: 42, mode: "car", costUsd: 18 },
-          { place: "Srinagar Old Town", activity: "Last walk: Shah-e-Hamdan & Khanqah", hours: 2, km: 14, mode: "car", costUsd: 6 },
-          { place: "SXR airport", activity: "Departure", hours: 1, km: 16, mode: "car", costUsd: 8 },
+          { place: "Doodhpathri", activity: "Less-touristed milk-meadow day-trip", hours: 4, km: 42, mode: "car", costUsd: 18, lat: 33.8647, lng: 74.6341 },
+          { place: "Srinagar Old Town", activity: "Last walk: Shah-e-Hamdan & Khanqah", hours: 2, km: 14, mode: "car", costUsd: 6, lat: 34.0880, lng: 74.8050 },
+          { place: "SXR airport", activity: "Departure", hours: 1, km: 16, mode: "car", costUsd: 8, lat: 33.9875, lng: 74.7741 },
         ],
       },
     ],

@@ -76,7 +76,11 @@ const MapPage = () => {
   const toggleTerrain = (t: Terrain) => {
     setTerrainFilter((prev) => {
       const next = new Set(prev);
-      next.has(t) ? next.delete(t) : next.add(t);
+      if (next.has(t)) {
+        next.delete(t);
+      } else {
+        next.add(t);
+      }
       return next;
     });
   };
