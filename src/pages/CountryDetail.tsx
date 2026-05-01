@@ -22,6 +22,8 @@ import { WeatherChart } from "@/components/WeatherChart";
 import { DegreesOfSeparation } from "@/components/DegreesOfSeparation";
 import { PassportStatus } from "@/components/PassportStatus";
 import { SmartPack } from "@/components/SmartPack";
+import { TravelPulse } from "@/components/TravelPulse";
+import { LanguageQuickStart } from "@/components/LanguageQuickStart";
 import { getWeather } from "@/lib/weather";
 
 const monthNames = (ms: number[]) => ms.map((m) => MONTHS[m - 1]).join(", ");
@@ -306,7 +308,9 @@ const CountryDetail = () => {
         </article>
 
         <article className="lg:col-span-1 space-y-6">
+           <TravelPulse slug={country.slug} />
            <SmartPack terrains={terrains} slug={country.slug} />
+           <LanguageQuickStart slug={country.slug} />
            <div className="glass-card p-6">
               <h2 className="font-display text-xl font-bold mb-1">Similar vibe</h2>
               <p className="text-sm text-muted-foreground mb-4">Countries with overlapping terrain, cost & feel.</p>
