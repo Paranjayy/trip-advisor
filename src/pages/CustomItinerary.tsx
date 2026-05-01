@@ -79,6 +79,20 @@ const CustomItinerary = () => {
     next.plan[dayIdx].stops.splice(stopIdx, 1);
     setIt(next);
   };
+  
+  const addDay = () => {
+    const next = { ...it };
+    const nextDayNum = next.plan.length + 1;
+    next.plan.push({
+      day: nextDayNum,
+      title: "New Day",
+      base: next.plan[next.plan.length - 1]?.base || "New Location",
+      stayUsd: next.plan[next.plan.length - 1]?.stayUsd || 50,
+      stops: []
+    });
+    next.days = nextDayNum;
+    setIt(next);
+  };
 
   const total = totalCost(it);
 
@@ -275,7 +289,10 @@ const CustomItinerary = () => {
                   </div>
                ))}
                
-               <Button className="w-full py-8 border-2 border-dashed border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-black uppercase tracking-[0.2em] text-sm rounded-3xl gap-3">
+               <Button 
+                  onClick={addDay}
+                  className="w-full py-8 border-2 border-dashed border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-black uppercase tracking-[0.2em] text-sm rounded-3xl gap-3"
+               >
                   <Plus className="h-5 w-5" /> Expand Itinerary (Add Day)
                </Button>
             </div>

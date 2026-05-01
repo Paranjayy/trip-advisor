@@ -3,6 +3,7 @@ import { Globe2, Heart, Map as MapIcon, Route } from "lucide-react";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { TranslateMenu } from "@/components/TranslateMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SettingsMenu } from "@/components/SettingsMenu";
 
 const links = [
   { to: "/", label: "Home", end: true },
@@ -49,6 +50,7 @@ export function SiteNav() {
         </div>
 
         <div className="flex items-center gap-2">
+          <SettingsMenu />
           <ThemeToggle />
           <TranslateMenu />
           <CurrencySwitcher />

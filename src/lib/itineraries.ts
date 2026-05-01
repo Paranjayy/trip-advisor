@@ -47,6 +47,10 @@ export type Itinerary = {
   category?: "Classic" | "Road Trip" | "Backpacking" | "Luxury" | "Hidden Gem";
   type?: "base-camp" | "road-trip";
   tags?: string[];
+  /** Connection to personal history or lineage (1-5, 1 being direct) */
+  degreesOfSeparation?: number;
+  /** Personal note on the connection */
+  connectionNote?: string;
 };
 
 export function getGoogleMapsUrl(itinerary: Itinerary) {
@@ -65,87 +69,164 @@ export function getGoogleMapsUrl(itinerary: Itinerary) {
 
 export const ITINERARIES: Itinerary[] = [
   {
-    slug: "srinagar-kashmir-7d",
-    title: "Srinagar & Kashmir Valley — 7 days",
+    slug: "kashmir-lineage-scholarly-3d",
+    title: "Kashmir Lineage & Scholarly Path — 3 days",
+    countrySlug: "india",
+    region: "Srinagar & Pahalgam, India",
+    flag: "🇮🇳",
+    days: 3,
+    bestMonths: [4, 5, 6, 9, 10],
+    difficulty: "easy",
+    terrains: ["mountains", "culture", "history"],
+    type: "base-camp",
+    blurb: "Follow the footsteps of the Karachi scholars. A high-recovery base camp stay focusing on archives and the Lidder pulse.",
+    totalUsd: 280,
+    highlights: ["Dal Lake Base Camp", "Lidder River Meditation", "Old Srinagar Archive Search"],
+    category: "Hidden Gem",
+    tags: ["Lineage", "Recovery", "History"],
+    degreesOfSeparation: 1,
+    connectionNote: "Direct tie to family's scholarly history in Kashmir/Karachi.",
+    plan: [
+      {
+        day: 1, title: "Srinagar Base Camp & Library", base: "Srinagar (Dal Lake)",
+        stayUsd: 80,
+        stops: [
+          { place: "Dal Lake Houseboat", activity: "Establish base camp with mountain views", hours: 2, km: 0, mode: "walk", costUsd: 80, lat: 34.0837, lng: 74.8327 },
+          { place: "Old Srinagar Archives", activity: "Searching for scholarly records of the Karachi scholar", hours: 4, km: 5, mode: "car", costUsd: 10 },
+          { place: "Shankaracharya Hill", activity: "Sunset view over the scholarly valley", hours: 2, km: 8, mode: "car", costUsd: 5, lat: 34.0722, lng: 74.8450 },
+        ],
+      },
+      {
+        day: 2, title: "The Lidder Pulse (Pahalgam)", base: "Srinagar (Dal Lake)",
+        stayUsd: 80,
+        stops: [
+          { place: "Lidder River", activity: "High-recovery river sitting and meditation", hours: 5, km: 90, mode: "car", costUsd: 40, lat: 34.0161, lng: 75.3145 },
+          { place: "Aru Valley", activity: "Scholarly solitude walk in the pines", hours: 3, km: 12, mode: "car", costUsd: 15 },
+        ],
+      },
+      {
+        day: 3, title: "Heritage & Recovery", base: "Srinagar (Dal Lake)",
+        stayUsd: 80,
+        stops: [
+          { place: "Jamia Masjid", activity: "Architectural study of Islamic scholar routes", hours: 2, km: 6, mode: "car", costUsd: 5 },
+          { place: "Ahdoos Panjim", activity: "Traditional Wazwan feast (The 'God' Build)", hours: 3, km: 2, mode: "walk", costUsd: 30 },
+          { place: "Mughal Gardens", activity: "Symmetry and order for mental clarity", hours: 3, km: 10, mode: "car", costUsd: 8 },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "pahalgam-retreat-5d",
+    title: "Pahalgam Retreat — 5 days",
     countrySlug: "india",
     region: "Kashmir, India",
     flag: "🇮🇳",
-    days: 7,
+    days: 5,
     bestMonths: [4, 5, 6, 9, 10],
-    difficulty: "moderate",
-    terrains: ["mountains", "lakes", "wellness", "snow"],
+    difficulty: "easy",
+    terrains: ["mountains", "wellness", "snow"],
+    type: "base-camp",
     blurb:
-      "Houseboats on Dal Lake, alpine meadows of Sonamarg & Pahalgam, and the Gulmarg gondola with views to K2 on a clear day.",
-    totalUsd: 540,
-    highlights: ["Shikara at sunrise on Dal Lake", "Gulmarg Gondola Phase II (3,979m)", "Aru & Betaab valleys", "Mughal gardens — Nishat & Shalimar"],
-    category: "Classic",
-    tags: ["Nature", "Photography", "Cultural"],
+      "A zero-hustle stay in Pahalgam. Focus on the Lidder river, pine forests, and slow mornings. High recovery, low decision load.",
+    totalUsd: 420,
+    highlights: ["Misty mornings at Aru Valley", "Riverside breakfast by the Lidder", "Short walk to Betaab Valley", "Kashmiri Kahwa sessions"],
+    category: "Luxury",
+    tags: ["Recovery", "Wellness", "Nature", "Family"],
+    degreesOfSeparation: 2,
+    connectionNote: "Grandfather's scholarly roots in the region; connection to Karachi lineage.",
     plan: [
       {
-        day: 1, title: "Arrive Srinagar — settle on Dal Lake", base: "Srinagar (houseboat)",
-        stayUsd: 35,
+        day: 1, title: "Arrive Srinagar → Transfer to Pahalgam", base: "Pahalgam",
+        stayUsd: 65,
         stops: [
-          { place: "SXR airport → Dal Lake", activity: "Transfer + houseboat check-in", hours: 1.5, km: 18, mode: "car", costUsd: 8, lat: 33.9875, lng: 74.7741 },
-          { place: "Dal Lake", activity: "Sunset shikara to lotus gardens", hours: 2, km: 4, mode: "boat", costUsd: 12, lat: 34.1133, lng: 74.8686 },
-          { place: "Lal Chowk / Polo View", activity: "Wazwan dinner & Kashmiri kahwa", hours: 2, km: 6, mode: "car", costUsd: 14, lat: 34.0722, lng: 74.8111 },
+          { place: "SXR airport → Pahalgam", activity: "Direct scenic transfer, skip Srinagar hustle", hours: 2.5, km: 90, mode: "car", costUsd: 25, lat: 34.0161, lng: 75.3150 },
+          { place: "Pahalgam Riverside", activity: "Check-in & evening walk by Lidder", hours: 2, km: 1, mode: "walk", costUsd: 10, lat: 34.0140, lng: 75.3250 },
         ],
       },
       {
-        day: 2, title: "Old Srinagar + Mughal gardens", base: "Srinagar (houseboat)",
-        stayUsd: 35,
+        day: 2, title: "Aru Valley Solitude", base: "Pahalgam",
+        stayUsd: 65,
         stops: [
-          { place: "Hazratbal & Jamia Masjid", activity: "Old town walk through papier-mâché bazaar", hours: 3, km: 9, mode: "car", costUsd: 6, lat: 34.1265, lng: 74.8436 },
-          { place: "Nishat Bagh", activity: "Mughal terrace garden, Zabarwan views", hours: 1.5, km: 11, mode: "car", costUsd: 4, lat: 34.1247, lng: 74.8806 },
-          { place: "Shalimar Bagh", activity: "Shah Jahan's chinar-lined garden", hours: 1.5, km: 4, mode: "car", costUsd: 3, lat: 34.1420, lng: 74.8730 },
-          { place: "Pari Mahal", activity: "Sunset over Dal from the hilltop ruin", hours: 1.5, km: 8, mode: "car", costUsd: 4, lat: 34.0841, lng: 74.8753 },
+          { place: "Aru Valley", activity: "Morning picnic in the pine meadow", hours: 4, km: 12, mode: "car", costUsd: 15, lat: 34.0906, lng: 75.2636 },
+          { place: "Local Pahalgam Bakery", activity: "Traditional Girda & Kahwa break", hours: 1.5, km: 2, mode: "walk", costUsd: 5 },
         ],
       },
       {
-        day: 3, title: "Gulmarg gondola day", base: "Gulmarg",
-        stayUsd: 45,
+        day: 3, title: "Betaab & Chandanwari", base: "Pahalgam",
+        stayUsd: 65,
         stops: [
-          { place: "Srinagar → Tangmarg", activity: "Drive through paddy fields & pine forest", hours: 1.75, km: 51, mode: "car", costUsd: 14, lat: 34.0583, lng: 74.4233 },
-          { place: "Gulmarg Gondola Phase 1", activity: "Cable-car to Kongdoori (3,080m)", hours: 1.5, km: 5, mode: "car", costUsd: 12, lat: 34.0484, lng: 74.3805 },
-          { place: "Gulmarg Phase 2", activity: "World's 2nd-highest gondola to Apharwat (3,979m)", hours: 2, km: 5, mode: "car", costUsd: 22, lat: 34.0200, lng: 74.3300 },
-          { place: "Strawberry Valley", activity: "Pony ride through alpine meadow", hours: 1.5, km: 4, mode: "walk", costUsd: 8, lat: 34.0550, lng: 74.3900 },
+          { place: "Betaab Valley", activity: "Slow photography & river sitting", hours: 3, km: 15, mode: "car", costUsd: 10, lat: 34.0494, lng: 75.3700 },
+          { place: "Chandanwari", activity: "Viewpoint of the snow-capped peaks", hours: 2, km: 16, mode: "car", costUsd: 12, lat: 34.0536, lng: 75.4419 },
         ],
       },
       {
-        day: 4, title: "Pahalgam & Betaab Valley", base: "Pahalgam",
-        stayUsd: 38,
+        day: 4, title: "Pahalgam Club & Rest", base: "Pahalgam",
+        stayUsd: 65,
         stops: [
-          { place: "Gulmarg → Pahalgam", activity: "Cross-valley drive via Anantnag", hours: 4.5, km: 145, mode: "car", costUsd: 28, lat: 34.0161, lng: 75.3150 },
-          { place: "Saffron fields, Pampore", activity: "Quick stop at the world's saffron capital", hours: 0.75, km: 0, mode: "car", costUsd: 4, lat: 33.9984, lng: 74.8762 },
-          { place: "Betaab Valley", activity: "Riverside walk at the Bollywood-famous valley", hours: 2, km: 15, mode: "car", costUsd: 6, lat: 34.0494, lng: 75.3700 },
-          { place: "Lidder River", activity: "Optional rafting (Grade II–III)", hours: 1.5, km: 3, mode: "car", costUsd: 14, lat: 34.0250, lng: 75.3300 },
+          { place: "Pahalgam Club Garden", activity: "Reading & mountain watching", hours: 3, km: 0.5, mode: "walk", costUsd: 5 },
+          { place: "Main Market", activity: "Walnut wood & shawl browsing (no rush)", hours: 2, km: 1, mode: "walk", costUsd: 15 },
         ],
       },
       {
-        day: 5, title: "Aru & Chandanwari excursion", base: "Pahalgam",
-        stayUsd: 38,
-        stops: [
-          { place: "Aru Valley", activity: "Pine-forest meadow, gateway to Kolahoi glacier", hours: 3, km: 12, mode: "car", costUsd: 8, lat: 34.0906, lng: 75.2636 },
-          { place: "Chandanwari", activity: "Snow bridge & start of Amarnath yatra", hours: 2.5, km: 16, mode: "car", costUsd: 9, lat: 34.0536, lng: 75.4419 },
-          { place: "Pahalgam market", activity: "Walnut wood shopping, kahwa break", hours: 1.5, km: 4, mode: "walk", costUsd: 6, lat: 34.0140, lng: 75.3250 },
-        ],
-      },
-      {
-        day: 6, title: "Sonamarg — meadow of gold", base: "Srinagar (houseboat)",
-        stayUsd: 35,
-        stops: [
-          { place: "Pahalgam → Sonamarg", activity: "Long scenic drive via Srinagar bypass", hours: 5, km: 175, mode: "car", costUsd: 30, lat: 34.3000, lng: 75.2917 },
-          { place: "Thajiwas Glacier", activity: "Pony ride or 4km hike to glacier viewpoint", hours: 3, km: 4, mode: "walk", costUsd: 18, lat: 34.2800, lng: 75.3100 },
-          { place: "Zoji La viewpoint", activity: "Highest pass on Srinagar–Leh highway", hours: 1, km: 12, mode: "car", costUsd: 5, lat: 34.2783, lng: 75.4783 },
-          { place: "Sonamarg → Srinagar", activity: "Return drive along Sindh river", hours: 2.5, km: 80, mode: "car", costUsd: 14, lat: 34.1133, lng: 74.8686 },
-        ],
-      },
-      {
-        day: 7, title: "Doodhpathri & departure", base: "Srinagar",
+        day: 5, title: "Departure", base: "Srinagar",
         stayUsd: 0,
         stops: [
-          { place: "Doodhpathri", activity: "Less-touristed milk-meadow day-trip", hours: 4, km: 42, mode: "car", costUsd: 18, lat: 33.8647, lng: 74.6341 },
-          { place: "Srinagar Old Town", activity: "Last walk: Shah-e-Hamdan & Khanqah", hours: 2, km: 14, mode: "car", costUsd: 6, lat: 34.0880, lng: 74.8050 },
-          { place: "SXR airport", activity: "Departure", hours: 1, km: 16, mode: "car", costUsd: 8, lat: 33.9875, lng: 74.7741 },
+          { place: "Pahalgam → SXR airport", activity: "Direct return transfer", hours: 2.5, km: 90, mode: "car", costUsd: 25 },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "goa-heritage-slow-4d",
+    title: "Goa Heritage & Slow Burn — 4 days",
+    countrySlug: "india",
+    region: "Goa, India",
+    flag: "🇮🇳",
+    days: 4,
+    bestMonths: [11, 12, 1, 2],
+    difficulty: "easy",
+    terrains: ["beaches", "food", "history"],
+    type: "base-camp",
+    blurb: "Skip the party, embrace the susegad. Old Latin quarters, backwater cruises, and zero-agenda beach days.",
+    totalUsd: 380,
+    highlights: ["Fontainhas heritage walk", "Divar Island ferry", "Sunset at Mandovi river", "Seafood thali in Panjim"],
+    category: "Hidden Gem",
+    tags: ["Culture", "Relaxation", "Food"],
+    degreesOfSeparation: 4,
+    connectionNote: "Frequent family getaway; low cognitive load for recurring visits.",
+    plan: [
+      {
+        day: 1, title: "Panjim & Fontainhas", base: "Panjim",
+        stayUsd: 55,
+        stops: [
+          { place: "GOI airport → Panjim", activity: "Transfer to Latin Quarter", hours: 1, km: 28, mode: "car", costUsd: 15 },
+          { place: "Fontainhas", activity: "Walk through colourful Portuguese-style streets", hours: 2, km: 2, mode: "walk", costUsd: 5 },
+          { place: "Panjim Church", activity: "Immaculate Conception visit", hours: 1, km: 1, mode: "walk", costUsd: 0 },
+        ],
+      },
+      {
+        day: 2, title: "Divar Island & Backwaters", base: "Panjim",
+        stayUsd: 55,
+        stops: [
+          { place: "Panjim → Divar Island", activity: "Ferry across the Mandovi", hours: 1, km: 10, mode: "boat", costUsd: 2 },
+          { place: "Divar Village", activity: "Bicycle exploration of the silent island", hours: 3, km: 15, mode: "bike", costUsd: 10 },
+          { place: "Mandovi River", activity: "Private boat cruise at sunset", hours: 2, km: 5, mode: "boat", costUsd: 30 },
+        ],
+      },
+      {
+        day: 3, title: "South Goa Beaches", base: "Agonda",
+        stayUsd: 45,
+        stops: [
+          { place: "Panjim → Agonda", activity: "Drive to the quiet south", hours: 1.5, km: 70, mode: "car", costUsd: 20 },
+          { place: "Agonda Beach", activity: "Reading & swimming (no shacks, no noise)", hours: 4, km: 0, mode: "walk", costUsd: 0 },
+          { place: "Cabo de Rama", activity: "Sunset over the Arabian Sea from the fort", hours: 2, km: 15, mode: "car", costUsd: 10 },
+        ],
+      },
+      {
+        day: 4, title: "Departure", base: "Agonda",
+        stayUsd: 0,
+        stops: [
+          { place: "Agonda → GOX/GOI airport", activity: "Return transfer", hours: 1.5, km: 65, mode: "car", costUsd: 20 },
         ],
       },
     ],

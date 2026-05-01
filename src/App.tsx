@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CurrencyProvider } from "@/lib/currency";
 import { ThemeProvider } from "@/lib/theme";
+import { UserSettingsProvider } from "@/lib/user-settings";
 import Index from "./pages/Index.tsx";
 import Explore from "./pages/Explore.tsx";
 import CountryDetail from "./pages/CountryDetail.tsx";
@@ -24,7 +25,8 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <CurrencyProvider>
+      <UserSettingsProvider>
+        <CurrencyProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -47,7 +49,8 @@ const App = () => (
             <AiAdvisor />
           </BrowserRouter>
         </TooltipProvider>
-      </CurrencyProvider>
+        </CurrencyProvider>
+      </UserSettingsProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

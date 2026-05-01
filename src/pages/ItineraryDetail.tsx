@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft, Bed, Bike, Bus, Calendar, Car, Clock, Compass, MapPin,
   Plane, Route as RouteIcon, Ship, Train, Users, Footprints, Mountain,
-  Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap, Navigation,
+  Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap, Navigation, List,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -64,6 +64,30 @@ const ItineraryDetail = () => {
 
   useEffect(() => {
     if (it) document.title = `${it.title} — TripAdvisor`;
+  }, [it]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const days = it?.plan.map(d => document.getElementById(`day-${d.day}`));
+      if (!days) return;
+
+      const viewportHeight = window.innerHeight;
+      const threshold = viewportHeight * 0.3; // 30% from top
+
+      for (let i = days.length - 1; i >= 0; i--) {
+        const el = days[i];
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= threshold) {
+            setActiveDay(it!.plan[i].day);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [it]);
 
   const handleShare = () => {
@@ -325,22 +349,35 @@ const ItineraryDetail = () => {
           
           {/* Sticky Day-Nav */}
           <aside className="hidden lg:block sticky top-24 space-y-1">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 pl-4">Itinerary Index</h4>
-            {it.plan.map((day) => (
-              <button
-                key={day.day}
-                onClick={() => scrollToDay(day.day)}
-                className={cn(
-                  "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-between group",
-                  activeDay === day.day 
-                    ? "bg-primary text-primary-foreground shadow-glow scale-[1.02]" 
-                    : "hover:bg-surface-muted text-muted-foreground"
-                )}
-              >
-                <span>Day {day.day}</span>
-                <ChevronRight className={cn("h-4 w-4 transition-transform", activeDay === day.day ? "rotate-90" : "group-hover:translate-x-1")} />
-              </button>
-            ))}
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 pl-4 flex items-center gap-2">
+               <List className="h-3 w-3" /> Itinerary Index
+            </h4>
+            <div className="relative pl-4 space-y-1">
+               <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-border/40 rounded-full" />
+               <div 
+                  className="absolute left-0 w-0.5 bg-primary rounded-full transition-all duration-300 ease-in-out shadow-[0_0_8px_rgba(var(--primary),0.4)]"
+                  style={{ 
+                    top: `${(activeDay - 1) * 44 + 8}px`, 
+                    height: "28px" 
+                  }}
+               />
+               {it.plan.map((day) => (
+                 <button
+                   key={day.day}
+                   onClick={() => scrollToDay(day.day)}
+                   className={cn(
+                     "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-between group relative overflow-hidden",
+                     activeDay === day.day 
+                       ? "text-primary bg-primary/5" 
+                       : "hover:bg-surface-muted text-muted-foreground"
+                   )}
+                 >
+                   <span className="relative z-10">Day {day.day}</span>
+                   <ChevronRight className={cn("h-4 w-4 transition-transform relative z-10", activeDay === day.day ? "rotate-90 text-primary" : "group-hover:translate-x-1")} />
+                   {activeDay === day.day && <div className="absolute inset-0 bg-primary/5 animate-pulse" />}
+                 </button>
+               ))}
+            </div>
           </aside>
 
           <div className="space-y-16">

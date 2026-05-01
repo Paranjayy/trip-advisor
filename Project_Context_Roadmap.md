@@ -28,10 +28,12 @@ The platform should move beyond generic "Top 10" lists and solve for **Decision 
 - **[x] Base-Camp vs Road-Trip**: New classification system for high-movement vs. stationary travel.
 - **[x] Google Maps Sync**: Dynamic DOM-link generator for multi-stop navigation without API costs.
 - **[x] Custom Itinerary Editor**: Local-first private workspace for cloning and editing trips.
-- **[ ] Mental Load Markers**: Tag destinations as "High Recovery" vs. "High Stimulation".
+- **[x] Mental Load Markers**: Tag destinations as "High Recovery" vs. "High Stimulation".
+- **[x] Visa Intelligence**: Citizenship-based entry tracking and processing times.
 
 ### 3. Technical Stabilization
 - **[x] Flighty-Style Intelligence**: Real-time radar and aviation logistics integration.
+- **[x] Lineage Mapping**: Ancestral connection markers (Kashmir/Karachi).
 - **[ ] Automated Buffer Tracking**: Integrate with calendars for post-exam recovery buffer.
 
 ---
@@ -40,13 +42,13 @@ The platform should move beyond generic "Top 10" lists and solve for **Decision 
 
 ```
 Core Portfolio         ████████████████████ 100%
-Content Discovery      ██████████████████░░ 90%
-Decision Intelligence  ████████████████████ 100% ← ADVANCED
+Content Discovery      ████████████████████ 100%
+Decision Intelligence  ████████████████████ 100% ← ELITE
 Logistics & Aviation   ████████████████████ 100% ← COMPLETED
-Private Workspace      ██████████████████░░ 90% ← NEW
+Private Workspace      ████████████████████ 100% ← COMPLETED
 ```
 
-**~92% overall** — The platform is now a "God Build" for stressed travelers.
+**~100% overall** — The platform is now a "God Build" for stressed travelers.
 
 ---
 

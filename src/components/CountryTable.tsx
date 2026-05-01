@@ -9,7 +9,7 @@ import { terrainsFor, difficultyFor, DIFFICULTY_META } from "@/lib/terrains";
 import { japanVibe } from "@/lib/japanVibe";
 import { cn } from "@/lib/utils";
 
-type Key = "name" | "region" | "daily" | "week" | "flights" | "jp" | "difficulty";
+type Key = "name" | "region" | "daily" | "week" | "flights" | "jp" | "difficulty" | "predictability" | "load";
 
 export function CountryTable({ countries }: { countries: Country[] }) {
   const [sort, setSort] = useState<Key>("jp");
@@ -27,6 +27,8 @@ export function CountryTable({ countries }: { countries: Country[] }) {
           case "flights": return c.flightCostRange[0];
           case "jp": return japanVibe(c.slug);
           case "difficulty": return ["easy","moderate","hard"].indexOf(difficultyFor(c));
+          case "predictability": return c.predictability;
+          case "load": return c.mentalLoad;
         }
       };
       const av = v(a) as number | string;
@@ -53,8 +55,9 @@ export function CountryTable({ countries }: { countries: Country[] }) {
               <Th k="region" sort={sort} dir={dir} onClick={click("region")}>Region</Th>
               <Th k="daily" sort={sort} dir={dir} onClick={click("daily")} className="text-right">Daily</Th>
               <Th k="jp" sort={sort} dir={dir} onClick={click("jp")} className="text-right">JP vibe</Th>
+              <Th k="predictability" sort={sort} dir={dir} onClick={click("predictability")} className="text-center">Structure</Th>
+              <Th k="load" sort={sort} dir={dir} onClick={click("load")} className="text-center">Mental Load</Th>
               <th className="px-3 py-3 text-left">Friction</th>
-              <th className="px-3 py-3 text-left">Pulse</th>
               <th className="px-3 py-3 text-left">Variety</th>
             </tr>
           </thead>
@@ -72,6 +75,34 @@ export function CountryTable({ countries }: { countries: Country[] }) {
                   <td className="px-3 py-2.5 text-muted-foreground">{c.region}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums"><Money usd={c.dailyCost} /></td>
                   <td className="px-3 py-2.5 text-right font-bold text-primary tabular-nums">{japanVibe(c.slug)}</td>
+                  <td className="px-3 py-2.5 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <div 
+                            key={i} 
+                            className={cn(
+                              "h-2.5 w-1 rounded-full",
+                              i < (c.predictability / 2) 
+                                ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" 
+                                : "bg-border/30"
+                            )} 
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[8px] mt-1 opacity-40 uppercase font-black tracking-tighter">Rigid</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-2.5 text-center">
+                    <span className={cn(
+                      "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tight",
+                      c.mentalLoad <= 3 ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : 
+                      c.mentalLoad <= 7 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" :
+                      "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                    )}>
+                      {c.mentalLoad <= 3 ? "Recovery" : c.mentalLoad <= 7 ? "Stimulation" : "Chaos"}
+                    </span>
+                  </td>
                   <td className="px-3 py-2.5">
                      <div className="flex items-center gap-2">
                         <div className="h-1 w-12 rounded-full bg-border/40 overflow-hidden">
@@ -83,13 +114,7 @@ export function CountryTable({ countries }: { countries: Country[] }) {
                               style={{ width: `${friction}%` }} 
                            />
                         </div>
-                        <span className="text-[9px] font-black opacity-60">{friction}%</span>
-                     </div>
-                  </td>
-                  <td className="px-3 py-2.5">
-                     <div className="flex items-center gap-2">
-                        <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", friction < 50 ? "bg-green-500" : "bg-blue-500")} />
-                        <span className="text-[9px] font-bold uppercase opacity-60 tracking-tighter">Stable</span>
+                        <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse shadow-[0_0_8px_currentColor]", friction < 50 ? "text-green-500 bg-green-500" : "text-blue-500 bg-blue-500")} />
                      </div>
                   </td>
                   <td className="px-3 py-2.5"><TerrainChips terrains={terrainsFor(c)} max={3} /></td>

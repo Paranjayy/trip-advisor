@@ -8,7 +8,7 @@ import { Flag } from "@/components/Flag";
 import { Button } from "@/components/ui/button";
 import { COUNTRIES } from "@/data/countries";
 import { Filters, filterCountries, recommend } from "@/lib/recommend";
-import heroImg from "@/assets/hero-globe.jpg";
+import { WorldClockMap } from "@/components/WorldClockMap";
 
 const Index = () => {
   const [filters, setFilters] = useState<Filters>({
@@ -72,15 +72,17 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-warm opacity-10 blur-3xl rounded-full" />
-            <img
-              src={heroImg}
-              alt="Watercolor world map with iconic landmarks"
-              width={1536}
-              height={1024}
-              className="relative rounded-3xl shadow-elevated w-full h-auto"
-            />
+          <div className="relative animate-fade-in delay-200">
+            <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full opacity-50" />
+            <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-border/40">
+               <WorldClockMap />
+            </div>
+            <div className="absolute -bottom-6 -right-6 glass-card p-4 shadow-elevated animate-float">
+               <div className="flex items-center gap-3">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Live Global Pulse Active</span>
+               </div>
+            </div>
           </div>
         </div>
       </section>

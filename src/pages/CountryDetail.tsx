@@ -20,7 +20,7 @@ import { ITINERARIES } from "@/lib/itineraries";
 import { Route as RouteIcon, Clock as ClockIcon, CheckCircle2, AlertCircle, Info, ShieldCheck, Zap } from "lucide-react";
 import { WeatherChart } from "@/components/WeatherChart";
 import { DegreesOfSeparation } from "@/components/DegreesOfSeparation";
-import { PassportStatus } from "@/components/PassportStatus";
+import { VisaIntelligence } from "@/components/VisaIntelligence";
 import { SmartPack } from "@/components/SmartPack";
 import { TravelPulse } from "@/components/TravelPulse";
 import { LanguageQuickStart } from "@/components/LanguageQuickStart";
@@ -295,7 +295,7 @@ const CountryDetail = () => {
               <ShieldCheck className="h-5 w-5 text-accent" /> Essential Logistics
            </h2>
            <div className="space-y-6">
-              <PassportStatus destinationSlug={country.slug} />
+              <VisaIntelligence country={country} />
               <div className="space-y-3">
                  <LogisticsRow icon={<Plane className="h-4 w-4" />} title="Visa Policy" desc="Check the passport tool above for your specific nationality." />
                  <LogisticsRow icon={<Utensils className="h-4 w-4" />} title="Water" desc="Stick to bottled water. High humidity in most regions." />

@@ -62,9 +62,21 @@ export function CountryCard({ country }: { country: Country }) {
             {vegLabel[country.vegScore]}
           </span>
           <span className="chip bg-primary-soft text-primary">JP {japanVibe(country.slug)}/100</span>
-          <span className={cn("chip", DIFFICULTY_META[difficultyFor(country)].tone)}>
-            {DIFFICULTY_META[difficultyFor(country)].label}
-          </span>
+          
+          <div className="flex items-center gap-1.5 ml-auto">
+             <div className="flex gap-0.5">
+                {[...Array(3)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={cn(
+                      "h-2 w-1 rounded-full",
+                      i < (country.predictability / 3) ? "bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.5)]" : "bg-border/30"
+                    )} 
+                  />
+                ))}
+             </div>
+             <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse shadow-[0_0_8px_currentColor]", country.predictability > 7 ? "text-green-500 bg-green-500" : "text-amber-500 bg-amber-500")} />
+          </div>
         </div>
       </Link>
     </article>

@@ -45,24 +45,46 @@ export function FlightIntelligence({ slug, flag }: { slug: string; flag: string 
        </div>
 
        {/* Mock Radar View */}
-       <div className="relative h-32 w-full bg-background/40 rounded-xl border border-border/40 mb-6 overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 opacity-20">
+       <div className="relative h-40 w-full bg-black/40 rounded-xl border border-white/5 mb-6 overflow-hidden flex items-center justify-center">
+          <div className="absolute inset-0">
              <svg className="h-full w-full" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-                <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-                <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-                <line x1="50" y1="5" x2="50" y2="95" stroke="currentColor" strokeWidth="0.2" />
-                <line x1="5" y1="50" x2="95" y2="50" stroke="currentColor" strokeWidth="0.2" />
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#10b881" strokeWidth="0.2" opacity="0.3" />
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#10b881" strokeWidth="0.2" opacity="0.2" />
+                <circle cx="50" cy="50" r="15" fill="none" stroke="#10b881" strokeWidth="0.2" opacity="0.1" />
+                <line x1="50" y1="5" x2="50" y2="95" stroke="#10b881" strokeWidth="0.1" opacity="0.2" />
+                <line x1="5" y1="50" x2="95" y2="50" stroke="#10b881" strokeWidth="0.1" opacity="0.2" />
+                
+                {/* Radar Sweep */}
+                <g className="origin-center animate-[spin_4s_linear_infinite]">
+                  <line x1="50" y1="50" x2="50" y2="5" stroke="#10b881" strokeWidth="0.5" />
+                  <path d="M50 5 L50 50 A45 45 0 0 0 15 25 Z" fill="url(#radarGradient)" opacity="0.2" />
+                </g>
+                <defs>
+                  <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#10b881" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#10b881" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
              </svg>
           </div>
-          <div className="relative flex items-center justify-center">
-             <div className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-             <span className="absolute -top-4 text-[10px] font-black uppercase tracking-tighter">{flag} Approach</span>
+          
+          <div className="relative flex flex-col items-center justify-center">
+             <div className="h-2.5 w-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_#10b881]" />
+             <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-500 mt-2">{flag} Approach</span>
              
-             {/* Random plane markers */}
-             <div className="absolute top-4 left-12 animate-pulse delay-75"><Navigation className="h-2 w-2 rotate-45 text-emerald-500" /></div>
-             <div className="absolute bottom-6 right-16 animate-pulse delay-150"><Navigation className="h-2 w-2 rotate-[120deg] text-emerald-500" /></div>
-             <div className="absolute top-10 right-4 animate-pulse delay-300"><Navigation className="h-2 w-2 rotate-[200deg] text-emerald-500" /></div>
+             {/* Random plane markers with flight codes */}
+             <div className="absolute -top-12 -left-12 animate-pulse flex flex-col items-center">
+                <Navigation className="h-2 w-2 rotate-45 text-emerald-500" />
+                <span className="text-[6px] font-mono text-emerald-500/60 mt-0.5">AI402</span>
+             </div>
+             <div className="absolute bottom-8 right-12 animate-pulse delay-700 flex flex-col items-center">
+                <Navigation className="h-2 w-2 rotate-[120deg] text-emerald-500" />
+                <span className="text-[6px] font-mono text-emerald-500/60 mt-0.5">6E2105</span>
+             </div>
+             <div className="absolute top-10 right-6 animate-pulse delay-1000 flex flex-col items-center">
+                <Navigation className="h-2 w-2 rotate-[200deg] text-emerald-500" />
+                <span className="text-[6px] font-mono text-emerald-500/60 mt-0.5">UK981</span>
+             </div>
           </div>
        </div>
 

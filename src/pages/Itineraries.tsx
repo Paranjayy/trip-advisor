@@ -18,12 +18,14 @@ const Itineraries = () => {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"days" | "budget" | "km">("days");
   const [diff, setDiff] = useState<"all" | "easy" | "moderate" | "hard">("all");
+  const [filterType, setFilterType] = useState<"all" | "base-camp" | "road-trip">("all");
 
   const list = useMemo(() => {
     const q = query.toLowerCase();
     let arr = ITINERARIES.filter(
       (i) =>
         (diff === "all" || i.difficulty === diff) &&
+        (filterType === "all" || i.type === filterType) &&
         (!q || `${i.title} ${i.region} ${i.blurb}`.toLowerCase().includes(q)),
     );
     arr = [...arr].sort((a, b) => {
@@ -60,6 +62,20 @@ const Itineraries = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search Srinagar, Japan, beaches…" className="pl-9 bg-surface" />
           </div>
+          <div className="flex bg-surface rounded-xl p-1 border border-border/40">
+             {(["all", "base-camp", "road-trip"] as const).map((t) => (
+               <button
+                 key={t}
+                 onClick={() => setFilterType(t)}
+                 className={cn(
+                   "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
+                   filterType === t ? "bg-primary text-primary-foreground shadow-glow" : "text-muted-foreground hover:text-foreground"
+                 )}
+               >
+                 {t.replace("-", " ")}
+               </button>
+             ))}
+          </div>
           <Select value={diff} onValueChange={(v) => setDiff(v as never)}>
             <SelectTrigger className="w-[160px] bg-surface"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -85,13 +101,28 @@ const Itineraries = () => {
             const hr = Math.round(totalHours(it));
             const cost = totalCost(it);
             const d = DIFFICULTY_META[it.difficulty];
+            const friction = it.type === "base-camp" ? 2 : it.difficulty === "hard" ? 8 : 5;
+            
             return (
               <Link
                 key={it.slug}
                 to={`/itinerary/${it.slug}`}
-                className="glass-card hover-lift p-5 flex flex-col gap-3 group"
+                className="glass-card hover-lift p-5 flex flex-col gap-3 group relative overflow-hidden"
               >
-                <div className="flex items-start gap-3">
+                {it.type === "base-camp" && (
+                  <div className="absolute -right-8 top-4 rotate-45 bg-emerald-500 text-[10px] font-black px-8 py-1 text-white shadow-lg uppercase tracking-tighter z-10">
+                    Base-Camp
+                  </div>
+                )}
+                
+                {it.type === "base-camp" && (
+              <div className="mt-4 p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center gap-3">
+                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                 <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-tight">Recovery Buffer: +2 Days Recommended</p>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-1.5 mt-4">
                   <Flag emoji={it.flag} size={36} />
                   <div className="min-w-0 flex-1">
                     <h2 className="font-display text-lg font-bold leading-snug group-hover:text-primary transition-colors">{it.title}</h2>
@@ -99,12 +130,23 @@ const Itineraries = () => {
                   </div>
                   <span className={cn("chip whitespace-nowrap", d.tone)}>{d.label}</span>
                 </div>
+
+                {it.connectionNote && (
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-2 flex items-start gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary mt-1 shrink-0 shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+                    <div>
+                       <p className="text-[10px] font-black text-primary uppercase tracking-tighter">Lineage connection</p>
+                       <p className="text-xs italic text-muted-foreground">{it.connectionNote}</p>
+                    </div>
+                  </div>
+                )}
+
                 <p className="text-sm text-muted-foreground line-clamp-2">{it.blurb}</p>
                 <TerrainChips terrains={it.terrains} max={5} />
                 <div className="grid grid-cols-3 gap-2 mt-auto">
                   <Stat icon={<Calendar className="h-3 w-3" />} label="Days" value={`${it.days}`} />
                   <Stat icon={<RouteIcon className="h-3 w-3" />} label="Distance" value={`${km} km`} />
-                  <Stat icon={<Clock className="h-3 w-3" />} label="Active hrs" value={`${hr}h`} />
+                  <Stat icon={<Clock className="h-3 w-3" />} label="Friction" value={`${friction}/10`} />
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-border/50">
                   <span className="text-xs text-muted-foreground">Per-person budget</span>

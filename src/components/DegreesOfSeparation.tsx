@@ -9,6 +9,13 @@ export function DegreesOfSeparation({ slug }: { slug: string }) {
   const current = getCountry(slug);
   const similar = similarCountries(slug, 3);
 
+  // Lineage logic for Kashmir/Karachi connection
+  const lineage = useMemo(() => {
+    if (slug === "india") return { degree: 2, note: "Ancestral roots in Kashmir; Grandfather's scholarly base." };
+    // Add more lineage markers if needed
+    return null;
+  }, [slug]);
+
   if (!current) return null;
 
   return (
@@ -22,6 +29,19 @@ export function DegreesOfSeparation({ slug }: { slug: string }) {
              <p className="text-xs text-muted-foreground mt-1">Connectivity in the global travel graph</p>
           </div>
        </div>
+
+       {lineage && (
+         <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.05)]">
+            <div className="flex items-center gap-2 mb-2">
+               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+               <p className="text-[10px] font-black uppercase text-primary tracking-widest">Lineage Detected</p>
+            </div>
+            <p className="text-sm font-bold text-foreground mb-1">{lineage.degree} Degrees of Separation</p>
+            <p className="text-xs text-muted-foreground italic leading-relaxed">
+               "{lineage.note}"
+            </p>
+         </div>
+       )}
 
        <div className="relative space-y-4">
           <div className="absolute left-[20px] top-4 bottom-4 w-px bg-dashed border-l border-border/60" />

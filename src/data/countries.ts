@@ -16,6 +16,12 @@ export type Country = {
   vegScore: VegScore;
   /** 0-100 — how Japan-like the experience feels (orderly, tech, food culture) */
   similarityScore: number;
+  /** 1-10 — how predictable the systems/infrastructure are (10 = Japan) */
+  predictability: number;
+  /** 1-10 — how much mental load is required (1 = recovery/easy, 10 = chaotic/complex) */
+  mentalLoad: number;
+  /** 1-10 — suitability for staying in one place and doing day trips */
+  baseCampSuitability: number;
   /** millions of international tourist arrivals / year */
   touristCount: number;
   /** 1-12 month numbers */
@@ -29,6 +35,13 @@ export type Country = {
   /** length 12 — relative price index per month (lower = cheaper). 60-140 typical */
   monthlyPriceIndex: number[];
   blurb: string;
+  visaInfo?: {
+    freeFor: string[]; 
+    onArrivalFor: string[];
+    eVisaFor: string[];
+    processingDays: number;
+    notes?: string;
+  };
 };
 
 const mp = (peak: number[], cheap: number[]): number[] => {
@@ -44,7 +57,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "japan", name: "Japan", region: "East Asia", flag: "🇯🇵", lat: 36.2, lng: 138.25,
     costRange: [1800, 3200], dailyCost: 180, flightCostRange: [900, 1500],
-    vegScore: "medium", similarityScore: 100, touristCount: 25,
+    vegScore: "medium", similarityScore: 100, predictability: 10, mentalLoad: 2, baseCampSuitability: 9, touristCount: 25,
     bestMonths: [3, 4, 10, 11], cheapestMonths: [1, 2, 6], peakMonths: [3, 4, 10, 11],
     highlights: [
       { name: "Tokyo", blurb: "Neon megacity, izakayas, Shibuya scramble." },
@@ -56,11 +69,18 @@ export const COUNTRIES: Country[] = [
     tags: ["culture", "city", "premium", "food", "nature"], vibe: "balanced",
     monthlyPriceIndex: mp([3, 4, 10, 11], [1, 2, 6]),
     blurb: "Hyper-organized, visually rich, with world-class food and rail.",
+    visaInfo: {
+      freeFor: ["india", "taiwan", "usa", "uk"],
+      onArrivalFor: [],
+      eVisaFor: [],
+      processingDays: 0,
+      notes: "Visa-free for most OECD countries; e-visa system recently expanded for India."
+    },
   },
   {
     slug: "taiwan", name: "Taiwan", region: "East Asia", flag: "🇹🇼", lat: 23.7, lng: 120.96,
     costRange: [900, 1600], dailyCost: 80, flightCostRange: [800, 1300],
-    vegScore: "easy", similarityScore: 78, touristCount: 11,
+    vegScore: "easy", similarityScore: 78, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 11,
     bestMonths: [3, 4, 10, 11], cheapestMonths: [5, 6, 9], peakMonths: [1, 2, 7, 8],
     highlights: [
       { name: "Taipei", blurb: "Night markets, hot springs, MRT efficiency." },
@@ -72,11 +92,18 @@ export const COUNTRIES: Country[] = [
     tags: ["food", "budget", "culture", "veg-friendly"], vibe: "chill",
     monthlyPriceIndex: mp([1, 2, 7, 8], [5, 6, 9]),
     blurb: "Japan-adjacent vibe at half the price — vegetarian heaven.",
+    visaInfo: {
+      freeFor: ["japan", "usa", "uk"],
+      onArrivalFor: [],
+      eVisaFor: ["india"],
+      processingDays: 3,
+      notes: "Indian citizens can apply for Travel Authorization Certificate (TAC) if they have a valid visa for Japan/USA/UK."
+    },
   },
   {
     slug: "vietnam", name: "Vietnam", region: "Southeast Asia", flag: "🇻🇳", lat: 14.06, lng: 108.28,
     costRange: [600, 1200], dailyCost: 50, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 55, touristCount: 12,
+    vegScore: "medium", similarityScore: 55, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 12,
     bestMonths: [2, 3, 4, 11], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 7],
     highlights: [
       { name: "Hanoi", blurb: "Old Quarter chaos, egg coffee, pho." },
@@ -92,7 +119,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "thailand", name: "Thailand", region: "Southeast Asia", flag: "🇹🇭", lat: 15.87, lng: 100.99,
     costRange: [800, 1600], dailyCost: 65, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 50, touristCount: 28,
+    vegScore: "medium", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 28,
     bestMonths: [11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Bangkok", blurb: "Temples, malls, sky-bars, street wok magic." },
@@ -108,7 +135,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "indonesia", name: "Indonesia", region: "Southeast Asia", flag: "🇮🇩", lat: -2.55, lng: 118.01,
     costRange: [700, 1400], dailyCost: 55, flightCostRange: [900, 1500],
-    vegScore: "medium", similarityScore: 35, touristCount: 16,
+    vegScore: "medium", similarityScore: 35, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 16,
     bestMonths: [4, 5, 6, 9], cheapestMonths: [2, 3, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Bali", blurb: "Rice terraces, surf, wellness culture." },
@@ -124,7 +151,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "sri-lanka", name: "Sri Lanka", region: "South Asia", flag: "🇱🇰", lat: 7.87, lng: 80.77,
     costRange: [700, 1300], dailyCost: 50, flightCostRange: [900, 1500],
-    vegScore: "easy", similarityScore: 30, touristCount: 2,
+    vegScore: "easy", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [1, 2, 3, 12], cheapestMonths: [5, 6, 9, 10], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Ella", blurb: "Tea-country trains and hikes." },
@@ -140,7 +167,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "malaysia", name: "Malaysia", region: "Southeast Asia", flag: "🇲🇾", lat: 4.21, lng: 101.98,
     costRange: [800, 1500], dailyCost: 65, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 45, touristCount: 26,
+    vegScore: "medium", similarityScore: 45, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 26,
     bestMonths: [2, 3, 4, 7, 8], cheapestMonths: [5, 6, 10, 11], peakMonths: [12, 1],
     highlights: [
       { name: "Kuala Lumpur", blurb: "Petronas towers + hawker meccas." },
@@ -156,7 +183,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "georgia", name: "Georgia", region: "Caucasus", flag: "🇬🇪", lat: 42.32, lng: 43.36,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [600, 1100],
-    vegScore: "medium", similarityScore: 25, touristCount: 7,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 7,
     bestMonths: [5, 6, 9, 10], cheapestMonths: [3, 4, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Tbilisi", blurb: "Sulfur baths and wine bars in cobbled lanes." },
@@ -172,7 +199,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "turkey", name: "Türkiye", region: "Western Asia", flag: "🇹🇷", lat: 38.96, lng: 35.24,
     costRange: [900, 1700], dailyCost: 70, flightCostRange: [600, 1100],
-    vegScore: "medium", similarityScore: 40, touristCount: 50,
+    vegScore: "medium", similarityScore: 40, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 50,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [6, 7, 8],
     highlights: [
       { name: "Istanbul", blurb: "Bosphorus, bazaars, mosques." },
@@ -188,7 +215,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "poland", name: "Poland", region: "Europe", flag: "🇵🇱", lat: 51.92, lng: 19.13,
     costRange: [900, 1600], dailyCost: 70, flightCostRange: [500, 1000],
-    vegScore: "medium", similarityScore: 35, touristCount: 21,
+    vegScore: "medium", similarityScore: 35, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 21,
     bestMonths: [5, 6, 9], cheapestMonths: [2, 3, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Kraków", blurb: "Medieval old town, Wawel castle." },
@@ -204,7 +231,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "hungary", name: "Hungary", region: "Europe", flag: "🇭🇺", lat: 47.16, lng: 19.5,
     costRange: [950, 1700], dailyCost: 75, flightCostRange: [550, 1050],
-    vegScore: "medium", similarityScore: 32, touristCount: 17,
+    vegScore: "medium", similarityScore: 32, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 17,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [1, 2, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Budapest", blurb: "Thermal baths and Danube panoramas." },
@@ -220,7 +247,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "romania", name: "Romania", region: "Europe", flag: "🇷🇴", lat: 45.94, lng: 24.97,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [600, 1100],
-    vegScore: "medium", similarityScore: 28, touristCount: 3,
+    vegScore: "medium", similarityScore: 28, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 3,
     bestMonths: [5, 6, 9], cheapestMonths: [2, 3, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Brașov", blurb: "Transylvanian old town under the Carpathians." },
@@ -236,7 +263,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "spain", name: "Spain", region: "Europe", flag: "🇪🇸", lat: 40.46, lng: -3.75,
     costRange: [1400, 2400], dailyCost: 130, flightCostRange: [600, 1200],
-    vegScore: "medium", similarityScore: 38, touristCount: 85,
+    vegScore: "medium", similarityScore: 38, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 85,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Barcelona", blurb: "Gaudí, beach, tapas." },
@@ -252,7 +279,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "portugal", name: "Portugal", region: "Europe", flag: "🇵🇹", lat: 39.4, lng: -8.22,
     costRange: [1200, 2100], dailyCost: 110, flightCostRange: [650, 1200],
-    vegScore: "medium", similarityScore: 36, touristCount: 26,
+    vegScore: "medium", similarityScore: 36, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 26,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Lisbon", blurb: "Tram 28, miradouros, fado." },
@@ -268,7 +295,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "czechia", name: "Czechia", region: "Europe", flag: "🇨🇿", lat: 49.82, lng: 15.47,
     costRange: [1000, 1700], dailyCost: 85, flightCostRange: [600, 1100],
-    vegScore: "medium", similarityScore: 34, touristCount: 13,
+    vegScore: "medium", similarityScore: 34, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 13,
     bestMonths: [5, 6, 9], cheapestMonths: [2, 3, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Prague", blurb: "Astronomical clock + cheap pilsner." },
@@ -284,7 +311,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "morocco", name: "Morocco", region: "North Africa", flag: "🇲🇦", lat: 31.79, lng: -7.09,
     costRange: [900, 1600], dailyCost: 70, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 20, touristCount: 14,
+    vegScore: "medium", similarityScore: 20, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 14,
     bestMonths: [3, 4, 10, 11], cheapestMonths: [6, 7, 8], peakMonths: [12, 1, 4],
     highlights: [
       { name: "Marrakech", blurb: "Souks, riads, Jemaa el-Fnaa nights." },
@@ -300,7 +327,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "egypt", name: "Egypt", region: "North Africa", flag: "🇪🇬", lat: 26.82, lng: 30.8,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [800, 1300],
-    vegScore: "medium", similarityScore: 18, touristCount: 13,
+    vegScore: "medium", similarityScore: 18, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 13,
     bestMonths: [10, 11, 2, 3], cheapestMonths: [6, 7, 8], peakMonths: [12, 1],
     highlights: [
       { name: "Cairo", blurb: "Pyramids and the Egyptian Museum." },
@@ -316,7 +343,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "philippines", name: "Philippines", region: "Southeast Asia", flag: "🇵🇭", lat: 12.88, lng: 121.77,
     costRange: [900, 1700], dailyCost: 70, flightCostRange: [1000, 1600],
-    vegScore: "hard", similarityScore: 30, touristCount: 5,
+    vegScore: "hard", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 5,
     bestMonths: [12, 1, 2, 3, 4], cheapestMonths: [6, 7, 9], peakMonths: [12, 1],
     highlights: [
       { name: "Palawan", blurb: "Hidden lagoons of El Nido." },
@@ -332,7 +359,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "south-korea", name: "South Korea", region: "East Asia", flag: "🇰🇷", lat: 35.91, lng: 127.77,
     costRange: [1500, 2600], dailyCost: 130, flightCostRange: [900, 1500],
-    vegScore: "medium", similarityScore: 88, touristCount: 11,
+    vegScore: "medium", similarityScore: 88, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 11,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [1, 2, 6], peakMonths: [4, 5, 10],
     highlights: [
       { name: "Seoul", blurb: "K-pop, palaces, 24/7 BBQ alleys." },
@@ -348,7 +375,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "singapore", name: "Singapore", region: "Southeast Asia", flag: "🇸🇬", lat: 1.35, lng: 103.82,
     costRange: [1700, 2900], dailyCost: 160, flightCostRange: [1000, 1600],
-    vegScore: "easy", similarityScore: 70, touristCount: 14,
+    vegScore: "easy", similarityScore: 70, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 14,
     bestMonths: [2, 3, 4], cheapestMonths: [10, 11], peakMonths: [6, 7, 12],
     highlights: [
       { name: "Marina Bay", blurb: "Skyline + Gardens by the Bay." },
@@ -364,7 +391,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "uae", name: "UAE", region: "Middle East", flag: "🇦🇪", lat: 23.42, lng: 53.85,
     costRange: [1600, 3000], dailyCost: 170, flightCostRange: [800, 1400],
-    vegScore: "easy", similarityScore: 50, touristCount: 17,
+    vegScore: "easy", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 17,
     bestMonths: [11, 12, 1, 2, 3], cheapestMonths: [6, 7, 8], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Dubai", blurb: "Burj Khalifa, desert safaris, malls." },
@@ -380,7 +407,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "china", name: "China", region: "East Asia", flag: "🇨🇳", lat: 35.86, lng: 104.2,
     costRange: [1300, 2400], dailyCost: 100, flightCostRange: [900, 1500],
-    vegScore: "medium", similarityScore: 65, touristCount: 30,
+    vegScore: "medium", similarityScore: 65, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 30,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [3, 6, 11], peakMonths: [5, 10],
     highlights: [
       { name: "Beijing", blurb: "Forbidden City + Great Wall day trips." },
@@ -396,7 +423,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "greece", name: "Greece", region: "Europe", flag: "🇬🇷", lat: 39.07, lng: 21.82,
     costRange: [1300, 2300], dailyCost: 120, flightCostRange: [700, 1200],
-    vegScore: "easy", similarityScore: 30, touristCount: 33,
+    vegScore: "easy", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 33,
     bestMonths: [5, 6, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Athens", blurb: "Acropolis at golden hour." },
@@ -412,7 +439,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "india", name: "India", region: "South Asia", flag: "🇮🇳", lat: 20.59, lng: 78.96,
     costRange: [600, 1300], dailyCost: 45, flightCostRange: [900, 1500],
-    vegScore: "easy", similarityScore: 25, touristCount: 9,
+    vegScore: "easy", similarityScore: 25, predictability: 3, mentalLoad: 9, baseCampSuitability: 6, touristCount: 9,
     bestMonths: [10, 11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1],
     highlights: [
       { name: "Rajasthan", blurb: "Pink, blue, golden cities + camel desert." },
@@ -424,11 +451,18 @@ export const COUNTRIES: Country[] = [
     tags: ["culture", "food", "veg-friendly", "budget", "spiritual"], vibe: "adventure",
     monthlyPriceIndex: mp([12, 1], [5, 6, 9]),
     blurb: "Vegetarian capital of the world — overwhelming and unforgettable.",
+    visaInfo: {
+      freeFor: ["nepal", "bhutan"],
+      onArrivalFor: [],
+      eVisaFor: ["japan", "taiwan", "usa", "uk"],
+      processingDays: 4,
+      notes: "Robust E-visa system for 160+ countries."
+    },
   },
   {
     slug: "nepal", name: "Nepal", region: "South Asia", flag: "🇳🇵", lat: 28.39, lng: 84.12,
     costRange: [700, 1300], dailyCost: 45, flightCostRange: [1000, 1500],
-    vegScore: "easy", similarityScore: 22, touristCount: 1,
+    vegScore: "easy", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [10, 11, 3, 4], cheapestMonths: [6, 7, 8], peakMonths: [10, 11],
     highlights: [
       { name: "Kathmandu", blurb: "Stupas, momo, mountain gateway." },
@@ -447,7 +481,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "italy", name: "Italy", region: "Europe", flag: "🇮🇹", lat: 41.87, lng: 12.57,
     costRange: [1500, 2700], dailyCost: 140, flightCostRange: [700, 1300],
-    vegScore: "easy", similarityScore: 38, touristCount: 65,
+    vegScore: "easy", similarityScore: 38, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 65,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Rome", blurb: "Colosseum, pasta carbonara, Vespa lanes." },
@@ -463,7 +497,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "france", name: "France", region: "Europe", flag: "🇫🇷", lat: 46.23, lng: 2.21,
     costRange: [1700, 3000], dailyCost: 160, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 42, touristCount: 90,
+    vegScore: "medium", similarityScore: 42, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 90,
     bestMonths: [5, 6, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Paris", blurb: "Louvre mornings, café afternoons." },
@@ -479,7 +513,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "germany", name: "Germany", region: "Europe", flag: "🇩🇪", lat: 51.17, lng: 10.45,
     costRange: [1300, 2300], dailyCost: 120, flightCostRange: [700, 1300],
-    vegScore: "easy", similarityScore: 45, touristCount: 39,
+    vegScore: "easy", similarityScore: 45, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 39,
     bestMonths: [5, 6, 9], cheapestMonths: [2, 3, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Berlin", blurb: "Techno, history, kebabs at 4am." },
@@ -495,7 +529,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "netherlands", name: "Netherlands", region: "Europe", flag: "🇳🇱", lat: 52.13, lng: 5.29,
     costRange: [1500, 2600], dailyCost: 140, flightCostRange: [700, 1300],
-    vegScore: "easy", similarityScore: 50, touristCount: 20,
+    vegScore: "easy", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 20,
     bestMonths: [4, 5, 6, 9], cheapestMonths: [1, 2, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Amsterdam", blurb: "Canals, bikes, brown cafés." },
@@ -511,7 +545,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "uk", name: "United Kingdom", region: "Europe", flag: "🇬🇧", lat: 55.38, lng: -3.44,
     costRange: [1700, 3000], dailyCost: 160, flightCostRange: [700, 1300],
-    vegScore: "easy", similarityScore: 40, touristCount: 38,
+    vegScore: "easy", similarityScore: 40, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 38,
     bestMonths: [5, 6, 9], cheapestMonths: [1, 2, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "London", blurb: "Museums, markets, theatre, curry." },
@@ -527,7 +561,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "ireland", name: "Ireland", region: "Europe", flag: "🇮🇪", lat: 53.41, lng: -8.24,
     costRange: [1500, 2600], dailyCost: 140, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 35, touristCount: 11,
+    vegScore: "medium", similarityScore: 35, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 11,
     bestMonths: [5, 6, 9], cheapestMonths: [1, 2, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Dublin", blurb: "Pints, poets, Trinity College." },
@@ -543,7 +577,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "iceland", name: "Iceland", region: "Europe", flag: "🇮🇸", lat: 64.96, lng: -19.02,
     costRange: [2200, 3800], dailyCost: 220, flightCostRange: [600, 1100],
-    vegScore: "medium", similarityScore: 40, touristCount: 2,
+    vegScore: "medium", similarityScore: 40, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [6, 7, 8, 9], cheapestMonths: [10, 11, 1], peakMonths: [6, 7, 8],
     highlights: [
       { name: "Reykjavík", blurb: "Tiny capital, big food scene." },
@@ -559,7 +593,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "norway", name: "Norway", region: "Europe", flag: "🇳🇴", lat: 60.47, lng: 8.47,
     costRange: [2000, 3500], dailyCost: 200, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 42, touristCount: 7,
+    vegScore: "medium", similarityScore: 42, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 7,
     bestMonths: [6, 7, 8], cheapestMonths: [1, 2, 11], peakMonths: [6, 7, 8],
     highlights: [
       { name: "Bergen", blurb: "Hanseatic wharf + fjord gateway." },
@@ -575,7 +609,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "sweden", name: "Sweden", region: "Europe", flag: "🇸🇪", lat: 60.13, lng: 18.64,
     costRange: [1700, 2900], dailyCost: 160, flightCostRange: [700, 1300],
-    vegScore: "easy", similarityScore: 50, touristCount: 8,
+    vegScore: "easy", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 8,
     bestMonths: [5, 6, 7, 8], cheapestMonths: [1, 2, 11], peakMonths: [6, 7, 8],
     highlights: [
       { name: "Stockholm", blurb: "14 islands of design + fika." },
@@ -591,7 +625,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "switzerland", name: "Switzerland", region: "Europe", flag: "🇨🇭", lat: 46.82, lng: 8.23,
     costRange: [2200, 3800], dailyCost: 220, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 55, touristCount: 12,
+    vegScore: "medium", similarityScore: 55, predictability: 10, mentalLoad: 3, baseCampSuitability: 8, touristCount: 12,
     bestMonths: [6, 7, 8, 9], cheapestMonths: [4, 5, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Zermatt", blurb: "Matterhorn-view alpine village." },
@@ -607,7 +641,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "austria", name: "Austria", region: "Europe", flag: "🇦🇹", lat: 47.52, lng: 14.55,
     costRange: [1400, 2400], dailyCost: 130, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 45, touristCount: 31,
+    vegScore: "medium", similarityScore: 45, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 31,
     bestMonths: [5, 6, 9], cheapestMonths: [1, 2, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Vienna", blurb: "Imperial cafés and concert halls." },
@@ -623,7 +657,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "croatia", name: "Croatia", region: "Europe", flag: "🇭🇷", lat: 45.1, lng: 15.2,
     costRange: [1100, 1900], dailyCost: 95, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 32, touristCount: 18,
+    vegScore: "medium", similarityScore: 32, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 18,
     bestMonths: [5, 6, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Dubrovnik", blurb: "Walled city on the Adriatic." },
@@ -639,7 +673,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "albania", name: "Albania", region: "Europe", flag: "🇦🇱", lat: 41.15, lng: 20.17,
     costRange: [600, 1100], dailyCost: 45, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 25, touristCount: 10,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 10,
     bestMonths: [5, 6, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Tirana", blurb: "Pastel-painted capital with great coffee." },
@@ -655,7 +689,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "bulgaria", name: "Bulgaria", region: "Europe", flag: "🇧🇬", lat: 42.73, lng: 25.49,
     costRange: [800, 1400], dailyCost: 60, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 28, touristCount: 9,
+    vegScore: "medium", similarityScore: 28, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 9,
     bestMonths: [5, 6, 9], cheapestMonths: [3, 4, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Sofia", blurb: "Capital of cathedrals and craft beer." },
@@ -671,7 +705,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "serbia", name: "Serbia", region: "Europe", flag: "🇷🇸", lat: 44.02, lng: 21.01,
     costRange: [700, 1300], dailyCost: 55, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 26, touristCount: 2,
+    vegScore: "medium", similarityScore: 26, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [5, 6, 9], cheapestMonths: [2, 3, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Belgrade", blurb: "Splavovi river clubs till sunrise." },
@@ -687,7 +721,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "armenia", name: "Armenia", region: "Caucasus", flag: "🇦🇲", lat: 40.07, lng: 45.04,
     costRange: [700, 1300], dailyCost: 55, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 24, touristCount: 2,
+    vegScore: "medium", similarityScore: 24, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [5, 6, 9, 10], cheapestMonths: [3, 4, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Yerevan", blurb: "Pink-stone capital with cafés galore." },
@@ -703,7 +737,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "kazakhstan", name: "Kazakhstan", region: "Central Asia", flag: "🇰🇿", lat: 48.02, lng: 66.92,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [800, 1400],
-    vegScore: "hard", similarityScore: 30, touristCount: 7,
+    vegScore: "hard", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 7,
     bestMonths: [5, 6, 9], cheapestMonths: [3, 4, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Almaty", blurb: "Tree-lined city under the Tien Shan." },
@@ -719,7 +753,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "uzbekistan", name: "Uzbekistan", region: "Central Asia", flag: "🇺🇿", lat: 41.38, lng: 64.59,
     costRange: [700, 1300], dailyCost: 55, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 22, touristCount: 6,
+    vegScore: "medium", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 6,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [2, 3, 11], peakMonths: [7, 8],
     highlights: [
       { name: "Samarkand", blurb: "Silk Road's tile-blue masterpiece." },
@@ -735,7 +769,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "jordan", name: "Jordan", region: "Middle East", flag: "🇯🇴", lat: 30.59, lng: 36.24,
     costRange: [1100, 1900], dailyCost: 90, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 25, touristCount: 5,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 5,
     bestMonths: [3, 4, 5, 10, 11], cheapestMonths: [6, 7, 8], peakMonths: [3, 4, 10],
     highlights: [
       { name: "Petra", blurb: "Rose-red city carved in cliffs." },
@@ -751,7 +785,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "israel", name: "Israel", region: "Middle East", flag: "🇮🇱", lat: 31.05, lng: 34.85,
     costRange: [1500, 2600], dailyCost: 140, flightCostRange: [800, 1400],
-    vegScore: "easy", similarityScore: 35, touristCount: 4,
+    vegScore: "easy", similarityScore: 35, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [3, 4, 5, 10, 11], cheapestMonths: [6, 7, 8], peakMonths: [9, 12, 4],
     highlights: [
       { name: "Tel Aviv", blurb: "Beach city + Levantine vegan capital." },
@@ -767,7 +801,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "saudi-arabia", name: "Saudi Arabia", region: "Middle East", flag: "🇸🇦", lat: 23.89, lng: 45.08,
     costRange: [1300, 2400], dailyCost: 120, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 35, touristCount: 27,
+    vegScore: "medium", similarityScore: 35, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 27,
     bestMonths: [11, 12, 1, 2, 3], cheapestMonths: [6, 7, 8], peakMonths: [12, 1, 2],
     highlights: [
       { name: "AlUla", blurb: "Hegra's Nabataean tombs in the desert." },
@@ -783,7 +817,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "qatar", name: "Qatar", region: "Middle East", flag: "🇶🇦", lat: 25.35, lng: 51.18,
     costRange: [1500, 2700], dailyCost: 150, flightCostRange: [800, 1400],
-    vegScore: "easy", similarityScore: 50, touristCount: 4,
+    vegScore: "easy", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [11, 12, 1, 2, 3], cheapestMonths: [6, 7, 8], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Doha", blurb: "Skyline + Museum of Islamic Art." },
@@ -799,7 +833,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "south-africa", name: "South Africa", region: "Africa", flag: "🇿🇦", lat: -30.56, lng: 22.94,
     costRange: [1200, 2200], dailyCost: 100, flightCostRange: [1100, 1700],
-    vegScore: "medium", similarityScore: 30, touristCount: 10,
+    vegScore: "medium", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 10,
     bestMonths: [3, 4, 5, 9, 10], cheapestMonths: [6, 7, 8], peakMonths: [12, 1],
     highlights: [
       { name: "Cape Town", blurb: "Table Mountain + wine valleys." },
@@ -815,7 +849,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "kenya", name: "Kenya", region: "Africa", flag: "🇰🇪", lat: -0.02, lng: 37.91,
     costRange: [1400, 2500], dailyCost: 120, flightCostRange: [1200, 1800],
-    vegScore: "medium", similarityScore: 22, touristCount: 2,
+    vegScore: "medium", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [6, 7, 8, 9, 10], cheapestMonths: [4, 5, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Maasai Mara", blurb: "Great Migration savanna." },
@@ -831,7 +865,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "tanzania", name: "Tanzania", region: "Africa", flag: "🇹🇿", lat: -6.37, lng: 34.89,
     costRange: [1500, 2700], dailyCost: 130, flightCostRange: [1200, 1800],
-    vegScore: "medium", similarityScore: 22, touristCount: 2,
+    vegScore: "medium", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [6, 7, 8, 9, 10], cheapestMonths: [4, 5, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Serengeti", blurb: "Endless plains + wildebeest." },
@@ -847,7 +881,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "namibia", name: "Namibia", region: "Africa", flag: "🇳🇦", lat: -22.96, lng: 18.49,
     costRange: [1500, 2600], dailyCost: 130, flightCostRange: [1300, 1900],
-    vegScore: "hard", similarityScore: 25, touristCount: 1,
+    vegScore: "hard", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [5, 6, 7, 8, 9], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Sossusvlei", blurb: "Tallest dunes in the world." },
@@ -863,7 +897,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "rwanda", name: "Rwanda", region: "Africa", flag: "🇷🇼", lat: -1.94, lng: 29.87,
     costRange: [1500, 2800], dailyCost: 130, flightCostRange: [1300, 1900],
-    vegScore: "medium", similarityScore: 25, touristCount: 1,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [6, 7, 8, 9], cheapestMonths: [3, 4, 11], peakMonths: [6, 7, 8],
     highlights: [
       { name: "Volcanoes NP", blurb: "Mountain gorilla trekking." },
@@ -879,7 +913,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "ethiopia", name: "Ethiopia", region: "Africa", flag: "🇪🇹", lat: 9.15, lng: 40.49,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [1100, 1700],
-    vegScore: "easy", similarityScore: 18, touristCount: 1,
+    vegScore: "easy", similarityScore: 18, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [10, 11, 12, 1, 2], cheapestMonths: [6, 7, 8], peakMonths: [12, 1],
     highlights: [
       { name: "Lalibela", blurb: "Rock-hewn churches." },
@@ -895,7 +929,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "tunisia", name: "Tunisia", region: "North Africa", flag: "🇹🇳", lat: 33.89, lng: 9.54,
     costRange: [700, 1300], dailyCost: 55, flightCostRange: [700, 1200],
-    vegScore: "medium", similarityScore: 22, touristCount: 9,
+    vegScore: "medium", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 9,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Tunis", blurb: "Medina + Carthage ruins." },
@@ -911,7 +945,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "usa", name: "United States", region: "North America", flag: "🇺🇸", lat: 39.83, lng: -98.58,
     costRange: [1800, 3500], dailyCost: 180, flightCostRange: [400, 1400],
-    vegScore: "easy", similarityScore: 45, touristCount: 51,
+    vegScore: "easy", similarityScore: 45, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 51,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [1, 2, 11], peakMonths: [6, 7, 8, 12],
     highlights: [
       { name: "NYC", blurb: "City that punches you with energy." },
@@ -927,7 +961,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "canada", name: "Canada", region: "North America", flag: "🇨🇦", lat: 56.13, lng: -106.35,
     costRange: [1600, 2800], dailyCost: 150, flightCostRange: [600, 1400],
-    vegScore: "easy", similarityScore: 50, touristCount: 22,
+    vegScore: "easy", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 22,
     bestMonths: [6, 7, 8, 9], cheapestMonths: [3, 4, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Banff", blurb: "Turquoise lakes in the Rockies." },
@@ -943,7 +977,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "mexico", name: "Mexico", region: "North America", flag: "🇲🇽", lat: 23.63, lng: -102.55,
     costRange: [900, 1700], dailyCost: 75, flightCostRange: [400, 900],
-    vegScore: "medium", similarityScore: 28, touristCount: 38,
+    vegScore: "medium", similarityScore: 28, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 38,
     bestMonths: [11, 12, 1, 2, 3, 4], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 3],
     highlights: [
       { name: "CDMX", blurb: "Tacos al pastor and Frida's house." },
@@ -959,7 +993,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "cuba", name: "Cuba", region: "Caribbean", flag: "🇨🇺", lat: 21.52, lng: -77.78,
     costRange: [1100, 1900], dailyCost: 90, flightCostRange: [500, 1100],
-    vegScore: "hard", similarityScore: 22, touristCount: 4,
+    vegScore: "hard", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [11, 12, 1, 2, 3, 4], cheapestMonths: [5, 9, 10], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Havana", blurb: "Classic cars and crumbling beauty." },
@@ -975,7 +1009,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "dominican-republic", name: "Dominican Republic", region: "Caribbean", flag: "🇩🇴", lat: 18.74, lng: -70.16,
     costRange: [1100, 2000], dailyCost: 95, flightCostRange: [500, 1000],
-    vegScore: "medium", similarityScore: 25, touristCount: 8,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 8,
     bestMonths: [12, 1, 2, 3, 4], cheapestMonths: [5, 9, 10], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Punta Cana", blurb: "All-inclusive beach belt." },
@@ -991,7 +1025,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "costa-rica", name: "Costa Rica", region: "Central America", flag: "🇨🇷", lat: 9.75, lng: -83.75,
     costRange: [1300, 2300], dailyCost: 120, flightCostRange: [500, 1100],
-    vegScore: "easy", similarityScore: 30, touristCount: 3,
+    vegScore: "easy", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 3,
     bestMonths: [12, 1, 2, 3, 4], cheapestMonths: [5, 9, 10], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Arenal", blurb: "Volcano + hot springs." },
@@ -1007,7 +1041,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "guatemala", name: "Guatemala", region: "Central America", flag: "🇬🇹", lat: 15.78, lng: -90.23,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [500, 1100],
-    vegScore: "medium", similarityScore: 22, touristCount: 2,
+    vegScore: "medium", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [11, 12, 1, 2, 3, 4], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 3],
     highlights: [
       { name: "Antigua", blurb: "Cobbled colonial city under volcanoes." },
@@ -1023,7 +1057,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "panama", name: "Panama", region: "Central America", flag: "🇵🇦", lat: 8.54, lng: -80.78,
     costRange: [1100, 2000], dailyCost: 95, flightCostRange: [500, 1100],
-    vegScore: "medium", similarityScore: 28, touristCount: 2,
+    vegScore: "medium", similarityScore: 28, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [12, 1, 2, 3, 4], cheapestMonths: [5, 9, 10], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Panama City", blurb: "Skyline + Casco Viejo old town." },
@@ -1039,7 +1073,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "brazil", name: "Brazil", region: "South America", flag: "🇧🇷", lat: -14.24, lng: -51.93,
     costRange: [1300, 2300], dailyCost: 110, flightCostRange: [800, 1500],
-    vegScore: "medium", similarityScore: 25, touristCount: 6,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 6,
     bestMonths: [4, 5, 9, 10], cheapestMonths: [3, 6, 11], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Rio", blurb: "Christ, Copacabana, samba schools." },
@@ -1055,7 +1089,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "argentina", name: "Argentina", region: "South America", flag: "🇦🇷", lat: -38.42, lng: -63.62,
     costRange: [1100, 2000], dailyCost: 95, flightCostRange: [800, 1500],
-    vegScore: "medium", similarityScore: 30, touristCount: 7,
+    vegScore: "medium", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 7,
     bestMonths: [10, 11, 12, 3, 4], cheapestMonths: [5, 6, 8], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Buenos Aires", blurb: "Tango + steak + Belle Époque." },
@@ -1071,7 +1105,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "chile", name: "Chile", region: "South America", flag: "🇨🇱", lat: -35.68, lng: -71.54,
     costRange: [1300, 2300], dailyCost: 110, flightCostRange: [900, 1600],
-    vegScore: "medium", similarityScore: 32, touristCount: 5,
+    vegScore: "medium", similarityScore: 32, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 5,
     bestMonths: [10, 11, 12, 3, 4], cheapestMonths: [5, 6, 8], peakMonths: [1, 2],
     highlights: [
       { name: "Atacama", blurb: "Driest desert on Earth — alien landscapes." },
@@ -1087,7 +1121,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "peru", name: "Peru", region: "South America", flag: "🇵🇪", lat: -9.19, lng: -75.02,
     costRange: [1100, 2000], dailyCost: 90, flightCostRange: [800, 1500],
-    vegScore: "easy", similarityScore: 25, touristCount: 4,
+    vegScore: "easy", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [5, 6, 7, 8, 9], cheapestMonths: [11, 2, 3], peakMonths: [6, 7, 8],
     highlights: [
       { name: "Machu Picchu", blurb: "Lost Inca city in the clouds." },
@@ -1103,7 +1137,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "colombia", name: "Colombia", region: "South America", flag: "🇨🇴", lat: 4.57, lng: -74.3,
     costRange: [900, 1700], dailyCost: 75, flightCostRange: [600, 1200],
-    vegScore: "medium", similarityScore: 25, touristCount: 4,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [12, 1, 2, 3, 7, 8], cheapestMonths: [4, 5, 10], peakMonths: [12, 1],
     highlights: [
       { name: "Cartagena", blurb: "Walled Caribbean colonial city." },
@@ -1119,7 +1153,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "ecuador", name: "Ecuador", region: "South America", flag: "🇪🇨", lat: -1.83, lng: -78.18,
     costRange: [1000, 1800], dailyCost: 85, flightCostRange: [700, 1300],
-    vegScore: "medium", similarityScore: 22, touristCount: 1,
+    vegScore: "medium", similarityScore: 22, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [6, 7, 8, 9, 12], cheapestMonths: [4, 5, 10, 11], peakMonths: [6, 7, 8, 12],
     highlights: [
       { name: "Galápagos", blurb: "Wildlife wonderland Darwin loved." },
@@ -1135,7 +1169,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "bolivia", name: "Bolivia", region: "South America", flag: "🇧🇴", lat: -16.29, lng: -63.59,
     costRange: [700, 1300], dailyCost: 50, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 18, touristCount: 1,
+    vegScore: "medium", similarityScore: 18, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [5, 6, 7, 8, 9], cheapestMonths: [11, 2, 3], peakMonths: [7, 8],
     highlights: [
       { name: "Salar de Uyuni", blurb: "World's biggest mirror salt flat." },
@@ -1151,7 +1185,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "australia", name: "Australia", region: "Oceania", flag: "🇦🇺", lat: -25.27, lng: 133.78,
     costRange: [2000, 3500], dailyCost: 200, flightCostRange: [1200, 2000],
-    vegScore: "easy", similarityScore: 50, touristCount: 9,
+    vegScore: "easy", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 9,
     bestMonths: [3, 4, 5, 9, 10, 11], cheapestMonths: [5, 6, 8], peakMonths: [12, 1],
     highlights: [
       { name: "Sydney", blurb: "Opera House harbor + beaches." },
@@ -1167,7 +1201,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "new-zealand", name: "New Zealand", region: "Oceania", flag: "🇳🇿", lat: -40.9, lng: 174.89,
     costRange: [1800, 3200], dailyCost: 170, flightCostRange: [1300, 2100],
-    vegScore: "easy", similarityScore: 45, touristCount: 4,
+    vegScore: "easy", similarityScore: 45, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [12, 1, 2, 3, 11], cheapestMonths: [5, 6, 8], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Queenstown", blurb: "Adventure capital of the world." },
@@ -1183,7 +1217,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "fiji", name: "Fiji", region: "Oceania", flag: "🇫🇯", lat: -17.71, lng: 178.07,
     costRange: [1800, 3200], dailyCost: 170, flightCostRange: [1300, 2100],
-    vegScore: "medium", similarityScore: 25, touristCount: 1,
+    vegScore: "medium", similarityScore: 25, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [5, 6, 7, 8, 9, 10], cheapestMonths: [2, 3, 11], peakMonths: [7, 8, 12],
     highlights: [
       { name: "Yasawa Islands", blurb: "Backpacker beach paradise." },
@@ -1199,7 +1233,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "mongolia", name: "Mongolia", region: "East Asia", flag: "🇲🇳", lat: 46.86, lng: 103.85,
     costRange: [1100, 2000], dailyCost: 90, flightCostRange: [900, 1500],
-    vegScore: "hard", similarityScore: 35, touristCount: 1,
+    vegScore: "hard", similarityScore: 35, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [6, 7, 8, 9], cheapestMonths: [4, 5, 10], peakMonths: [7, 8],
     highlights: [
       { name: "Gobi Desert", blurb: "Singing dunes + dinosaur fossils." },
@@ -1215,7 +1249,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "bhutan", name: "Bhutan", region: "South Asia", flag: "🇧🇹", lat: 27.51, lng: 90.43,
     costRange: [2200, 3800], dailyCost: 250, flightCostRange: [1100, 1700],
-    vegScore: "easy", similarityScore: 40, touristCount: 0.3,
+    vegScore: "easy", similarityScore: 40, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 0.3,
     bestMonths: [3, 4, 5, 10, 11], cheapestMonths: [6, 7, 8], peakMonths: [3, 4, 10],
     highlights: [
       { name: "Tiger's Nest", blurb: "Cliffside monastery hike." },
@@ -1231,7 +1265,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "cambodia", name: "Cambodia", region: "Southeast Asia", flag: "🇰🇭", lat: 12.57, lng: 104.99,
     costRange: [600, 1200], dailyCost: 50, flightCostRange: [900, 1400],
-    vegScore: "medium", similarityScore: 30, touristCount: 5,
+    vegScore: "medium", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 5,
     bestMonths: [11, 12, 1, 2, 3], cheapestMonths: [6, 7, 8, 9], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Angkor Wat", blurb: "Sunrise at the world's biggest temple." },
@@ -1247,7 +1281,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "laos", name: "Laos", region: "Southeast Asia", flag: "🇱🇦", lat: 19.86, lng: 102.5,
     costRange: [600, 1200], dailyCost: 45, flightCostRange: [1000, 1500],
-    vegScore: "medium", similarityScore: 28, touristCount: 4,
+    vegScore: "medium", similarityScore: 28, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 4,
     bestMonths: [11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Luang Prabang", blurb: "Saffron monks at sunrise alms." },
@@ -1263,7 +1297,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "myanmar", name: "Myanmar", region: "Southeast Asia", flag: "🇲🇲", lat: 21.91, lng: 95.96,
     costRange: [800, 1500], dailyCost: 60, flightCostRange: [1000, 1500],
-    vegScore: "medium", similarityScore: 28, touristCount: 1,
+    vegScore: "medium", similarityScore: 28, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 1,
     bestMonths: [11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1],
     highlights: [
       { name: "Bagan", blurb: "2,000 temples on a sunrise plain." },
@@ -1279,7 +1313,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "maldives", name: "Maldives", region: "South Asia", flag: "🇲🇻", lat: 3.2, lng: 73.22,
     costRange: [2500, 4500], dailyCost: 280, flightCostRange: [1100, 1800],
-    vegScore: "medium", similarityScore: 30, touristCount: 2,
+    vegScore: "medium", similarityScore: 30, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 2,
     bestMonths: [11, 12, 1, 2, 3, 4], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 2],
     highlights: [
       { name: "Overwater Bungalows", blurb: "Glass floors over reef." },
@@ -1295,7 +1329,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "russia", name: "Russia", region: "Europe", flag: "🇷🇺", lat: 61.52, lng: 105.32,
     costRange: [1100, 1900], dailyCost: 85, flightCostRange: [800, 1400],
-    vegScore: "medium", similarityScore: 38, touristCount: 5,
+    vegScore: "medium", similarityScore: 38, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 5,
     bestMonths: [5, 6, 7, 8, 9], cheapestMonths: [11, 2, 3], peakMonths: [6, 7, 8, 12],
     highlights: [
       { name: "St. Petersburg", blurb: "Hermitage + canals + white nights." },

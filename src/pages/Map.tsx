@@ -20,6 +20,7 @@ import { TERRAIN_LIST, TERRAIN_META, terrainsFor, type Terrain, difficultyFor, D
 import { japanVibe } from "@/lib/japanVibe";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
+import { WorldClockMap } from "@/components/WorldClockMap";
 
 function costColor(daily: number): string {
   if (daily <= 60) return "hsl(var(--success))";
@@ -178,6 +179,7 @@ const MapPage = () => {
             <Tabs defaultValue="map">
               <TabsList className="mb-4">
                 <TabsTrigger value="map">🗺️ Map</TabsTrigger>
+                <TabsTrigger value="temporal">🕒 Temporal Pulse</TabsTrigger>
                 <TabsTrigger value="table">📊 Table view</TabsTrigger>
               </TabsList>
 
@@ -256,6 +258,15 @@ const MapPage = () => {
                       })}
                     </MapContainer>
                   </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="temporal" className="m-0">
+                <WorldClockMap />
+                <div className="mt-4 p-4 glass-card border-primary/20 bg-primary-soft/10">
+                   <h3 className="text-xs font-black uppercase tracking-widest text-primary mb-2">Synchronization Note</h3>
+                   <p className="text-xs text-muted-foreground leading-relaxed">
+                     The terminator line above approximates the real-time boundary between day and night across the globe. Use this to gauge jet lag impact and communication windows for your 'Base-Camp' coordination.
+                   </p>
                 </div>
               </TabsContent>
 
