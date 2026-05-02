@@ -4,19 +4,27 @@ transforming...
 Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-✓ 62 modules transformed.
-x Build failed in 1.88s
+✓ 3021 modules transformed.
+x Build failed in 4.58s
 error during build:
-[vite]: Rollup failed to resolve import "framer-motion" from "/Users/paranjay/Developer/trip-advisor/src/components/SiteNav.tsx".
-This is most likely unintended because it can break your application at runtime.
-If you do want to externalize this module explicitly add it to
-`build.rollupOptions.external`
-    at viteWarn (file:///Users/paranjay/Developer/trip-advisor/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
-    at onwarn (file:///Users/paranjay/Developer/trip-advisor/node_modules/@vitejs/plugin-react-swc/index.js:90:7)
-    at onRollupWarning (file:///Users/paranjay/Developer/trip-advisor/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
-    at onwarn (file:///Users/paranjay/Developer/trip-advisor/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
-    at file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:19393:13
-    at Object.logger [as onLog] (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:21119:9)
-    at ModuleLoader.handleInvalidResolvedId (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:20008:26)
-    at file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:19966:26
+src/components/SettingsMenu.tsx (13:9): "CITIZENSHIPS" is not exported by "src/lib/passport.ts", imported by "src/components/SettingsMenu.tsx".
+file: /Users/paranjay/Developer/trip-advisor/src/components/SettingsMenu.tsx:13:9
+
+11: import { Button } from "@/components/ui/button";
+12: import { useUserSettings, Citizenship } from "@/lib/user-settings";
+13: import { CITIZENSHIPS } from "@/lib/passport";
+             ^
+14: 
+15: export function SettingsMenu() {
+
+    at getRollupError (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/parseAst.js:392:41)
+    at error (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/parseAst.js:388:42)
+    at Module.error (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:13968:16)
+    at Module.traceVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:14415:29)
+    at ModuleScope.findVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:12122:39)
+    at FunctionScope.findVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:7467:38)
+    at FunctionBodyScope.findVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:7467:38)
+    at MemberExpression.bind (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:8843:49)
+    at CallExpression.bind (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:4808:23)
+    at CallExpression.bind (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:9224:15)
 error: script "build" exited with code 1

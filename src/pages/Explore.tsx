@@ -1,6 +1,5 @@
-import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LayoutGrid, List as ListIcon, Table as TableIcon, Layers } from "lucide-react";
+import { LayoutGrid, List as ListIcon, Table as TableIcon, Layers, Zap } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CountryCard } from "@/components/CountryCard";
 import { CountryTable } from "@/components/CountryTable";
@@ -14,9 +13,14 @@ import { Filters, filterCountries } from "@/lib/recommend";
 import { japanVibe } from "@/lib/japanVibe";
 import { difficultyFor, DIFFICULTY_META, terrainsFor } from "@/lib/terrains";
 import { TerrainChips } from "@/components/TerrainChips";
+import { useTheme } from "@/lib/theme";
+import { getVisaStatus, getVisaLabel, getVisaTone } from "@/lib/passport";
 import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/ui/toggle";
 import { VibeMatcher } from "@/components/VibeMatcher";
+import { VibeCell } from "@/components/VibeCell";
+import { Cell } from "@/components/Cell";
+import { useState, useMemo, useEffect } from "react";
 
 type View = "grid" | "list" | "table" | "matrix";
 type Sort = "name" | "daily-asc" | "daily-desc" | "week-asc" | "week-desc" | "tourists" | "jp";
@@ -137,7 +141,7 @@ const Explore = () => {
                     {isGrouped && groupItems.length > 0 && (
                       <div className="flex items-center gap-4">
                         <h2 className="font-display text-xl font-bold flex items-center gap-2">
-                           <Flag emoji={groupItems[0].flag} size={24} /> {groupName}
+                           {groupName}
                            <span className="text-xs text-muted-foreground font-medium ml-2">{groupItems.length} destinations</span>
                         </h2>
                         <div className="h-px bg-border/40 flex-1" />
@@ -211,60 +215,6 @@ function ListRow({ country: c }: { country: Country }) {
         <Cell label="JP vibe">{japanVibe(c.slug)}/100</Cell>
       </div>
       <span className={cn("chip", DIFFICULTY_META[d].tone)}>{DIFFICULTY_META[d].label}</span>
-    </Link>
-  );
-}
-
-function Cell({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="font-semibold tabular-nums">{children}</div>
-    </div>
-  );
-}
-
-function VibeCell({ country: c }: { country: Country }) {
-  const jp = japanVibe(c.slug);
-  return (
-    <Link to={`/country/${c.slug}`} className="glass-card p-4 hover-lift group border-primary/10">
-       <div className="flex items-center justify-between mb-3">
-          <Flag emoji={c.flag} size={24} />
-          <span className="text-[10px] font-black uppercase text-muted-foreground">{c.region.split(',')[0]}</span>
-       </div>
-       <h3 className="font-display font-bold text-sm mb-4 truncate group-hover:text-primary transition-colors">{c.name}</h3>
-       
-       <div className="space-y-3">
-          <div className="space-y-1">
-             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
-                <span>Daily Cost</span>
-                <Money usd={c.dailyCost} />
-             </div>
-             <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-primary" style={{ width: `${Math.min(100, (c.dailyCost / 300) * 100)}%` }} />
-             </div>
-          </div>
-          
-          <div className="space-y-1">
-             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
-                <span>Japan Similarity</span>
-                <span>{jp}%</span>
-             </div>
-             <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-accent" style={{ width: `${jp}%` }} />
-             </div>
-          </div>
-
-          <div className="space-y-1">
-             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
-                <span>Variety</span>
-                <span>{terrainsFor(c).length}/8</span>
-             </div>
-             <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-success" style={{ width: `${(terrainsFor(c).length / 8) * 100}%` }} />
-             </div>
-          </div>
-       </div>
     </Link>
   );
 }

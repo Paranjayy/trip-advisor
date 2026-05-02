@@ -3,8 +3,8 @@ import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { COUNTRIES } from "@/data/countries";
 import { Flag } from "@/components/Flag";
-import { Money } from "@/components/Money";
 import { useTheme } from "@/lib/theme";
+import { getVisaStatus, getVisaLabel, getVisaTone } from "@/lib/passport";
 
 export function HeroDiscoveryMap() {
   const { theme } = useTheme();
@@ -39,9 +39,14 @@ export function HeroDiscoveryMap() {
             }}
           >
             <Tooltip direction="top" offset={[0, -5]} opacity={1}>
-               <span className="flex items-center gap-1.5 font-bold text-[8px]">
-                  <Flag emoji={c.flag} size={10} /> {c.name}
-               </span>
+               <div className="flex flex-col gap-1">
+                  <span className="flex items-center gap-1.5 font-bold text-[8px]">
+                     <Flag emoji={c.flag} size={10} /> {c.name}
+                  </span>
+                  <span className={`text-[6px] font-black uppercase px-1 py-0.5 rounded border self-start ${getVisaTone(getVisaStatus(c.slug))}`}>
+                     {getVisaLabel(getVisaStatus(c.slug))}
+                  </span>
+               </div>
             </Tooltip>
           </CircleMarker>
         ))}

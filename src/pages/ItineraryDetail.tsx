@@ -22,6 +22,7 @@ import { VibePlayer } from "@/components/VibePlayer";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useCustomItineraries } from "@/hooks/useCustomItineraries";
+import { getPhotoUrl } from "@/lib/photos";
 
 const MODE_ICON: Record<ItineraryStop["mode"], React.ComponentType<{ className?: string }>> = {
   walk: Footprints, car: Car, bus: Bus, train: Train, flight: Plane, boat: Ship, bike: Bike,
@@ -164,8 +165,15 @@ const ItineraryDetail = () => {
       <SiteNav />
 
       {/* Hero Section */}
-      <section className="bg-gradient-hero border-b border-border/60 relative overflow-hidden">
+      <section className="relative h-[60vh] flex flex-col justify-end border-b border-border/60 overflow-hidden">
+        <img 
+          src={getPhotoUrl(it.title, 1920, 1080)} 
+          alt={it.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/60 to-transparent" />
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -skew-x-12 translate-x-1/2 pointer-events-none" />
+        
         <div className="container mx-auto py-12 relative z-10">
           <Link to="/itinerary" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 group transition-colors">
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to Explorations
@@ -435,7 +443,20 @@ const ItineraryDetail = () => {
                     return (
                       <div key={day.day} id={`day-${day.day}`} className="relative">
                         <div className="glass-card p-0 overflow-hidden border-border/60 shadow-elevated">
-                          {/* Day Header */}
+                          {/* Day Header with Photo */}
+                          <div className="h-48 relative overflow-hidden shrink-0">
+                             <img 
+                               src={getPhotoUrl(day.base, 800, 300)} 
+                               alt={day.base}
+                               className="absolute inset-0 w-full h-full object-cover"
+                             />
+                             <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+                             <div className="absolute bottom-4 left-6 flex items-center gap-2">
+                                <span className="h-5 w-10 rounded-full bg-primary text-primary-foreground text-[10px] font-black flex items-center justify-center uppercase">Day {day.day}</span>
+                                <span className="text-xs font-bold text-white uppercase tracking-widest bg-black/40 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">{day.base}</span>
+                             </div>
+                          </div>
+                          
                           <div className="bg-surface-muted/50 px-6 py-5 border-b border-border/60 flex flex-wrap items-center justify-between gap-4">
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
