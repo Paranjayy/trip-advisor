@@ -17,7 +17,7 @@ const Itineraries = () => {
   useEffect(() => { document.title = "Trip itineraries — TripAdvisor"; }, []);
 
   const [query, setQuery] = useState("");
-  const [maxDays, setMaxDays] = useState(14);
+  const [dayRange, setDayRange] = useState<[number, number]>([1, 14]);
   const [sort, setSort] = useState<"days" | "budget" | "km">("days");
   const [diff, setDiff] = useState<"all" | "easy" | "moderate" | "hard">("all");
   const [filterType, setFilterType] = useState<"all" | "base-camp" | "road-trip">("all");
@@ -28,7 +28,7 @@ const Itineraries = () => {
       (i) =>
         (diff === "all" || i.difficulty === diff) &&
         (filterType === "all" || i.type === filterType) &&
-        (i.days <= maxDays) &&
+        (i.days >= dayRange[0] && i.days <= dayRange[1]) &&
         (!q || `${i.title} ${i.region} ${i.blurb}`.toLowerCase().includes(q)),
     );
     arr = [...arr].sort((a, b) => {
@@ -68,10 +68,10 @@ const Itineraries = () => {
           
           <div className="flex-1 min-w-[200px] space-y-2">
              <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Max Duration</span>
-                <span className="text-xs font-bold text-primary">{maxDays} Days</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Duration Range</span>
+                <span className="text-xs font-bold text-primary">{dayRange[0]} – {dayRange[1]} Days</span>
              </div>
-             <Slider value={[maxDays]} min={1} max={14} step={1} onValueChange={(v) => setMaxDays(v[0])} />
+             <Slider value={dayRange} min={1} max={14} step={1} onValueChange={(v) => setDayRange(v as [number, number])} />
           </div>
 
           <div className="flex bg-surface rounded-xl p-1 border border-border/40">

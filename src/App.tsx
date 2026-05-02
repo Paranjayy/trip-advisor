@@ -1,11 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CurrencyProvider } from "@/lib/currency";
 import { ThemeProvider } from "@/lib/theme";
 import { UserSettingsProvider } from "@/lib/user-settings";
+import { motion, AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
 import Explore from "./pages/Explore";
 import CountryDetail from "./pages/CountryDetail";
@@ -23,6 +24,40 @@ import { AiAdvisor } from "@/components/AiAdvisor";
 
 const queryClient = new QueryClient();
 
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    transition={{ duration: 0.3, ease: "easeOut" }}
+  >
+    {children}
+  </motion.div>
+);
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+        <Route path="/explore" element={<PageWrapper><Explore /></PageWrapper>} />
+        <Route path="/map" element={<PageWrapper><MapPage /></PageWrapper>} />
+        <Route path="/country/:slug" element={<PageWrapper><CountryDetail /></PageWrapper>} />
+        <Route path="/compare" element={<PageWrapper><Compare /></PageWrapper>} />
+        <Route path="/timing" element={<PageWrapper><Timing /></PageWrapper>} />
+        <Route path="/favorites" element={<PageWrapper><Favorites /></PageWrapper>} />
+        <Route path="/trips" element={<Navigate to="/itinerary" replace />} />
+        <Route path="/itinerary" element={<PageWrapper><Itineraries /></PageWrapper>} />
+        <Route path="/itinerary/:slug" element={<PageWrapper><ItineraryDetail /></PageWrapper>} />
+        <Route path="/itinerary/edit/:slug" element={<PageWrapper><CustomItinerary /></PageWrapper>} />
+        <Route path="/planner" element={<PageWrapper><Planner /></PageWrapper>} />
+        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -33,21 +68,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/explore" element={<Explore />} />
-                  <Route path="/map" element={<MapPage />} />
-                  <Route path="/country/:slug" element={<CountryDetail />} />
-                  <Route path="/compare" element={<Compare />} />
-                  <Route path="/timing" element={<Timing />} />
-                  <Route path="/favorites" element={<Favorites />} />
-                  <Route path="/trips" element={<Navigate to="/itinerary" replace />} />
-                  <Route path="/itinerary" element={<Itineraries />} />
-                  <Route path="/itinerary/:slug" element={<ItineraryDetail />} />
-                  <Route path="/itinerary/edit/:slug" element={<CustomItinerary />} />
-                  <Route path="/planner" element={<Planner />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <AnimatedRoutes />
                 <AiAdvisor />
               </BrowserRouter>
             </TooltipProvider>

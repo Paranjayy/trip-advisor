@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { 
   Plus, Trash2, MapPin, Clock, Wallet, MoveRight, 
-  Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap
+  Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap, Upload, Terminal
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
@@ -37,6 +39,9 @@ const Planner = () => {
     }
   ]);
 
+  const [importText, setImportText] = useState("");
+  const [showImport, setShowImport] = useState(false);
+
   const totalBudget = useMemo(() => {
     return days.reduce((sum, day) => {
       const stopsSum = day.stops.reduce((s, st) => s + st.cost, 0);
@@ -70,8 +75,8 @@ const Planner = () => {
 
   const frictionScore = useMemo(() => {
     if (days.length === 0) return 1;
-    const totalKm = days.length * 50; // Mock average
-    const totalHrs = days.reduce((sum, d) => sum + d.stops.reduce((s, st) => s + 2, 0), 0); // Mock 2h per stop
+    const totalKm = days.length * 50; 
+    const totalHrs = days.reduce((sum, d) => sum + d.stops.reduce((s, st) => s + 2, 0), 0); 
     const score = Math.min(10, Math.round((totalKm / 100) + (totalHrs / days.length)));
     return score;
   }, [days]);
@@ -110,12 +115,40 @@ const Planner = () => {
     setDays(days.map(d => d.id === dayId ? { ...d, [field]: value } : d));
   };
 
+  const handleImport = () => {
+    try {
+      const data = JSON.parse(importText);
+      const daysData = data.days || data.plan || data;
+      if (!Array.isArray(daysData)) throw new Error("Invalid format");
+      
+      const newDays = daysData.map((d: any, i: number) => ({
+        id: Math.random().toString(36).substr(2, 9),
+        dayNumber: d.dayNumber || i + 1,
+        title: d.title || `Day ${i+1}`,
+        base: d.base || "Destination",
+        stayCost: d.stayCost || d.stayUsd || 50,
+        stops: (d.stops || []).map((s: any) => ({
+          id: Math.random().toString(),
+          place: s.place || "Stop",
+          activity: s.activity || "Explore",
+          cost: s.cost || s.costUsd || 0
+        }))
+      }));
+      
+      setDays(newDays);
+      setShowImport(false);
+      setImportText("");
+      toast({ title: "Import Successful", description: `Loaded ${newDays.length} days into your plan.` });
+    } catch (e) {
+      toast({ title: "Import Failed", description: "Please ensure the JSON matches the required structure.", variant: "destructive" });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SiteNav />
       
       <div className="container mx-auto py-10 px-4 md:px-6">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="space-y-4">
             <Link to="/itinerary" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group">
@@ -136,17 +169,49 @@ const Planner = () => {
                 <Money usd={totalBudget} />
              </div>
              <div className="flex gap-4 mt-4 w-full">
-                <Button variant="outline" className="flex-1 rounded-xl h-9 text-xs font-bold gap-2">
-                   <Download className="h-3.5 w-3.5" /> Export
+                <Button 
+                   variant="outline" 
+                   onClick={() => setShowImport(!showImport)}
+                   className="flex-1 rounded-xl h-9 text-xs font-bold gap-2 border-primary/30 text-primary hover:bg-primary/5"
+                >
+                    <Terminal className="h-3.5 w-3.5" /> Bulk Import
                 </Button>
                 <Button className="flex-1 rounded-xl h-9 text-xs font-bold bg-primary gap-2 shadow-glow">
-                   <Save className="h-3.5 w-3.5" /> Save Trip
+                    <Save className="h-3.5 w-3.5" /> Save Trip
                 </Button>
              </div>
           </div>
         </div>
 
-        {/* Action Bar */}
+        <AnimatePresence mode="wait">
+          {showImport && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden mb-12"
+            >
+              <div className="glass-card p-6 border-primary/20 bg-primary/5 space-y-4">
+                <div className="flex items-center justify-between">
+                   <h3 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                      <Terminal className="h-4 w-4" /> JSON Bulk Import
+                   </h3>
+                   <Button variant="ghost" size="sm" onClick={() => setShowImport(false)}>Close</Button>
+                </div>
+                <Textarea 
+                  value={importText}
+                  onChange={(e) => setImportText(e.target.value)}
+                  placeholder='Paste your JSON here (e.g. from the AI Injector below)...'
+                  className="h-48 font-mono text-xs bg-background/50 border-primary/20 focus-visible:ring-primary/20"
+                />
+                <Button onClick={handleImport} className="w-full rounded-xl bg-primary shadow-glow font-bold">
+                   Ingest JSON Itinerary
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="flex items-center justify-between mb-8">
            <div className="flex items-center gap-4">
               <div className="h-10 px-4 rounded-xl bg-surface-muted border border-border/40 flex items-center gap-3">
@@ -167,21 +232,24 @@ const Planner = () => {
            </Button>
         </div>
 
-        {/* Days List */}
         <div className="space-y-10 relative">
           <div className="absolute left-[20px] top-4 bottom-4 w-px bg-dashed border-l border-border/60 z-0" />
           
           {days.map((day, idx) => (
-            <div key={day.id} className="relative z-10 group">
+            <motion.div 
+              key={day.id} 
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative z-10 group"
+            >
               <div className="flex gap-8">
-                {/* Day Indicator */}
                 <div className="shrink-0">
                    <div className="h-10 w-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center font-black shadow-glow group-hover:scale-110 transition-transform">
                       {day.dayNumber}
                    </div>
                 </div>
 
-                {/* Day Card */}
                 <div className="flex-1 space-y-6">
                   <div className="glass-card p-0 overflow-hidden border-border/60 hover:border-primary/20 transition-colors shadow-elevated">
                     <div className="bg-surface-muted/50 px-6 py-4 border-b border-border/60 flex items-center justify-between">
@@ -214,10 +282,13 @@ const Planner = () => {
                     </div>
 
                     <div className="p-6 space-y-6">
-                       {/* Stops List */}
                        <div className="space-y-4">
                           {day.stops.map((stop) => (
-                            <div key={stop.id} className="flex flex-wrap items-center gap-4 p-4 rounded-2xl bg-surface/50 border border-border/40 group/stop">
+                            <motion.div 
+                              key={stop.id} 
+                              layout
+                              className="flex flex-wrap items-center gap-4 p-4 rounded-2xl bg-surface/50 border border-border/40 group/stop hover:bg-surface transition-colors"
+                            >
                                <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
                                   <MapPin className="h-4 w-4" />
                                </div>
@@ -252,7 +323,7 @@ const Planner = () => {
                                >
                                   <Trash2 className="h-4 w-4" />
                                </Button>
-                            </div>
+                            </motion.div>
                           ))}
                           <button 
                             onClick={() => addStop(day.id)}
@@ -262,7 +333,6 @@ const Planner = () => {
                           </button>
                        </div>
 
-                       {/* Day Footer / Stay */}
                        <div className="pt-4 border-t border-border/40 flex items-center justify-between">
                           <div className="flex items-center gap-3">
                              <div className="h-9 px-4 rounded-xl bg-surface-muted border border-border/40 flex items-center gap-2.5">
@@ -287,11 +357,10 @@ const Planner = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* AI Context Injector */}
         <div className="mt-12 glass-card p-8 border-accent/20 bg-accent/5 relative overflow-hidden">
            <div className="absolute top-0 right-0 p-4">
               <Sparkles className="h-12 w-12 text-accent opacity-20" />
@@ -358,7 +427,6 @@ JSON Structure:
            </div>
         </div>
 
-        {/* Final CTA */}
         <div className="mt-20 py-20 border-t border-border/60 text-center space-y-8">
            <h2 className="font-display text-4xl font-black">Plan locked in?</h2>
            <p className="text-muted-foreground max-w-lg mx-auto">

@@ -224,9 +224,9 @@ const MapPage = () => {
                             <Tooltip direction="top" offset={[0, -6]} opacity={1}>
                               <span className="font-semibold inline-flex items-center gap-1"><Flag emoji={c.flag} size={16} /> {c.name}</span> · <span className={cn(
                                 "font-bold",
-                                getVisaStatus(citizenship, c.slug).status === "visa-free" ? "text-emerald-500" : 
-                                getVisaStatus(citizenship, c.slug).status === "visa-required" ? "text-red-500" : "text-accent"
-                              )}>{getVisaStatus(citizenship, c.slug).status.replace("-", " ")}</span>
+                                getVisaStatus(c.slug, citizenship) === "visa-free" ? "text-emerald-500" : 
+                                getVisaStatus(c.slug, citizenship) === "required" ? "text-red-500" : "text-accent"
+                              )}>{getVisaStatus(c.slug, citizenship).replace("-", " ")}</span>
                             </Tooltip>
                             <Popup minWidth={240} maxWidth={280}>
                               <div className="space-y-2">
@@ -245,10 +245,10 @@ const MapPage = () => {
                                   <Pop label="Daily"><Money usd={c.dailyCost} /></Pop>
                                   <Pop label="Visa Status">
                                     <span className={cn(
-                                      "font-bold",
-                                      getVisaStatus(citizenship, c.slug).status === "visa-free" ? "text-emerald-500" : 
-                                      getVisaStatus(citizenship, c.slug).status === "visa-required" ? "text-red-500" : "text-accent"
-                                    )}>{getVisaStatus(citizenship, c.slug).status.replace("-", " ")}</span>
+                                      "font-bold uppercase tracking-tighter text-[9px]",
+                                      getVisaStatus(c.slug, citizenship) === "visa-free" ? "text-emerald-500" : 
+                                      getVisaStatus(c.slug, citizenship) === "required" ? "text-red-500" : "text-accent"
+                                    )}>{getVisaStatus(c.slug, citizenship).replace("-", " ")}</span>
                                   </Pop>
                                   <Pop label="JP vibe">{japanVibe(c.slug)}/100</Pop>
                                 </div>

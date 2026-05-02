@@ -69,6 +69,68 @@ export function getGoogleMapsUrl(itinerary: Itinerary) {
 
 export const ITINERARIES: Itinerary[] = [
   {
+    slug: "bali-zen-nomad-basecamp-7d",
+    title: "Bali Zen Nomad Basecamp",
+    countrySlug: "indonesia",
+    region: "Ubud & Canggu, Bali",
+    flag: "🇮🇩",
+    days: 7,
+    bestMonths: [5, 6, 7, 8, 9],
+    difficulty: "easy",
+    terrains: ["beach", "jungle", "culture"],
+    type: "base-camp",
+    blurb: "A low-friction digital nomad basecamp. Perfect for high-output work windows combined with jungle recovery.",
+    totalUsd: 850,
+    highlights: ["Ubud Jungle Office", "Tegalalang Rice Terrace Sunrise", "Uluwatu Sunset Pulse"],
+    category: "Classic",
+    tags: ["Nomad", "Zen", "Pulse"],
+    plan: [
+      {
+        day: 1, title: "Jungle Immersion", base: "Ubud",
+        stayUsd: 70,
+        stops: [
+          { place: "Ngurah Rai Airport", activity: "Transfer to Ubud", hours: 2, km: 40, mode: "car", costUsd: 25, lat: -8.7482, lng: 115.1673 },
+          { place: "Ubud Center", activity: "Establish base camp & local pulse check", hours: 3, km: 2, mode: "walk", costUsd: 15, lat: -8.5069, lng: 115.2625 }
+        ]
+      },
+      {
+        day: 2, title: "Rice Fields & Creative Flow", base: "Ubud",
+        stayUsd: 70,
+        stops: [
+          { place: "Tegalalang", activity: "Sunrise meditation & photography", hours: 4, km: 10, mode: "bike", costUsd: 10, lat: -8.4326, lng: 115.2789 },
+          { place: "Campuhan Ridge", activity: "Dusk walk for fresh context", hours: 2, km: 4, mode: "walk", costUsd: 0, lat: -8.5034, lng: 115.2547 }
+        ]
+      }
+    ]
+  },
+  {
+    slug: "vietnam-north-loop-roadtrip-10d",
+    title: "Vietnam North: The Dragon's Backbone",
+    countrySlug: "vietnam",
+    region: "Hanoi & Ha Giang, Vietnam",
+    flag: "🇻🇳",
+    days: 10,
+    bestMonths: [9, 10, 11, 3, 4],
+    difficulty: "hard",
+    terrains: ["mountains", "rural", "culture"],
+    type: "road-trip",
+    blurb: "A high-velocity road trip through the northern karst peaks. Intense, immersive, and visually overwhelming.",
+    totalUsd: 1100,
+    highlights: ["Ha Giang Loop", "Ban Gioc Waterfall", "Hanoi Old Quarter Pulse"],
+    category: "Road Trip",
+    tags: ["Intense", "Peaks", "Loop"],
+    plan: [
+      {
+        day: 1, title: "Hanoi Chaos Entry", base: "Hanoi",
+        stayUsd: 40,
+        stops: [
+          { place: "Noi Bai Airport", activity: "Transfer to Old Quarter", hours: 1, km: 30, mode: "car", costUsd: 15, lat: 21.2212, lng: 105.8072 },
+          { place: "Train Street", activity: "Evening pulse & local coffee", hours: 2, km: 2, mode: "walk", costUsd: 5, lat: 21.0285, lng: 105.8542 }
+        ]
+      }
+    ]
+  },
+  {
     slug: "kashmir-lineage-scholarly-3d",
     title: "Kashmir Lineage & Scholarly Path — 3 days",
     countrySlug: "india",
