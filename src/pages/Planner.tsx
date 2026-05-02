@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { 
   Plus, Trash2, MapPin, Clock, Wallet, MoveRight, 
   Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap, Upload, Terminal,
-  Info, Globe, FileJson, CheckCircle2, AlertCircle, HelpCircle
+  Info, Globe, FileJson, CheckCircle2, AlertCircle, HelpCircle, Mountain, TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,7 @@ type PlannedStop = {
   place: string;
   activity: string;
   cost: number;
+  altitude?: number;
 };
 
 type PlannedDay = {
@@ -30,6 +31,7 @@ type PlannedDay = {
   base: string;
   stops: PlannedStop[];
   stayCost: number;
+  avgAltitude?: number;
 };
 
 const Planner = () => {
@@ -37,7 +39,7 @@ const Planner = () => {
   const [days, setDays] = useState<PlannedDay[]>([
     { 
       id: "1", dayNumber: 1, title: "Arrival & Exploration", base: "City Center", stayCost: 50, 
-      stops: [{ id: "s1", place: "Airport", activity: "Transfer to hotel", cost: 20 }] 
+      stops: [{ id: "s1", place: "Airport", activity: "Transfer to hotel", cost: 20, altitude: 0 }] 
     }
   ]);
 
@@ -59,7 +61,8 @@ const Planner = () => {
       title: `Day ${days.length + 1} Plan`,
       base: "New Location",
       stayCost: 50,
-      stops: []
+      stops: [],
+      avgAltitude: 0
     };
     setDays([...days, newDay]);
     toast({ title: "Day Added", description: `Day ${newDay.dayNumber} has been added to your draft.` });
@@ -95,7 +98,7 @@ const Planner = () => {
       if (d.id === dayId) {
         return {
           ...d,
-          stops: [...d.stops, { id: Math.random().toString(), place: "New Spot", activity: "What will you do?", cost: 0 }]
+          stops: [...d.stops, { id: Math.random().toString(), place: "New Spot", activity: "What will you do?", cost: 0, altitude: 0 }]
         };
       }
       return d;
@@ -140,25 +143,27 @@ const Planner = () => {
         title: d.title || `Day ${i+1}`,
         base: d.base || "Destination",
         stayCost: d.stayCost || d.stayUsd || 50,
+        avgAltitude: d.altitude || d.avgAltitude || 0,
         stops: (d.stops || []).map((s: any) => ({
           id: Math.random().toString(),
           place: s.place || "Stop",
           activity: s.activity || "Explore",
-          cost: s.cost || s.costUsd || 0
+          cost: s.cost || s.costUsd || 0,
+          altitude: s.altitude || 0
         }))
       }));
       
       setDays(newDays);
       setShowImport(false);
       setImportText("");
-      toast({ title: "Itinerary Imported", description: `Loaded ${newDays.length} days into your plan.` });
+      toast({ title: "Itinerary Imported", description: `Loaded ${newDays.length} days with altitude telemetry.` });
     } catch (e) {
       toast({ title: "Parse Failure", description: "Invalid JSON structure. Check the instructions.", variant: "destructive" });
     }
   };
 
   const aiPrompt = `You are a world-class travel architect. Generate a travel data payload in the following JSON format.
-${importMode === 'itinerary' ? 'Generate a multi-day itinerary.' : 'Generate country-level travel intelligence.'}
+${importMode === 'itinerary' ? 'Generate a multi-day itinerary with altitude telemetry for mountain regions.' : 'Generate country-level travel intelligence.'}
 
 JSON Structure for ITINERARY:
 {
@@ -170,7 +175,8 @@ JSON Structure for ITINERARY:
       "title": "Day Theme",
       "base": "City",
       "stayCost": 120,
-      "stops": [{ "place": "Place", "activity": "Action", "cost": 30 }]
+      "altitude": 3500,
+      "stops": [{ "place": "Place", "activity": "Action", "cost": 30, "altitude": 3600 }]
     }
   ]
 }
@@ -181,7 +187,8 @@ JSON Structure for COUNTRY:
   "slug": "country-slug",
   "bestMonths": [1, 2, 3],
   "budget": "budget-tier",
-  "terrains": ["mountains", "beaches"]
+  "terrains": ["mountains", "beaches"],
+  "avgAltitude": 4500
 }
 
 Only return the raw JSON object. No markdown, no preamble.`;
@@ -201,7 +208,7 @@ Only return the raw JSON object. No markdown, no preamble.`;
                <Sparkles className="h-12 w-12 text-primary animate-pulse" /> Multi-Day Planner
             </h1>
             <p className="text-muted-foreground text-lg max-w-xl font-medium leading-relaxed">
-               Architect your own curated route or ingest global travel intelligence via JSON. Total control over every stop, hour, and dollar.
+               Architect your own curated route or ingest global travel intelligence via JSON. Total control over altitude, hours, and dollars.
             </p>
           </div>
 
@@ -281,18 +288,11 @@ Only return the raw JSON object. No markdown, no preamble.`;
                          <HelpCircle className="h-3.5 w-3.5" /> Smart Guidance
                       </h4>
                       <ul className="space-y-3">
-                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text={`Mode: ${importMode === 'itinerary' ? 'Multi-Day Mapping' : 'Global Intelligence'}`} />
+                         <ImportStep icon={<TrendingUp className="h-4 w-4 text-emerald-500" />} text="Include 'altitude' for mountain trips" />
                          <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Valid JSON structure only" />
                          <ImportStep icon={<FileJson className="h-4 w-4 text-primary" />} text="No markdown blocks ( \`\`\` )" />
-                         <ImportStep icon={<AlertCircle className="h-4 w-4 text-warn" />} text="Auto-syncs with Discovery Vault" />
+                         <ImportStep icon={<AlertCircle className="h-4 w-4 text-warn" />} text="Auto-sync with Discovery Vault" />
                       </ul>
-                      <div className="pt-4 border-t border-border/40">
-                         <p className="text-[9px] font-bold text-muted-foreground uppercase leading-relaxed italic">
-                            {importMode === 'itinerary' 
-                              ? 'Itinerary mode populates your day-by-day planner and calculates total friction.' 
-                              : 'Country mode updates the global exploration matrix with your custom metadata.'}
-                         </p>
-                      </div>
                    </div>
                 </div>
               </div>
@@ -362,6 +362,16 @@ Only return the raw JSON object. No markdown, no preamble.`;
                           </div>
                        </div>
                        <div className="flex items-center gap-2">
+                         <div className="h-10 px-4 rounded-xl bg-surface-muted/50 border border-border/40 flex items-center gap-2">
+                            <Mountain className="h-3.5 w-3.5 text-primary" />
+                            <Input 
+                              type="number"
+                              value={day.avgAltitude}
+                              onChange={(e) => updateDay(day.id, 'avgAltitude', parseFloat(e.target.value) || 0)}
+                              className="w-16 bg-transparent border-none focus-visible:ring-0 h-auto p-0 text-xs font-black text-right"
+                            />
+                            <span className="text-[8px] font-black text-muted-foreground uppercase">m</span>
+                         </div>
                          <Button variant="ghost" onClick={() => cloneDay(day)} className="h-10 w-10 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 p-0">
                             <Copy className="h-4 w-4" />
                          </Button>
@@ -396,15 +406,27 @@ Only return the raw JSON object. No markdown, no preamble.`;
                                     placeholder="Brief Activity Description..."
                                   />
                                </div>
-                               <div className="flex items-center gap-3 bg-background/80 border border-border/40 rounded-2xl px-5 h-12 shadow-inner">
-                                  <Wallet className="h-4 w-4 text-primary" />
-                                  <Input 
-                                    type="number"
-                                    value={stop.cost}
-                                    onChange={(e) => updateStop(day.id, stop.id, 'cost', parseFloat(e.target.value) || 0)}
-                                    className="w-20 border-none focus-visible:ring-0 h-auto p-0 text-lg font-black text-right bg-transparent"
-                                  />
-                                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">USD</span>
+                               <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2 bg-background/80 border border-border/40 rounded-2xl px-4 h-12 shadow-inner">
+                                     <Mountain className="h-3.5 w-3.5 text-muted-foreground" />
+                                     <Input 
+                                       type="number"
+                                       value={stop.altitude}
+                                       onChange={(e) => updateStop(day.id, stop.id, 'altitude', parseFloat(e.target.value) || 0)}
+                                       className="w-14 border-none focus-visible:ring-0 h-auto p-0 text-xs font-black text-right bg-transparent"
+                                     />
+                                     <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">m</span>
+                                  </div>
+                                  <div className="flex items-center gap-3 bg-background/80 border border-border/40 rounded-2xl px-5 h-12 shadow-inner">
+                                     <Wallet className="h-4 w-4 text-primary" />
+                                     <Input 
+                                       type="number"
+                                       value={stop.cost}
+                                       onChange={(e) => updateStop(day.id, stop.id, 'cost', parseFloat(e.target.value) || 0)}
+                                       className="w-20 border-none focus-visible:ring-0 h-auto p-0 text-lg font-black text-right bg-transparent"
+                                     />
+                                     <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">USD</span>
+                                  </div>
                                </div>
                                <Button 
                                  variant="ghost" 
@@ -469,13 +491,13 @@ Only return the raw JSON object. No markdown, no preamble.`;
                        <Zap className="h-10 w-10 text-accent animate-pulse" /> AI Context Injector
                     </h2>
                     <p className="text-muted-foreground text-lg leading-relaxed font-medium">
-                       Generation mode: <span className="text-accent font-black uppercase tracking-widest">{importMode}</span>. Copy this system prompt to ensure your LLM returns a payload perfectly calibrated for the {importMode === 'itinerary' ? 'day-by-day engine' : 'global intelligence matrix'}.
+                       Generation mode: <span className="text-accent font-black uppercase tracking-widest">{importMode}</span>. Altitude telemetry included.
                     </p>
                  </div>
                  
                  <div className="flex flex-wrap gap-4">
+                    <InstructionChip icon={<TrendingUp className="h-4 w-4" />} text="Altitude Logic" />
                     <InstructionChip icon={<FileJson className="h-4 w-4" />} text="Structured JSON" />
-                    <InstructionChip icon={<Globe className="h-4 w-4" />} text="Intelligence Nodes" />
                     <InstructionChip icon={<Zap className="h-4 w-4" />} text="Vault Sync" />
                  </div>
 
@@ -486,7 +508,7 @@ Only return the raw JSON object. No markdown, no preamble.`;
                     }}
                     className="rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90 h-16 px-10 font-black text-xl gap-4 shadow-glow"
                  >
-                    <Copy className="h-6 w-6" /> COPY {importMode.toUpperCase()} PROMPT
+                    <Copy className="h-6 w-6" /> COPY PROMPT
                  </Button>
               </div>
 
@@ -496,41 +518,13 @@ Only return the raw JSON object. No markdown, no preamble.`;
                     <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/50" />
                     <div className="h-2.5 w-2.5 rounded-full bg-green-500/50" />
                  </div>
-{importMode === 'itinerary' ? `{
-  "title": "Kyoto Zen Discovery",
-  "base": "Kyoto",
-  "days": [
-    {
-      "dayNumber": 1,
-      "title": "Temple Immersion",
-      "base": "Kyoto Center",
-      "stayCost": 120,
-      "stops": [
-        { "place": "Kinkaku-ji", "activity": "Zen Walk", "cost": 15 }
-      ]
-    }
-  ]
-}` : `{
-  "name": "Iceland",
-  "slug": "iceland",
-  "bestMonths": [6, 7, 8],
-  "budget": "high",
-  "terrains": ["glaciers", "volcanoes"]
-}`}
+                 <div className="mt-4 opacity-50">
+                    {importMode === 'itinerary' ? "// Itinerary Schema v1.2" : "// Country Schema v1.0"}
+                 </div>
+                 <div className="mt-2 text-xs">
+                    {importMode === 'itinerary' ? "{ \"title\": \"Trip Name\", ... }" : "{ \"name\": \"Country\", ... }"}
+                 </div>
               </div>
-           </div>
-        </div>
-
-        {/* Final CTA */}
-        <div className="mt-32 py-32 border-t border-border/40 text-center space-y-10">
-           <h2 className="font-display text-6xl font-black tracking-tighter">Ready for take-off?</h2>
-           <p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed">
-             You've successfully architected {days.length} days of exploration. Save this to your profile to unlock real-time volatility monitoring.
-           </p>
-           <div className="flex justify-center gap-6">
-              <Button size="lg" className="rounded-[2rem] h-20 px-16 bg-primary shadow-glow font-black text-2xl gap-4 hover:scale-105 transition-transform">
-                 <Save className="h-8 w-8" /> LOCK IN DRAFT
-              </Button>
            </div>
         </div>
       </div>

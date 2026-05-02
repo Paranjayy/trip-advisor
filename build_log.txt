@@ -4,27 +4,47 @@ transforming...
 Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-✓ 3021 modules transformed.
-x Build failed in 4.58s
+✓ 19 modules transformed.
+x Build failed in 1.36s
 error during build:
-src/components/SettingsMenu.tsx (13:9): "CITIZENSHIPS" is not exported by "src/lib/passport.ts", imported by "src/components/SettingsMenu.tsx".
-file: /Users/paranjay/Developer/trip-advisor/src/components/SettingsMenu.tsx:13:9
+[vite:esbuild] Transform failed with 3 errors:
+/Users/paranjay/Developer/trip-advisor/src/pages/Planner.tsx:478:14: ERROR: The character "}" is not valid inside a JSX element
+/Users/paranjay/Developer/trip-advisor/src/pages/Planner.tsx:479:12: ERROR: Unexpected closing "div" tag does not match opening "motion.div" tag
+/Users/paranjay/Developer/trip-advisor/src/pages/Planner.tsx:480:14: ERROR: Unterminated regular expression
+file: /Users/paranjay/Developer/trip-advisor/src/pages/Planner.tsx:478:14
 
-11: import { Button } from "@/components/ui/button";
-12: import { useUserSettings, Citizenship } from "@/lib/user-settings";
-13: import { CITIZENSHIPS } from "@/lib/passport";
-             ^
-14: 
-15: export function SettingsMenu() {
+The character "}" is not valid inside a JSX element
+476|                  </div>
+477|                </div>
+478|              ))}
+   |                ^
+479|            </div>
+480|          </div>
 
-    at getRollupError (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/parseAst.js:392:41)
-    at error (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/parseAst.js:388:42)
-    at Module.error (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:13968:16)
-    at Module.traceVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:14415:29)
-    at ModuleScope.findVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:12122:39)
-    at FunctionScope.findVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:7467:38)
-    at FunctionBodyScope.findVariable (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:7467:38)
-    at MemberExpression.bind (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:8843:49)
-    at CallExpression.bind (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:4808:23)
-    at CallExpression.bind (file:///Users/paranjay/Developer/trip-advisor/node_modules/rollup/dist/es/shared/node-entry.js:9224:15)
+Unexpected closing "div" tag does not match opening "motion.div" tag
+477|                </div>
+478|              ))}
+479|            </div>
+   |              ^
+480|          </div>
+481|  
+
+Unterminated regular expression
+478|              ))}
+479|            </div>
+480|          </div>
+   |                ^
+481|  
+482|          <div className="mt-20 glass-card p-12 border-accent/20 bg-accent/5 relative overflow-hidden shadow-elevated">
+
+    at failureErrorWithLog (/Users/paranjay/Developer/trip-advisor/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/paranjay/Developer/trip-advisor/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/Users/paranjay/Developer/trip-advisor/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/Users/paranjay/Developer/trip-advisor/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/Users/paranjay/Developer/trip-advisor/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:509:20)
+    at addChunk (node:internal/streams/readable:564:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:515:3)
+    at Readable.push (node:internal/streams/readable:395:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
 error: script "build" exited with code 1

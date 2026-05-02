@@ -19,6 +19,7 @@ const links = [
   { to: "/itinerary", label: "Trips", icon: Route },
   { to: "/gallery", label: "Gallery", icon: ImageIcon },
   { to: "/planner", label: "Planner" },
+  { to: "/compare", label: "Compare" },
 ];
 
 export function SiteNav() {

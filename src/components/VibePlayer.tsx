@@ -1,54 +1,23 @@
-import { useState, useEffect, useRef } from "react";
 import { Music, Volume2, VolumeX, Wind, Waves, Coffee, Ghost, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useVibe } from "@/lib/vibe-context";
 
 const VIBES = [
-  { 
-    id: "rain", label: "Kyoto Rain", icon: Wind, color: "text-blue-400", 
-    url: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg" 
-  },
-  { 
-    id: "waves", label: "Phi Phi Waves", icon: Waves, color: "text-cyan-400",
-    url: "https://actions.google.com/sounds/v1/water/waves_crashing_on_rock.ogg"
-  },
-  { 
-    id: "cafe", label: "Parisian Café", icon: Coffee, color: "text-orange-400",
-    url: "https://actions.google.com/sounds/v1/crowds/city_market.ogg"
-  },
-  { 
-    id: "zen", label: "Zen Garden", icon: Ghost, color: "text-purple-400",
-    url: "https://actions.google.com/sounds/v1/ambient/nature_atmosphere.ogg"
-  },
+  { id: "rain", label: "Kyoto Rain", icon: Wind, color: "text-blue-400" },
+  { id: "waves", label: "Phi Phi Waves", icon: Waves, color: "text-cyan-400" },
+  { id: "cafe", label: "Parisian Café", icon: Coffee, color: "text-orange-400" },
+  { id: "zen", label: "Zen Garden", icon: Ghost, color: "text-purple-400" },
 ];
 
 export function VibePlayer() {
-  const [active, setActive] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.loop = true;
-    }
-
-    const currentVibe = VIBES.find(v => v.id === active);
-    if (currentVibe && isPlaying) {
-      if (audioRef.current.src !== currentVibe.url) {
-        audioRef.current.src = currentVibe.url;
-      }
-      audioRef.current.play().catch(e => console.error("Autoplay blocked", e));
-    } else {
-      audioRef.current.pause();
-    }
-  }, [active, isPlaying]);
+  const { activeVibe, isPlaying, setVibe, setIsPlaying } = useVibe();
 
   const toggleVibe = (id: string) => {
-    if (active === id) {
+    if (activeVibe === id) {
       setIsPlaying(!isPlaying);
     } else {
-      setActive(id);
+      setVibe(id as any);
       setIsPlaying(true);
     }
   };
@@ -62,7 +31,7 @@ export function VibePlayer() {
       >
         <div className="flex items-center justify-between px-2 py-1">
           <div className="flex items-center gap-2.5">
-             <div className={cn("h-2 w-2 rounded-full", isPlaying ? "bg-primary animate-pulse" : "bg-muted-foreground")} />
+             <div className={cn("h-2 w-2 rounded-full transition-colors", isPlaying ? "bg-primary animate-pulse" : "bg-muted-foreground")} />
              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground">Ambient Pulse</span>
           </div>
           <button 
@@ -76,7 +45,7 @@ export function VibePlayer() {
         <div className="flex gap-2">
           {VIBES.map((vibe) => {
             const Icon = vibe.icon;
-            const isVibeActive = active === vibe.id && isPlaying;
+            const isVibeActive = activeVibe === vibe.id && isPlaying;
             return (
               <button
                 key={vibe.id}
@@ -96,7 +65,7 @@ export function VibePlayer() {
         </div>
         
         <AnimatePresence>
-          {active && (
+          {activeVibe && (
             <motion.div 
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
@@ -104,7 +73,7 @@ export function VibePlayer() {
               className="px-2 overflow-hidden"
             >
                <p className="text-[9px] font-black text-primary uppercase tracking-widest flex items-center gap-2 pb-1">
-                 <Zap className="h-3 w-3" /> STREAMING: {VIBES.find(v => v.id === active)?.label}
+                 <Zap className="h-3 w-3" /> STREAMING: {VIBES.find(v => v.id === activeVibe)?.label}
                </p>
             </motion.div>
           )}

@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CurrencyProvider } from "@/lib/currency";
 import { ThemeProvider } from "@/lib/theme";
 import { UserSettingsProvider } from "@/lib/user-settings";
+import { VibeProvider } from "@/lib/vibe-context";
+import { VibePulse } from "@/components/VibePulse";
 import { motion, AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
 import Explore from "./pages/Explore";
@@ -32,12 +34,13 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => (
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
     transition={{ duration: 0.2, ease: "easeOut" }}
-    className="flex flex-col min-h-screen"
+    className="flex flex-col min-h-screen relative"
   >
-    <div className="flex-1">
+    <div className="flex-1 z-10">
       {children}
     </div>
     <SiteFooter />
+    <VibePulse />
   </motion.div>
 );
 
@@ -69,18 +72,20 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <UserSettingsProvider>
-        <CurrencyProvider>
-          <CustomItineraryProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AnimatedRoutes />
-                <AiAdvisor />
-              </BrowserRouter>
-            </TooltipProvider>
-          </CustomItineraryProvider>
-        </CurrencyProvider>
+        <VibeProvider>
+          <CurrencyProvider>
+            <CustomItineraryProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AnimatedRoutes />
+                  <AiAdvisor />
+                </BrowserRouter>
+              </TooltipProvider>
+            </CustomItineraryProvider>
+          </CurrencyProvider>
+        </VibeProvider>
       </UserSettingsProvider>
     </ThemeProvider>
   </QueryClientProvider>
