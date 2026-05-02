@@ -37,55 +37,61 @@ const Gallery = () => {
   const allPhotos = useMemo(() => {
     let photos: PhotoNode[] = [];
     
-    const providers: PhotoProvider[] = provider === "all" ? ["lorem", "unsplash", "art", "wiki"] : [provider];
+    const providers: PhotoProvider[] = provider === "all" ? ["lorem", "unsplash", "wiki", "art"] : [provider];
+    
+    // Check if query is a general search (not matching known places)
+    const knownPlaces = new Set([
+       ...COUNTRIES.map(c => c.name.toLowerCase()),
+       ...ITINERARIES.map(it => it.title.toLowerCase()),
+       ...ITINERARIES.flatMap(it => it.plan.map(d => d.base.toLowerCase()))
+    ]);
+
+    const isGeneralSearch = query.length > 2 && !knownPlaces.has(query.toLowerCase());
 
     providers.forEach(p => {
-      COUNTRIES.forEach(c => {
-        photos.push({
-          url: getPhotoUrl(c.name, 800, 800, p),
-          place: c.name,
-          country: c.name,
-          slug: c.slug,
-          type: 'country'
-        });
-      });
-
-      ITINERARIES.forEach(it => {
-        photos.push({
-          url: getPhotoUrl(it.slug.split('-')[0], 800, 800, p),
-          place: it.title,
-          country: it.region,
-          slug: it.slug,
-          type: 'itinerary'
-        });
-        it.plan.forEach(d => {
+      if (!isGeneralSearch) {
+        COUNTRIES.forEach(c => {
           photos.push({
-            url: getPhotoUrl(d.base, 800, 800, p),
-            place: d.base,
+            url: getPhotoUrl(c.name, 800, 800, p),
+            place: c.name,
+            country: c.name,
+            slug: c.slug,
+            type: 'country'
+          });
+        });
+
+        ITINERARIES.forEach(it => {
+          photos.push({
+            url: getPhotoUrl(it.slug.split('-')[0], 800, 800, p),
+            place: it.title,
             country: it.region,
             slug: it.slug,
             type: 'itinerary'
           });
+          it.plan.forEach(d => {
+            photos.push({
+              url: getPhotoUrl(d.base, 800, 800, p),
+              place: d.base,
+              country: it.region,
+              slug: it.slug,
+              type: 'itinerary'
+            });
+          });
         });
-      });
+      }
 
-      // Add "Precision Results" for the search query if it doesn't match any known country/itinerary
-      if (query && query.length > 2) {
-        photos.push({
-          url: getPhotoUrl(query, 800, 800, p),
-          place: query,
-          country: "Precision Discovery",
-          slug: "search",
-          type: 'itinerary'
-        });
-        // Add a few more variants
-        ["detail", "mood", "vista"].forEach(mod => {
+      // If search query is present, add many precision results
+      if (query && query.length > 1) {
+        // Generate a large pulse for search
+        const mods = ["view", "mood", "vista", "detail", "street", "architecture", "landscape", "interior", "night", "candid", "aerial", "culture"];
+        mods.forEach((mod, idx) => {
            photos.push({
              url: getPhotoUrl(`${query} ${mod}`, 800, 800, p),
-             place: `${query} (${mod})`,
-             country: "Precision Discovery",
+             place: query, // Use base query for label
+             country: isGeneralSearch ? "Global Search Engine" : "Precision Discovery",
              slug: "search",
-             type: 'itinerary'
+             type: 'itinerary',
+             tag: mod // Add tag for variety
            });
         });
       }
@@ -93,15 +99,15 @@ const Gallery = () => {
 
     // 1. Initial filter by type and query
     let filtered = photos.filter(p => {
-      const matchQuery = !query || p.place.toLowerCase().includes(query.toLowerCase()) || p.country.toLowerCase().includes(query.toLowerCase());
+      const matchQuery = !query || p.place.toLowerCase().includes(query.toLowerCase()) || p.country.toLowerCase().includes(query.toLowerCase()) || (p.tag && p.tag.includes(query.toLowerCase()));
       const matchType = filterType === "all" || p.type === filterType;
       return matchQuery && matchType;
     });
 
-    // 2. Deduplicate after filtering so types don't mask each other
+    // 2. Deduplicate after filtering - use provider in key if in All mode
     const seen = new Set();
     filtered = filtered.filter(p => {
-      const key = `${p.type}-${p.place}`;
+      const key = `${p.url}`; // Use URL as unique key
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -115,10 +121,10 @@ const Gallery = () => {
   }, [query, filterType, sortBy, provider]);
 
   const grouped = useMemo(() => {
-    if (!isGrouped) return { "Global Stream": allPhotos };
+    if (!isGrouped) return { "Visual Stream": allPhotos };
     const groups: Record<string, PhotoNode[]> = {};
     allPhotos.forEach(p => {
-      const g = p.country.split(',').pop()?.trim() || "Global";
+      const g = p.country;
       if (!groups[g]) groups[g] = [];
       groups[g].push(p);
     });
