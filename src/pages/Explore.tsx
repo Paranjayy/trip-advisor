@@ -134,7 +134,7 @@ const Explore = () => {
               <div className="space-y-12">
                 {Object.entries(grouped).map(([groupName, groupItems]) => (
                   <div key={groupName} className="space-y-6">
-                    {isGrouped && (
+                    {isGrouped && groupItems.length > 0 && (
                       <div className="flex items-center gap-4">
                         <h2 className="font-display text-xl font-bold flex items-center gap-2">
                            <Flag emoji={groupItems[0].flag} size={24} /> {groupName}

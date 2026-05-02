@@ -12,8 +12,6 @@ export function HeroDiscoveryMap() {
     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 
-  const featured = COUNTRIES.filter(c => c.dailyCost < 100).slice(0, 5);
-
   return (
     <div className="h-full w-full relative group">
       <MapContainer
@@ -24,25 +22,25 @@ export function HeroDiscoveryMap() {
         zoomControl={false}
         attributionControl={false}
         scrollWheelZoom={false}
-        dragging={false}
+        dragging={true}
         style={{ height: "100%", width: "100%", background: "#0a0a0c" }}
       >
         <TileLayer url={tileUrl} />
-        {featured.map((c) => (
+        {COUNTRIES.map((c) => (
           <CircleMarker
             key={c.slug}
             center={[c.lat, c.lng]}
-            radius={6}
+            radius={4}
             pathOptions={{
               color: "hsl(var(--primary))",
               fillColor: "hsl(var(--primary))",
               fillOpacity: 0.6,
-              weight: 2,
+              weight: 1,
             }}
           >
-            <Tooltip direction="top" offset={[0, -5]} opacity={1} permanent>
-               <span className="flex items-center gap-1.5 font-bold text-[10px]">
-                  <Flag emoji={c.flag} size={12} /> {c.name}
+            <Tooltip direction="top" offset={[0, -5]} opacity={1}>
+               <span className="flex items-center gap-1.5 font-bold text-[8px]">
+                  <Flag emoji={c.flag} size={10} /> {c.name}
                </span>
             </Tooltip>
           </CircleMarker>

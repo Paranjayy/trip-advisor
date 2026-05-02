@@ -6,6 +6,7 @@ import { Flag } from "@/components/Flag";
 import { Money } from "@/components/Money";
 import { TerrainChips } from "@/components/TerrainChips";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ITINERARIES, totalCost, totalHours, totalKm } from "@/lib/itineraries";
