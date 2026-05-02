@@ -41,15 +41,15 @@ export function SiteNav() {
     <header className="sticky top-0 z-50">
       <div className="border-b border-border/60 bg-background/80 backdrop-blur-md">
         <nav className="container mx-auto flex h-16 items-center justify-between gap-4 px-4 md:px-6">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
             <Link to="/" className="flex items-center gap-2 group shrink-0">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
-                <Globe2 className="h-6 w-6 text-primary-foreground" />
+              <div className="grid h-8 w-8 sm:h-10 sm:w-10 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
+                <Globe2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
               </div>
-              <span className="font-display text-xl font-black tracking-tighter hidden sm:inline-block">TripAdvisor</span>
+              <span className="font-display text-lg sm:text-xl font-black tracking-tighter truncate sm:inline-block">TripAdvisor</span>
             </Link>
 
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-1 overflow-hidden">
               {links.map((l) => (
                 <NavLink
                   key={l.to}
@@ -57,7 +57,7 @@ export function SiteNav() {
                   end={l.end}
                   className={({ isActive }) =>
                     cn(
-                      "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
+                      "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] xl:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
                       isActive
                         ? "bg-primary text-white shadow-glow"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -65,18 +65,19 @@ export function SiteNav() {
                   }
                 >
                   {l.icon && <l.icon className="h-3.5 w-3.5" />}
-                  {l.label}
+                  <span className="hidden xl:inline">{l.label}</span>
+                  <span className="xl:hidden">{l.label.charAt(0)}</span>
                 </NavLink>
               ))}
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 border-r border-border/40 pr-3 mr-1">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <div className="hidden md:flex items-center gap-1 sm:gap-2 border-r border-border/40 pr-2 sm:pr-3 mr-0 sm:mr-1">
                <button 
                   onClick={handleRandomTrip}
                   title="Take me anywhere (Randomize)"
-                  className="h-10 w-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                  className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
                >
                   <Shuffle className="h-4 w-4" />
                </button>
@@ -90,7 +91,7 @@ export function SiteNav() {
               to="/favorites"
               className={({ isActive }) =>
                 cn(
-                  "inline-flex items-center gap-2.5 h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                  "inline-flex items-center gap-2 h-9 sm:h-10 px-3 sm:px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
                   isActive ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent hover:bg-accent/5"
                 )
               }
@@ -99,7 +100,7 @@ export function SiteNav() {
               <span className="hidden xl:inline">Discovery Vault</span>
             </NavLink>
 
-            <Button variant="ghost" size="icon" className="lg:hidden rounded-xl h-10 w-10 bg-secondary/50" onClick={() => setIsOpen(!isOpen)}>
+            <Button variant="ghost" size="icon" className="lg:hidden rounded-xl h-9 w-9 sm:h-10 sm:w-10 bg-secondary/50 shrink-0" onClick={() => setIsOpen(!isOpen)}>
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
@@ -130,7 +131,10 @@ export function SiteNav() {
                     <div className="h-10 w-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
                        <Globe2 className="h-5 w-5 text-white" />
                     </div>
-                    <span className="font-display text-xl font-black">TripAdvisor</span>
+                    <div className="flex flex-col">
+                       <span className="font-display text-xl font-black leading-tight">TripAdvisor</span>
+                       <span className="text-[8px] font-black uppercase tracking-widest text-primary/60">Build v1.5.8-GOATED</span>
+                    </div>
                  </div>
                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="rounded-full h-10 w-10 hover:bg-secondary">
                     <X className="h-5 w-5" />
@@ -151,11 +155,15 @@ export function SiteNav() {
                       )
                     }
                   >
-                    <div className="flex items-center gap-4">
-                       {l.icon && <l.icon className="h-5 w-5" />}
-                       {l.label}
-                    </div>
-                    <ChevronRight className={cn("h-5 w-5 transition-transform", isActive ? "rotate-90" : "opacity-20")} />
+                    {({ isActive }) => (
+                      <>
+                        <div className="flex items-center gap-4">
+                           {l.icon && <l.icon className="h-5 w-5" />}
+                           {l.label}
+                        </div>
+                        <ChevronRight className={cn("h-5 w-5 transition-transform", isActive ? "rotate-90" : "opacity-20")} />
+                      </>
+                    )}
                   </NavLink>
                 ))}
                 <button 

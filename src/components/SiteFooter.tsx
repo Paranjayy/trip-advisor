@@ -68,11 +68,19 @@ export function SiteFooter() {
            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
               © 2026 TRIPADVISOR ENGINE — BUILT BY PARANJAY
            </p>
-           <div className="flex items-center gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-              <a href="#" className="hover:text-primary transition-colors">Privacy Protocol</a>
-              <a href="#" className="hover:text-primary transition-colors">Usage Terms</a>
-              <a href="#" className="hover:text-primary transition-colors">API Access</a>
-           </div>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+               <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/50 border border-border/40 text-primary">
+                  <Zap className="h-3 w-3" />
+                  BUILD: v1.5.8-GOATED
+               </div>
+               <div className="hidden sm:block opacity-40">|</div>
+               <div className="flex items-center gap-2">
+                  <Github className="h-3 w-3" />
+                  HASH: {Math.random().toString(36).substring(7).toUpperCase()}
+               </div>
+               <a href="#" className="hover:text-primary transition-colors">Privacy Protocol</a>
+               <a href="#" className="hover:text-primary transition-colors">Usage Terms</a>
+            </div>
         </div>
       </div>
     </footer>

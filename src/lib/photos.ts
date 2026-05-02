@@ -23,14 +23,24 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
   const preciseQuery = PHOTO_MAPPING[query] || query;
   
   // Clean the query (remove special chars, etc.)
-  const cleanQuery = preciseQuery.replace(/[^\w\s]/gi, '');
+  const cleanQuery = preciseQuery.replace(/[^\w\s]/gi, '').split(' ')[0]; // Use first word for better reliability
 
   const seed = query.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const keywords = ["travel", "cinematic", "architecture", "landscape", "adventure"];
-  const subQuery = keywords[seed % keywords.length];
   
-  // Using Source Unsplash with refined query and signature
-  return `https://source.unsplash.com/featured/${width}x${height}/?${encodeURIComponent(cleanQuery)},${subQuery},travel&sig=${seed}`;
+  // A set of "goated" high-fidelity travel photos as fallbacks
+  const fallbacks = [
+    "photo-1500530855697-b586d89ba3ee", // Road trip mountains
+    "photo-1476514525535-07fb3b4ae5f1", // Boat on lake
+    "photo-1506197603052-3cc9c3a201bd", // Forest path
+    "photo-1533929736458-ca588d08c8be", // Tokyo neon
+    "photo-1520250497591-112f2f40a3f4", // Resort pool
+  ];
+  
+  const fallbackId = fallbacks[seed % fallbacks.length];
+  
+  // Using a more reliable "featured" search via a redirect-friendly service or direct fallback
+  // We use LoremFlickr as it's more stable for tag-based discovery now
+  return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},travel/all?lock=${seed}`;
 };
 
 /**
