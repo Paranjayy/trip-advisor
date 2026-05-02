@@ -49,52 +49,53 @@ const Gallery = () => {
     const isGeneralSearch = query.length > 2 && !knownPlaces.has(query.toLowerCase());
 
     providers.forEach(p => {
-      if (!isGeneralSearch) {
-        COUNTRIES.forEach(c => {
-          photos.push({
-            url: getPhotoUrl(c.name, 800, 800, p),
-            place: c.name,
-            country: c.name,
-            slug: c.slug,
-            type: 'country'
-          });
+      // If search query is present, prioritize search results
+      if (query && query.length > 1) {
+        // Generate a large pulse for search
+        const mods = ["view", "mood", "vista", "detail", "street", "architecture", "landscape", "interior", "night", "candid", "aerial", "culture", "landmark", "hotel", "food", "vibe"];
+        mods.forEach((mod) => {
+           photos.push({
+             url: getPhotoUrl(`${query} ${mod}`, 800, 800, p),
+             place: query, 
+             country: isGeneralSearch ? `Global Discovery: ${query}` : "Precision Discovery",
+             slug: "search",
+             type: 'itinerary',
+             tag: mod
+           });
         });
 
-        ITINERARIES.forEach(it => {
+        // If it's a general search, we skip the internal nodes to keep results relevant
+        if (isGeneralSearch) return;
+      }
+
+      COUNTRIES.forEach(c => {
+        photos.push({
+          url: getPhotoUrl(c.name, 800, 800, p),
+          place: c.name,
+          country: c.name,
+          slug: c.slug,
+          type: 'country'
+        });
+      });
+
+      ITINERARIES.forEach(it => {
+        photos.push({
+          url: getPhotoUrl(it.slug.split('-')[0], 800, 800, p),
+          place: it.title,
+          country: it.region,
+          slug: it.slug,
+          type: 'itinerary'
+        });
+        it.plan.forEach(d => {
           photos.push({
-            url: getPhotoUrl(it.slug.split('-')[0], 800, 800, p),
-            place: it.title,
+            url: getPhotoUrl(d.base, 800, 800, p),
+            place: d.base,
             country: it.region,
             slug: it.slug,
             type: 'itinerary'
           });
-          it.plan.forEach(d => {
-            photos.push({
-              url: getPhotoUrl(d.base, 800, 800, p),
-              place: d.base,
-              country: it.region,
-              slug: it.slug,
-              type: 'itinerary'
-            });
-          });
         });
-      }
-
-      // If search query is present, add many precision results
-      if (query && query.length > 1) {
-        // Generate a large pulse for search
-        const mods = ["view", "mood", "vista", "detail", "street", "architecture", "landscape", "interior", "night", "candid", "aerial", "culture"];
-        mods.forEach((mod, idx) => {
-           photos.push({
-             url: getPhotoUrl(`${query} ${mod}`, 800, 800, p),
-             place: query, // Use base query for label
-             country: isGeneralSearch ? "Global Search Engine" : "Precision Discovery",
-             slug: "search",
-             type: 'itinerary',
-             tag: mod // Add tag for variety
-           });
-        });
-      }
+      });
     });
 
     // 1. Initial filter by type and query
@@ -104,10 +105,10 @@ const Gallery = () => {
       return matchQuery && matchType;
     });
 
-    // 2. Deduplicate after filtering - use provider in key if in All mode
+    // 2. Deduplicate after filtering - extremely unique key
     const seen = new Set();
     filtered = filtered.filter(p => {
-      const key = `${p.url}`; // Use URL as unique key
+      const key = `${p.url}-${p.place}-${p.tag || ''}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;

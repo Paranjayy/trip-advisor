@@ -100,8 +100,8 @@ export function SiteNav() {
          <div className="flex items-center gap-6 overflow-hidden flex-1">
             <div className="flex items-center gap-2 text-primary shrink-0 border-r border-border/40 pr-6 mr-2">
                <Zap className="h-3 w-3 fill-current animate-pulse" />
-               <span className="hidden sm:inline">INTELLIGENCE HUB</span>
-               <span className="sm:hidden">INTEL</span>
+               <span className="hidden sm:inline">GLOBAL PULSE</span>
+               <span className="sm:hidden">LIVE</span>
             </div>
             <GlobalPulse />
          </div>
