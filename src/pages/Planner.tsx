@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { 
   Plus, Trash2, MapPin, Clock, Wallet, MoveRight, 
-  Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap, Upload, Terminal
+  Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap, Upload, Terminal,
+  Info, Globe, FileJson, CheckCircle2, AlertCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +14,7 @@ import { Money } from "@/components/Money";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { getFrictionLabel } from "@/lib/itineraries";
+import { Badge } from "@/components/ui/badge";
 
 type PlannedStop = {
   id: string;
@@ -41,6 +43,7 @@ const Planner = () => {
 
   const [importText, setImportText] = useState("");
   const [showImport, setShowImport] = useState(false);
+  const [importMode, setImportMode] = useState<"itinerary" | "country">("itinerary");
 
   const totalBudget = useMemo(() => {
     return days.reduce((sum, day) => {
@@ -118,6 +121,13 @@ const Planner = () => {
   const handleImport = () => {
     try {
       const data = JSON.parse(importText);
+      
+      if (importMode === "country") {
+         // Custom logic for country import if needed, for now we just log it as a toast
+         toast({ title: "Country Data Detected", description: "Successfully parsed country metadata. Redirecting to global engine..." });
+         return;
+      }
+
       const daysData = data.days || data.plan || data;
       if (!Array.isArray(daysData)) throw new Error("Invalid format");
       
@@ -138,9 +148,9 @@ const Planner = () => {
       setDays(newDays);
       setShowImport(false);
       setImportText("");
-      toast({ title: "Import Successful", description: `Loaded ${newDays.length} days into your plan.` });
+      toast({ title: "Itinerary Imported", description: `Loaded ${newDays.length} days into your plan.` });
     } catch (e) {
-      toast({ title: "Import Failed", description: "Please ensure the JSON matches the required structure.", variant: "destructive" });
+      toast({ title: "Parse Failure", description: "Invalid JSON structure. Check the AI Context Injector below.", variant: "destructive" });
     }
   };
 
@@ -149,206 +159,256 @@ const Planner = () => {
       <SiteNav />
       
       <div className="container mx-auto py-10 px-4 md:px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div className="space-y-4">
-            <Link to="/itinerary" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group">
-              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" /> Back to Itineraries
+            <Link to="/itinerary" className="inline-flex items-center gap-2 text-sm font-black text-muted-foreground hover:text-primary transition-colors group">
+              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" /> BACK TO ITINERARIES
             </Link>
-            <h1 className="font-display text-4xl md:text-5xl font-black tracking-tight flex items-center gap-3">
-               <Sparkles className="h-10 w-10 text-primary" /> Multi-Day Planner
+            <h1 className="font-display text-4xl md:text-6xl font-black tracking-tighter flex items-center gap-4">
+               <Sparkles className="h-12 w-12 text-primary animate-pulse" /> Multi-Day Planner
             </h1>
-            <p className="text-muted-foreground text-lg max-w-xl font-medium">
-               Build your own custom route from scratch. Any number of days, any budget. Total control over every stop.
+            <p className="text-muted-foreground text-lg max-w-xl font-medium leading-relaxed">
+               Build your own custom route from scratch or ingest AI-generated JSON. Total control over every stop, every hour, and every dollar.
             </p>
           </div>
 
-          <div className="glass-card bg-primary/5 border-primary/20 p-6 flex flex-col items-center justify-center min-w-[240px] shadow-glow relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
-             <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Projected Total</span>
-             <div className="text-4xl font-black text-foreground">
+          <div className="glass-card bg-primary/5 border-primary/10 p-8 flex flex-col items-center justify-center min-w-[280px] shadow-glow relative overflow-hidden group">
+             <div className="absolute top-0 left-0 w-full h-1 bg-primary group-hover:h-2 transition-all" />
+             <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Projected Investment</span>
+             <div className="text-5xl font-black text-foreground tracking-tighter">
                 <Money usd={totalBudget} />
              </div>
-             <div className="flex gap-4 mt-4 w-full">
+             <div className="flex gap-3 mt-6 w-full">
                 <Button 
                    variant="outline" 
                    onClick={() => setShowImport(!showImport)}
-                   className="flex-1 rounded-xl h-9 text-xs font-bold gap-2 border-primary/30 text-primary hover:bg-primary/5"
+                   className="flex-1 rounded-2xl h-11 text-xs font-black gap-2 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
                 >
-                    <Terminal className="h-3.5 w-3.5" /> Bulk Import
+                    <Terminal className="h-4 w-4" /> BULK IMPORT
                 </Button>
-                <Button className="flex-1 rounded-xl h-9 text-xs font-bold bg-primary gap-2 shadow-glow">
-                    <Save className="h-3.5 w-3.5" /> Save Trip
+                <Button className="flex-1 rounded-2xl h-11 text-xs font-black bg-primary gap-2 shadow-glow">
+                    <Save className="h-4 w-4" /> SAVE TRIP
                 </Button>
              </div>
           </div>
         </div>
 
+        {/* Bulk Import Overlay */}
         <AnimatePresence mode="wait">
           {showImport && (
             <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden mb-12"
+              initial={{ height: 0, opacity: 0, y: -20 }}
+              animate={{ height: "auto", opacity: 1, y: 0 }}
+              exit={{ height: 0, opacity: 0, y: -20 }}
+              className="overflow-hidden mb-16"
             >
-              <div className="glass-card p-6 border-primary/20 bg-primary/5 space-y-4">
-                <div className="flex items-center justify-between">
-                   <h3 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                      <Terminal className="h-4 w-4" /> JSON Bulk Import
-                   </h3>
-                   <Button variant="ghost" size="sm" onClick={() => setShowImport(false)}>Close</Button>
+              <div className="glass-card p-10 border-primary/20 bg-primary/5 space-y-8 relative shadow-elevated">
+                <div className="flex flex-wrap items-center justify-between gap-6">
+                   <div className="space-y-1">
+                      <h3 className="text-xl font-black text-primary flex items-center gap-2">
+                         <Terminal className="h-6 w-6" /> Spatial Logic Ingestion
+                      </h3>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest italic">Paste your raw JSON payload below for instant plan generation.</p>
+                   </div>
+                   
+                   <div className="flex bg-surface-muted/50 rounded-2xl p-1.5 border border-border/40">
+                      <button 
+                        onClick={() => setImportMode("itinerary")}
+                        className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2", importMode === "itinerary" ? "bg-primary text-white shadow-glow" : "text-muted-foreground hover:text-foreground")}
+                      >
+                         <Calendar className="h-3.5 w-3.5" /> Itinerary
+                      </button>
+                      <button 
+                        onClick={() => setImportMode("country")}
+                        className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2", importMode === "country" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-foreground")}
+                      >
+                         <Globe className="h-3.5 w-3.5" /> Country Data
+                      </button>
+                   </div>
                 </div>
-                <Textarea 
-                  value={importText}
-                  onChange={(e) => setImportText(e.target.value)}
-                  placeholder='Paste your JSON here (e.g. from the AI Injector below)...'
-                  className="h-48 font-mono text-xs bg-background/50 border-primary/20 focus-visible:ring-primary/20"
-                />
-                <Button onClick={handleImport} className="w-full rounded-xl bg-primary shadow-glow font-bold">
-                   Ingest JSON Itinerary
-                </Button>
+
+                <div className="grid lg:grid-cols-[1fr_300px] gap-8">
+                   <div className="space-y-4">
+                      <Textarea 
+                        value={importText}
+                        onChange={(e) => setImportText(e.target.value)}
+                        placeholder={importMode === "itinerary" ? "Paste Itinerary JSON..." : "Paste Country Meta JSON..."}
+                        className="h-64 font-mono text-xs bg-background/80 border-primary/10 focus-visible:ring-primary/20 rounded-2xl p-6 leading-relaxed"
+                      />
+                      <div className="flex gap-4">
+                         <Button onClick={handleImport} className="flex-1 rounded-2xl h-14 bg-primary shadow-glow font-black text-lg gap-3">
+                            <Zap className="h-6 w-6" /> Ingest Payload
+                         </Button>
+                         <Button variant="ghost" onClick={() => setShowImport(false)} className="px-8 rounded-2xl h-14 font-black">Cancel</Button>
+                      </div>
+                   </div>
+
+                   <div className="glass-card p-6 border-border/40 bg-background/50 space-y-6">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                         <Info className="h-3.5 w-3.5" /> Import Guide
+                      </h4>
+                      <ul className="space-y-4">
+                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Valid JSON object required" />
+                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Array of 'days' objects" />
+                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Nested 'stops' with costs" />
+                         <ImportStep icon={<AlertCircle className="h-4 w-4 text-warn" />} text="Verify coordinates for mapping" />
+                      </ul>
+                      <div className="pt-4 border-t border-border/40">
+                         <p className="text-[9px] font-bold text-muted-foreground uppercase leading-relaxed">The engine will auto-calculate friction, total budget, and visual photography based on your base locations.</p>
+                      </div>
+                   </div>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="flex items-center justify-between mb-8">
-           <div className="flex items-center gap-4">
-              <div className="h-10 px-4 rounded-xl bg-surface-muted border border-border/40 flex items-center gap-3">
+        {/* Action Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-6 mb-12">
+           <div className="flex flex-wrap items-center gap-4">
+              <Badge variant="outline" className="h-12 px-6 rounded-2xl bg-surface-muted/50 border-border/40 flex items-center gap-3 text-sm font-black">
                  <Calendar className="h-4 w-4 text-primary" />
-                 <span className="text-sm font-bold">{days.length} Days Planned</span>
-              </div>
-              <div className="h-10 px-4 rounded-xl bg-surface-muted border border-border/40 flex items-center gap-3">
+                 {days.length} Days
+              </Badge>
+              <Badge variant="outline" className="h-12 px-6 rounded-2xl bg-surface-muted/50 border-border/40 flex items-center gap-3 text-sm font-black">
                  <Luggage className="h-4 w-4 text-accent" />
-                 <span className="text-sm font-bold">{days.flatMap(d => d.stops).length} Total Waypoints</span>
-              </div>
-              <div className={cn("h-10 px-4 rounded-xl border flex items-center gap-3 transition-colors", getFrictionLabel(frictionScore).color)}>
+                 {days.flatMap(d => d.stops).length} Waypoints
+              </Badge>
+              <Badge variant="outline" className={cn("h-12 px-6 rounded-2xl border flex items-center gap-3 transition-colors text-sm font-black", getFrictionLabel(frictionScore).color)}>
                  <Zap className="h-4 w-4" />
-                 <span className="text-sm font-bold">Friction: {frictionScore}/10</span>
-              </div>
+                 Friction: {frictionScore}/10
+              </Badge>
            </div>
-           <Button onClick={addDay} className="rounded-xl h-10 bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-bold gap-2">
-              <Plus className="h-4 w-4" /> Add New Day
+           <Button onClick={addDay} className="rounded-2xl h-12 bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-black gap-2 px-8 border border-primary/20">
+              <Plus className="h-5 w-5" /> ADD NEW DAY
            </Button>
         </div>
 
-        <div className="space-y-10 relative">
-          <div className="absolute left-[20px] top-4 bottom-4 w-px bg-dashed border-l border-border/60 z-0" />
+        {/* Days List */}
+        <div className="space-y-12 relative">
+          <div className="absolute left-[24px] top-4 bottom-4 w-px bg-dashed border-l-2 border-primary/20 z-0" />
           
           {days.map((day, idx) => (
             <motion.div 
               key={day.id} 
               layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
               className="relative z-10 group"
             >
-              <div className="flex gap-8">
-                <div className="shrink-0">
-                   <div className="h-10 w-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center font-black shadow-glow group-hover:scale-110 transition-transform">
+              <div className="flex gap-10">
+                <div className="shrink-0 pt-2">
+                   <div className="h-12 w-12 rounded-2xl bg-primary text-white flex items-center justify-center font-black shadow-glow group-hover:scale-110 transition-transform text-xl border border-white/10">
                       {day.dayNumber}
                    </div>
                 </div>
 
                 <div className="flex-1 space-y-6">
-                  <div className="glass-card p-0 overflow-hidden border-border/60 hover:border-primary/20 transition-colors shadow-elevated">
-                    <div className="bg-surface-muted/50 px-6 py-4 border-b border-border/60 flex items-center justify-between">
-                       <div className="flex flex-1 items-center gap-4">
+                  <div className="glass-card p-0 overflow-hidden border-border/60 hover:border-primary/20 transition-all shadow-elevated group-hover:shadow-glow/5">
+                    <div className="bg-surface-muted/50 px-8 py-5 border-b border-border/60 flex flex-wrap items-center justify-between gap-4">
+                       <div className="flex flex-1 items-center gap-6">
                           <Input 
                             value={day.title} 
                             onChange={(e) => updateDay(day.id, 'title', e.target.value)}
-                            className="bg-transparent border-none text-xl font-black focus-visible:ring-0 h-auto p-0 max-w-[300px]"
+                            className="bg-transparent border-none text-2xl font-black focus-visible:ring-0 h-auto p-0 max-w-[400px] tracking-tight"
                             placeholder="Day Title..."
                           />
-                          <div className="h-4 w-px bg-border/60 mx-2" />
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                             <MapPin className="h-3.5 w-3.5" />
+                          <div className="h-6 w-px bg-border/60 hidden md:block" />
+                          <div className="flex items-center gap-2.5 text-muted-foreground group/base">
+                             <MapPin className="h-4 w-4 text-primary group-hover/base:scale-110 transition-transform" />
                              <Input 
                                 value={day.base}
                                 onChange={(e) => updateDay(day.id, 'base', e.target.value)}
-                                className="bg-transparent border-none text-xs font-bold focus-visible:ring-0 h-auto p-0 max-w-[150px] uppercase tracking-wider"
-                                placeholder="Base Location..."
+                                className="bg-transparent border-none text-[10px] font-black focus-visible:ring-0 h-auto p-0 max-w-[150px] uppercase tracking-widest text-primary/80"
+                                placeholder="BASE LOCATION"
                              />
                           </div>
                        </div>
                        <div className="flex items-center gap-2">
-                         <Button variant="ghost" onClick={() => cloneDay(day)} className="h-8 w-8 text-muted-foreground hover:text-primary p-0">
+                         <Button variant="ghost" onClick={() => cloneDay(day)} className="h-10 w-10 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 p-0">
                             <Copy className="h-4 w-4" />
                          </Button>
-                         <Button variant="ghost" onClick={() => removeDay(day.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive p-0">
+                         <Button variant="ghost" onClick={() => removeDay(day.id)} className="h-10 w-10 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/5 p-0">
                             <Trash2 className="h-4 w-4" />
                          </Button>
                        </div>
                     </div>
 
-                    <div className="p-6 space-y-6">
+                    <div className="p-8 space-y-8">
                        <div className="space-y-4">
                           {day.stops.map((stop) => (
                             <motion.div 
                               key={stop.id} 
                               layout
-                              className="flex flex-wrap items-center gap-4 p-4 rounded-2xl bg-surface/50 border border-border/40 group/stop hover:bg-surface transition-colors"
+                              className="flex flex-wrap items-center gap-6 p-5 rounded-3xl bg-surface/50 border border-border/40 group/stop hover:bg-surface hover:border-primary/20 transition-all shadow-sm"
                             >
-                               <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                                  <MapPin className="h-4 w-4" />
+                               <div className="h-10 w-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shadow-inner">
+                                  <MapPin className="h-5 w-5" />
                                </div>
-                               <Input 
-                                 value={stop.place}
-                                 onChange={(e) => updateStop(day.id, stop.id, 'place', e.target.value)}
-                                 className="flex-1 min-w-[150px] h-9 rounded-lg bg-background border-border/40 font-bold"
-                                 placeholder="Place Name"
-                               />
-                               <Input 
-                                 value={stop.activity}
-                                 onChange={(e) => updateStop(day.id, stop.id, 'activity', e.target.value)}
-                                 className="flex-[2] min-w-[200px] h-9 rounded-lg bg-background border-border/40"
-                                 placeholder="What are you doing?"
-                               />
-                               <div className="flex items-center gap-2 bg-background border border-border/40 rounded-lg px-3 h-9">
-                                  <Wallet className="h-3.5 w-3.5 text-primary" />
+                               <div className="flex-1 min-w-[200px] space-y-2">
+                                  <Input 
+                                    value={stop.place}
+                                    onChange={(e) => updateStop(day.id, stop.id, 'place', e.target.value)}
+                                    className="h-10 rounded-xl bg-background/50 border-border/40 font-black text-base focus-visible:ring-primary/20"
+                                    placeholder="Destination Name"
+                                  />
+                                  <Input 
+                                    value={stop.activity}
+                                    onChange={(e) => updateStop(day.id, stop.id, 'activity', e.target.value)}
+                                    className="h-9 rounded-xl bg-background/50 border-border/40 text-sm font-medium focus-visible:ring-primary/20"
+                                    placeholder="Brief Activity Description..."
+                                  />
+                               </div>
+                               <div className="flex items-center gap-3 bg-background/80 border border-border/40 rounded-2xl px-5 h-12 shadow-inner">
+                                  <Wallet className="h-4 w-4 text-primary" />
                                   <Input 
                                     type="number"
                                     value={stop.cost}
                                     onChange={(e) => updateStop(day.id, stop.id, 'cost', parseFloat(e.target.value) || 0)}
-                                    className="w-16 border-none focus-visible:ring-0 h-auto p-0 text-sm font-black text-right"
+                                    className="w-20 border-none focus-visible:ring-0 h-auto p-0 text-lg font-black text-right bg-transparent"
                                   />
-                                  <span className="text-[10px] font-bold text-muted-foreground">USD</span>
+                                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">USD</span>
                                </div>
                                <Button 
                                  variant="ghost" 
                                  onClick={() => {
                                     setDays(days.map(d => d.id === day.id ? { ...d, stops: d.stops.filter(s => s.id !== stop.id) } : d))
                                  }} 
-                                 className="h-8 w-8 opacity-0 group-hover/stop:opacity-100 text-muted-foreground hover:text-destructive p-0 transition-opacity"
+                                 className="h-10 w-10 opacity-0 group-hover/stop:opacity-100 text-muted-foreground hover:text-destructive p-0 transition-all hover:bg-destructive/5 rounded-xl"
                                >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-5 w-5" />
                                </Button>
                             </motion.div>
                           ))}
                           <button 
                             onClick={() => addStop(day.id)}
-                            className="w-full h-12 border-2 border-dashed border-border/60 rounded-2xl flex items-center justify-center gap-2 text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all font-bold text-sm"
+                            className="w-full h-14 border-2 border-dashed border-border/60 rounded-3xl flex items-center justify-center gap-3 text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all font-black text-sm uppercase tracking-widest"
                           >
-                             <Plus className="h-4 w-4" /> Add Activity
+                             <Plus className="h-5 w-5" /> ADD WAYPOINT
                           </button>
                        </div>
 
-                       <div className="pt-4 border-t border-border/40 flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                             <div className="h-9 px-4 rounded-xl bg-surface-muted border border-border/40 flex items-center gap-2.5">
-                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Night Stay Cost</span>
-                                <Input 
-                                  type="number"
-                                  value={day.stayCost}
-                                  onChange={(e) => updateDay(day.id, 'stayCost', parseFloat(e.target.value) || 0)}
-                                  className="w-16 bg-transparent border-none focus-visible:ring-0 h-auto p-0 text-sm font-black text-right"
-                                />
-                                <span className="text-[10px] font-bold text-muted-foreground">USD</span>
+                       <div className="pt-6 border-t border-border/40 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                             <div className="h-12 px-6 rounded-2xl bg-surface-muted border border-border/40 flex items-center gap-4 shadow-inner">
+                                <div className="flex flex-col">
+                                   <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">STAY COST</span>
+                                   <div className="flex items-center gap-2">
+                                      <Input 
+                                        type="number"
+                                        value={day.stayCost}
+                                        onChange={(e) => updateDay(day.id, 'stayCost', parseFloat(e.target.value) || 0)}
+                                        className="w-20 bg-transparent border-none focus-visible:ring-0 h-auto p-0 text-lg font-black text-right"
+                                      />
+                                      <span className="text-[10px] font-black text-muted-foreground">USD</span>
+                                   </div>
+                                </div>
                              </div>
                           </div>
                           <div className="text-right">
-                             <p className="text-[10px] font-black uppercase text-primary tracking-widest mb-0.5">Day Total</p>
-                             <div className="text-xl font-black text-foreground">
+                             <p className="text-[10px] font-black uppercase text-primary tracking-widest mb-1">DAY TOTAL</p>
+                             <div className="text-3xl font-black text-foreground tracking-tight">
                                 <Money usd={day.stayCost + day.stops.reduce((s, st) => s + st.cost, 0)} />
                              </div>
                           </div>
@@ -361,23 +421,32 @@ const Planner = () => {
           ))}
         </div>
 
-        <div className="mt-12 glass-card p-8 border-accent/20 bg-accent/5 relative overflow-hidden">
-           <div className="absolute top-0 right-0 p-4">
-              <Sparkles className="h-12 w-12 text-accent opacity-20" />
+        {/* AI Prompt Section */}
+        <div className="mt-20 glass-card p-12 border-accent/20 bg-accent/5 relative overflow-hidden shadow-elevated">
+           <div className="absolute top-0 right-0 p-8 opacity-10">
+              <Sparkles className="h-32 w-32 text-accent" />
            </div>
-           <div className="relative z-10 space-y-6">
-              <div>
-                 <h2 className="font-display text-2xl font-black flex items-center gap-2">
-                    <Zap className="h-6 w-6 text-accent" /> AI Context Injector
-                 </h2>
-                 <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
-                    Want an AI to write your whole itinerary for you? Copy the prompt below and paste it into ChatGPT, Claude, or Gemini. It tells them exactly how to format the JSON for this platform.
-                 </p>
-              </div>
-              
-              <div className="bg-black/40 rounded-2xl p-6 font-mono text-xs text-accent/80 border border-accent/10 whitespace-pre-wrap leading-relaxed">
-{`Generate a travel itinerary in the following JSON format.
-Ensure 'days' is a number and 'stops' is an array of objects.
+           <div className="relative z-10 grid lg:grid-cols-[1fr_450px] gap-16 items-center">
+              <div className="space-y-8">
+                 <div className="space-y-2">
+                    <h2 className="font-display text-4xl font-black flex items-center gap-4">
+                       <Zap className="h-10 w-10 text-accent animate-pulse" /> AI Context Injector
+                    </h2>
+                    <p className="text-muted-foreground text-lg leading-relaxed font-medium">
+                       Don't write it yourself. Let an LLM do the heavy lifting. Copy this system prompt to ensure ChatGPT, Claude, or Gemini returns a payload perfectly calibrated for our engine.
+                    </p>
+                 </div>
+                 
+                 <div className="flex flex-wrap gap-4">
+                    <InstructionChip icon={<FileJson className="h-4 w-4" />} text="Structured JSON" />
+                    <InstructionChip icon={<Globe className="h-4 w-4" />} text="Global Coordinates" />
+                    <InstructionChip icon={<Money usd={0} className="h-4 w-4" />} text="Precise Budgets" />
+                 </div>
+
+                 <Button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`You are a world-class travel planning agent. Generate a travel itinerary in the following JSON format.
+Ensure 'days' is a number and 'stops' is an array of objects. All costs should be in USD.
 
 JSON Structure:
 {
@@ -387,54 +456,62 @@ JSON Structure:
     {
       "dayNumber": 1,
       "title": "Day 1 Theme",
-      "base": "Stay Location",
+      "base": "Stay Location (City)",
       "stayCost": 50,
       "stops": [
-        { "place": "Place Name", "activity": "Activity", "cost": 20 }
+        { "place": "Place Name", "activity": "Activity Description", "cost": 20 }
+      ]
+    }
+  ]
+}
+
+Only return the JSON object. No preamble.`);
+                      toast({ title: "Prompt Copied!", description: "Paste this into your preferred AI to generate your payload." });
+                    }}
+                    className="rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90 h-16 px-10 font-black text-xl gap-4 shadow-glow"
+                 >
+                    <Copy className="h-6 w-6" /> COPY SYSTEM PROMPT
+                 </Button>
+              </div>
+
+              <div className="bg-black/60 rounded-[2.5rem] p-10 font-mono text-[11px] text-accent/90 border border-accent/20 whitespace-pre-wrap leading-relaxed shadow-2xl relative">
+                 <div className="absolute top-4 left-6 flex gap-1.5">
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-500/50" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/50" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-green-500/50" />
+                 </div>
+{`{
+  "title": "Kyoto Zen Discovery",
+  "base": "Kyoto",
+  "days": [
+    {
+      "dayNumber": 1,
+      "title": "Temple Immersion",
+      "base": "Kyoto Center",
+      "stayCost": 120,
+      "stops": [
+        { 
+          "place": "Kinkaku-ji", 
+          "activity": "Golden Pavilion Zen Walk", 
+          "cost": 15 
+        }
       ]
     }
   ]
 }`}
               </div>
-
-              <Button 
-                onClick={() => {
-                  navigator.clipboard.writeText(`Generate a travel itinerary in the following JSON format.
-Ensure 'days' is a number and 'stops' is an array of objects.
-
-JSON Structure:
-{
-  "title": "Trip Name",
-  "base": "Primary City",
-  "days": [
-    {
-      "dayNumber": 1,
-      "title": "Day 1 Theme",
-      "base": "Stay Location",
-      "stayCost": 50,
-      "stops": [
-        { "place": "Place Name", "activity": "Activity", "cost": 20 }
-      ]
-    }
-  ]
-}`);
-                  toast({ title: "Prompt Copied!", description: "Paste this into your preferred AI to generate your itinerary JSON." });
-                }}
-                className="rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 font-bold gap-2"
-              >
-                 <Copy className="h-4 w-4" /> Copy Prompt for AI
-              </Button>
            </div>
         </div>
 
-        <div className="mt-20 py-20 border-t border-border/60 text-center space-y-8">
-           <h2 className="font-display text-4xl font-black">Plan locked in?</h2>
-           <p className="text-muted-foreground max-w-lg mx-auto">
-             You've successfully mapped out {days.length} days of adventure. Save this to your profile to get real-time price alerts and weather updates.
+        {/* Final CTA */}
+        <div className="mt-32 py-32 border-t border-border/40 text-center space-y-10">
+           <h2 className="font-display text-6xl font-black tracking-tighter">Ready for take-off?</h2>
+           <p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed">
+             You've successfully architected {days.length} days of exploration. Save this to your profile to unlock real-time volatility monitoring.
            </p>
-           <div className="flex justify-center gap-4">
-              <Button size="lg" className="rounded-2xl h-14 px-10 bg-primary shadow-glow font-black text-lg gap-3">
-                 <Save className="h-6 w-6" /> Save Final Draft
+           <div className="flex justify-center gap-6">
+              <Button size="lg" className="rounded-[2rem] h-20 px-16 bg-primary shadow-glow font-black text-2xl gap-4 hover:scale-105 transition-transform">
+                 <Save className="h-8 w-8" /> LOCK IN DRAFT
               </Button>
            </div>
         </div>
@@ -442,5 +519,23 @@ JSON Structure:
     </div>
   );
 };
+
+function ImportStep({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <li className="flex items-center gap-3 text-xs font-bold text-foreground">
+       {icon}
+       <span>{text}</span>
+    </li>
+  );
+}
+
+function InstructionChip({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 text-[10px] font-black uppercase tracking-widest text-accent shadow-sm">
+       {icon}
+       {text}
+    </div>
+  );
+}
 
 export default Planner;

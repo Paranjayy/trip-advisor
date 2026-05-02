@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X, Globe2, Heart, Map as MapIcon, Route, ChevronRight } from "lucide-react";
+import { Menu, X, Globe2, Heart, Map as MapIcon, Route, ChevronRight, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { TranslateMenu } from "@/components/TranslateMenu";
@@ -8,9 +8,9 @@ import { SettingsMenu } from "@/components/SettingsMenu";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { GlobalPulse } from "./GlobalPulse";
 
 const links = [
-  { to: "/", label: "Home", end: true },
   { to: "/explore", label: "Explore" },
   { to: "/map", label: "Map", icon: MapIcon },
   { to: "/itinerary", label: "Trips", icon: Route },
@@ -23,62 +23,66 @@ export function SiteNav() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <nav className="container mx-auto flex h-16 items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
-              <Globe2 className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display text-lg font-bold tracking-tight notranslate" translate="no">TripAdvisor</span>
-          </Link>
-        </div>
+    <header className="sticky top-0 z-50">
+      <GlobalPulse />
+      <div className="border-b border-border/60 bg-background/80 backdrop-blur-md">
+        <nav className="container mx-auto flex h-16 items-center justify-between gap-4 px-4 md:px-6">
+          <div className="flex items-center gap-6">
+            <Link to="/" className="flex items-center gap-2 group shrink-0">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
+                <Globe2 className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <span className="font-display text-xl font-black tracking-tighter hidden sm:inline-block">TripAdvisor</span>
+            </Link>
 
-        <div className="hidden md:flex items-center gap-1">
-          {links.map((l) => (
+            <div className="hidden lg:flex items-center gap-1">
+              {links.map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  className={({ isActive }) =>
+                    cn(
+                      "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
+                      isActive
+                        ? "bg-primary text-white shadow-glow"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    )
+                  }
+                >
+                  {l.icon && <l.icon className="h-3.5 w-3.5" />}
+                  {l.label}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2 border-r border-border/40 pr-3 mr-1">
+               <SettingsMenu />
+               <ThemeToggle />
+               <TranslateMenu />
+               <CurrencySwitcher />
+            </div>
+            
             <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
+              to="/favorites"
               className={({ isActive }) =>
                 cn(
-                  "inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-primary-soft text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  "inline-flex items-center gap-2.5 h-10 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                  isActive ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent hover:bg-accent/5"
                 )
               }
             >
-              {l.icon && <l.icon className="h-3.5 w-3.5" />}
-              {l.label}
+              <Heart className="h-4 w-4" />
+              <span className="hidden xl:inline">Discovery Vault</span>
             </NavLink>
-          ))}
-        </div>
 
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-2">
-             <SettingsMenu />
-             <ThemeToggle />
-             <TranslateMenu />
-             <CurrencySwitcher />
+            <Button variant="ghost" size="icon" className="lg:hidden rounded-xl h-10 w-10 bg-secondary/50" onClick={() => setIsOpen(!isOpen)}>
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
           </div>
-          <NavLink
-            to="/favorites"
-            className={({ isActive }) =>
-              cn(
-                "inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                isActive ? "bg-accent-soft text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent-soft"
-              )
-            }
-          >
-            <Heart className="h-4 w-4" />
-            <span className="hidden lg:inline">Saved</span>
-          </NavLink>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -89,54 +93,58 @@ export function SiteNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="md:hidden fixed inset-0 bg-background/60 backdrop-blur-sm z-[51]"
+              className="lg:hidden fixed inset-0 bg-background/80 backdrop-blur-md z-[51]"
             />
             <motion.div
-              initial={{ x: "-100%" }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="md:hidden fixed inset-y-0 left-0 w-3/4 max-w-xs bg-background border-r border-border/60 p-6 flex flex-col gap-6 z-[52] shadow-2xl"
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="lg:hidden fixed inset-y-0 right-0 w-full max-w-sm bg-background border-l border-border/60 p-8 flex flex-col gap-8 z-[52] shadow-2xl"
             >
-              <div className="flex items-center gap-2 mb-4">
-                 <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-                    <Globe2 className="h-4 w-4 text-white" />
+              <div className="flex items-center justify-between">
+                 <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+                       <Globe2 className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="font-display text-xl font-black">TripAdvisor</span>
                  </div>
-                 <span className="font-display font-bold">TripAdvisor</span>
+                 <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="rounded-full h-10 w-10 hover:bg-secondary">
+                    <X className="h-5 w-5" />
+                 </Button>
               </div>
               
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {links.map((l) => (
                   <NavLink
                     key={l.to}
                     to={l.to}
-                    end={l.end}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
                       cn(
-                        "flex items-center justify-between p-3 rounded-xl text-sm font-bold transition-all",
-                        isActive ? "bg-primary text-primary-foreground shadow-glow" : "text-muted-foreground hover:bg-secondary"
+                        "flex items-center justify-between p-4 rounded-2xl text-base font-black transition-all",
+                        isActive ? "bg-primary text-white shadow-glow" : "text-muted-foreground hover:bg-secondary"
                       )
                     }
                   >
-                    <div className="flex items-center gap-3">
-                       {l.icon && <l.icon className="h-4 w-4" />}
+                    <div className="flex items-center gap-4">
+                       {l.icon && <l.icon className="h-5 w-5" />}
                        {l.label}
                     </div>
-                    <ChevronRight className="h-4 w-4 opacity-40" />
+                    <ChevronRight className={cn("h-5 w-5 transition-transform", isActive ? "rotate-90" : "opacity-20")} />
                   </NavLink>
                 ))}
               </div>
 
-              <div className="mt-auto space-y-4 pt-6 border-t border-border/60">
-                 <div className="grid grid-cols-2 gap-2">
-                    <div className="glass-card p-2 flex justify-center"><SettingsMenu /></div>
-                    <div className="glass-card p-2 flex justify-center"><ThemeToggle /></div>
-                    <div className="glass-card p-2 flex justify-center"><TranslateMenu /></div>
-                    <div className="glass-card p-2 flex justify-center"><CurrencySwitcher /></div>
+              <div className="mt-auto space-y-6">
+                 <div className="grid grid-cols-2 gap-3">
+                    <MobileAction icon={<SettingsMenu />} label="Settings" />
+                    <MobileAction icon={<ThemeToggle />} label="Appearance" />
+                    <MobileAction icon={<TranslateMenu />} label="Language" />
+                    <MobileAction icon={<CurrencySwitcher />} label="Currency" />
                  </div>
-                 <Button variant="outline" className="w-full h-12 rounded-xl text-xs font-black uppercase tracking-widest" onClick={() => setIsOpen(false)}>
-                    Close Menu
+                 <Button className="w-full h-14 rounded-2xl font-black text-lg gap-3 shadow-glow" onClick={() => setIsOpen(false)}>
+                    <Zap className="h-5 w-5" /> CLOSE NAV ENGINE
                  </Button>
               </div>
             </motion.div>
@@ -144,5 +152,14 @@ export function SiteNav() {
         )}
       </AnimatePresence>
     </header>
+  );
+}
+
+function MobileAction({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <div className="glass-card p-4 flex flex-col items-center gap-2 border-border/40 hover:border-primary/20 transition-colors">
+       <div className="h-8 w-8 flex items-center justify-center">{icon}</div>
+       <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>
+    </div>
   );
 }

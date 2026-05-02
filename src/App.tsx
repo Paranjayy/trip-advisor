@@ -21,6 +21,7 @@ import Planner from "./pages/Planner";
 import NotFound from "./pages/NotFound";
 import { CustomItineraryProvider } from "@/hooks/useCustomItineraries";
 import { AiAdvisor } from "@/components/AiAdvisor";
+import { SiteFooter } from "./components/SiteFooter";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +31,12 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => (
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
     transition={{ duration: 0.3, ease: "easeOut" }}
+    className="flex flex-col min-h-screen"
   >
-    {children}
+    <div className="flex-1">
+      {children}
+    </div>
+    <SiteFooter />
   </motion.div>
 );
 
