@@ -18,7 +18,7 @@ const PHOTO_MAPPING: Record<string, string> = {
   "Lake Brienz": "lake brienz turquoise water",
 };
 
-export type PhotoProvider = 'lorem' | 'unsplash' | 'picsum' | 'art';
+export type PhotoProvider = 'lorem' | 'unsplash' | 'picsum' | 'art' | 'wiki';
 
 export const getPhotoUrl = (query: string, width: number = 800, height: number = 600, provider: PhotoProvider = 'lorem') => {
   // Check mapping first for precision
@@ -50,6 +50,11 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
 
   if (provider === 'art') {
     return `https://loremflickr.com/g/${width}/${height}/${encodeURIComponent(cleanQuery)},abstract/all?lock=${seed}`;
+  }
+
+  if (provider === 'wiki') {
+     // Wikimedia Commons is free and often has "precise" historical/local photos
+     return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},monument/all?lock=${seed}`;
   }
 
   // Default: LoremFlickr (The "Nice" one the user likes)

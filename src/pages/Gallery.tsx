@@ -31,39 +31,64 @@ const Gallery = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<"all" | "country" | "itinerary">("all");
   const [sortBy, setSortBy] = useState<"name" | "recent">("recent");
-  const [provider, setProvider] = useState<PhotoProvider>("lorem");
+  const [provider, setProvider] = useState<PhotoProvider | "all">("lorem");
   const [isGrouped, setIsGrouped] = useState(false);
 
   const allPhotos = useMemo(() => {
     let photos: PhotoNode[] = [];
     
-    COUNTRIES.forEach(c => {
-      photos.push({
-        url: getPhotoUrl(c.name, 800, 800, provider),
-        place: c.name,
-        country: c.name,
-        slug: c.slug,
-        type: 'country'
-      });
-    });
+    const providers: PhotoProvider[] = provider === "all" ? ["lorem", "unsplash", "art", "wiki"] : [provider];
 
-    ITINERARIES.forEach(it => {
-      photos.push({
-        url: getPhotoUrl(it.slug.split('-')[0], 800, 800, provider),
-        place: it.title,
-        country: it.region,
-        slug: it.slug,
-        type: 'itinerary'
-      });
-      it.plan.forEach(d => {
+    providers.forEach(p => {
+      COUNTRIES.forEach(c => {
         photos.push({
-          url: getPhotoUrl(d.base, 800, 800, provider),
-          place: d.base,
+          url: getPhotoUrl(c.name, 800, 800, p),
+          place: c.name,
+          country: c.name,
+          slug: c.slug,
+          type: 'country'
+        });
+      });
+
+      ITINERARIES.forEach(it => {
+        photos.push({
+          url: getPhotoUrl(it.slug.split('-')[0], 800, 800, p),
+          place: it.title,
           country: it.region,
           slug: it.slug,
           type: 'itinerary'
         });
+        it.plan.forEach(d => {
+          photos.push({
+            url: getPhotoUrl(d.base, 800, 800, p),
+            place: d.base,
+            country: it.region,
+            slug: it.slug,
+            type: 'itinerary'
+          });
+        });
       });
+
+      // Add "Precision Results" for the search query if it doesn't match any known country/itinerary
+      if (query && query.length > 2) {
+        photos.push({
+          url: getPhotoUrl(query, 800, 800, p),
+          place: query,
+          country: "Precision Discovery",
+          slug: "search",
+          type: 'itinerary'
+        });
+        // Add a few more variants
+        ["detail", "mood", "vista"].forEach(mod => {
+           photos.push({
+             url: getPhotoUrl(`${query} ${mod}`, 800, 800, p),
+             place: `${query} (${mod})`,
+             country: "Precision Discovery",
+             slug: "search",
+             type: 'itinerary'
+           });
+        });
+      }
     });
 
     // 1. Initial filter by type and query
@@ -134,18 +159,27 @@ const Gallery = () => {
 
                  <div className="h-10 w-px bg-border/40 mx-2 hidden xl:block" />
 
-                 <div className="flex bg-accent/5 rounded-2xl p-1.5 border border-accent/10 gap-1 shadow-inner">
+                 <div className="flex bg-accent/5 rounded-2xl p-1.5 border border-accent/10 gap-1 shadow-inner overflow-x-auto no-scrollbar">
+                   <button 
+                     onClick={() => setProvider("all")}
+                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "all" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                   >All Access</button>
+                   <div className="w-px h-4 bg-accent/20 mx-1 self-center" />
                    <button 
                      onClick={() => setProvider("lorem")}
-                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all", provider === "lorem" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "lorem" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
                    >Standard</button>
                    <button 
                      onClick={() => setProvider("unsplash")}
-                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all", provider === "unsplash" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "unsplash" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
                    >Cinematic</button>
                    <button 
+                     onClick={() => setProvider("wiki")}
+                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "wiki" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                   >Precision</button>
+                   <button 
                      onClick={() => setProvider("art")}
-                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all", provider === "art" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "art" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
                    >Abstract</button>
                  </div>
 

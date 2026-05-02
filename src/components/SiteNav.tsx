@@ -98,11 +98,11 @@ export function SiteNav() {
 
       <div className="bg-secondary/40 backdrop-blur-md border-b border-border/40 py-1.5 px-6 lg:px-12 flex items-center justify-between text-[9px] font-black uppercase tracking-widest">
          <div className="flex items-center gap-6 overflow-hidden flex-1">
-            <div className="flex items-center gap-2 text-primary shrink-0">
+            <div className="flex items-center gap-2 text-primary shrink-0 border-r border-border/40 pr-6 mr-2">
                <Zap className="h-3 w-3 fill-current animate-pulse" />
-               INTELLIGENCE HUB
+               <span className="hidden sm:inline">INTELLIGENCE HUB</span>
+               <span className="sm:hidden">INTEL</span>
             </div>
-            <div className="h-3 w-px bg-border/40" />
             <GlobalPulse />
          </div>
          
@@ -120,10 +120,6 @@ export function SiteNav() {
                <ThemeToggle />
                <TranslateMenu />
                <CurrencySwitcher />
-            </div>
-            <div className="hidden sm:flex items-center gap-4 text-muted-foreground/40">
-               <span>LATENCY: 24MS</span>
-               <span>NODES: 14/14</span>
             </div>
          </div>
       </div>
