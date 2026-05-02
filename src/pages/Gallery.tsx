@@ -71,7 +71,6 @@ const Gallery = () => {
              tag: mod
            });
         });
-        if (isGeneralSearch) return;
       }
 
       COUNTRIES.forEach(c => {
@@ -265,7 +264,7 @@ const Gallery = () => {
           {Object.entries(grouped).map(([groupName, photos]) => (
             photos.length > 0 && (
               <div key={groupName} className="space-y-10">
-                {isGrouped && (
+                {(isGrouped || query) && (
                   <div className="flex items-center gap-6">
                     <h2 className="text-3xl font-black tracking-tighter">{groupName}</h2>
                     <div className="h-px bg-gradient-to-r from-border/60 to-transparent flex-1" />
@@ -292,39 +291,6 @@ const Gallery = () => {
               <Button onClick={() => { setQuery(""); setFilterType("all"); }} variant="outline" className="rounded-2xl font-black">RESET FILTERS</Button>
            </div>
         )}
-      </div>
-
-      {/* Discovery Compass / Warp Button */}
-      <div className="fixed bottom-10 right-10 z-[100]">
-         <motion.button
-           whileHover={{ scale: 1.1, rotate: 5 }}
-           whileTap={{ scale: 0.9 }}
-           onClick={handleWarp}
-           disabled={warpLoading}
-           className="relative h-20 w-20 rounded-full bg-primary shadow-glow shadow-primary/40 flex items-center justify-center group overflow-hidden border-4 border-background"
-         >
-            <AnimatePresence mode="wait">
-               {warpLoading ? (
-                 <motion.div
-                   key="loading"
-                   initial={{ rotate: 0 }}
-                   animate={{ rotate: 360 }}
-                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                 >
-                    <Shuffle className="h-8 w-8 text-white" />
-                 </motion.div>
-               ) : (
-                 <motion.div key="icon" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                    <Compass className="h-10 w-10 text-white fill-current animate-pulse" />
-                 </motion.div>
-               )}
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-         </motion.button>
-         
-         <div className="absolute -top-12 right-0 bg-surface border border-border px-4 py-2 rounded-2xl shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
-            <span className="text-[10px] font-black uppercase tracking-widest text-primary">Discovery Warp Engine</span>
-         </div>
       </div>
 
       <AnimatePresence>
