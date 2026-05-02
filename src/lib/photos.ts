@@ -58,12 +58,13 @@ export function getPhotoUrl(query: string, width: number = 800, height: number =
     return `https://images.unsplash.com/photo-${mappedId}?q=80&w=${width}&h=${height}&auto=format&fit=crop`;
   }
 
-  // 2. High-Fidelity Unsplash Source Fallback (Variety Engine)
-  // This is the most reliable way to get high-res variety without a key.
-  const keywords = ["landscape", "architecture", "culture", "nature", "vibe", "scenic"];
-  const finalQuery = `${query} ${keywords[seed % keywords.length]}`;
+  // 2. High-Fidelity Generative Fallback (Infinite Variety Engine)
+  // Replaces dead Unsplash Source with a synchronous, high-res AI generation API.
+  // This ensures perfect visual resolution for ANY global search (e.g. 'Chicago', 'Varanasi').
+  const keywords = ["cinematic travel photography", "high resolution", "beautiful lighting"];
+  const finalQuery = `${query} ${keywords.join(', ')}`;
   
-  return `https://source.unsplash.com/featured/${width}x${height}/?${encodeURIComponent(finalQuery)}&sig=${seed}`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(finalQuery)}?width=${width}&height=${height}&nologo=true&seed=${seed}`;
 }
 
 export const getPhotoPulse = (place: string, count: number = 8) => {
