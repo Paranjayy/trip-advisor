@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Route, Image as ImageIcon, Zap, Command, X, Globe, Landmark, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";

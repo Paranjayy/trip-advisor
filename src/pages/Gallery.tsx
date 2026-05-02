@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Image as ImageIcon, Search, Zap, Maximize2, MapPin, 
   ExternalLink, Camera, LayoutGrid, Layers, SortAsc, 
-  Filter, Globe, Route, FilterX, Library, Landmark, Sparkles
+  Filter, Globe, Route, FilterX, Library, Landmark, Sparkles, Compass, Shuffle
 } from "lucide-react";
 import { ITINERARIES } from "@/lib/itineraries";
 import { COUNTRIES } from "@/data/countries";
@@ -167,10 +167,36 @@ const Gallery = () => {
     ];
   }, [query]);
 
+  const [warpLoading, setWarpLoading] = useState(false);
+
+  const handleWarp = () => {
+    setWarpLoading(true);
+    const recos = ["Switzerland", "Japan", "Iceland", "Bali", "Patagonia", "Dubai", "Kyoto", "Rome", "Athens"];
+    const random = recos[Math.floor(Math.random() * recos.length)];
+    setTimeout(() => {
+      setQuery(random);
+      setWarpLoading(false);
+    }, 1000);
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Neural Drift Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+         <motion.div 
+           animate={{ 
+             scale: [1, 1.2, 1],
+             rotate: [0, 5, 0],
+             opacity: [0.1, 0.2, 0.1]
+           }}
+           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+           className="absolute -top-[20%] -left-[20%] w-[140%] h-[140%] bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.15),transparent_70%)]" 
+         />
+         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+      </div>
+
       <SiteNav />
-      <div className="container mx-auto py-10 px-4 md:px-6">
+      <div className="container mx-auto py-10 px-4 md:px-6 relative z-10">
         <header className="mb-12 text-center space-y-8">
            <div className="space-y-4">
               <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] shadow-glow">
@@ -184,7 +210,7 @@ const Gallery = () => {
               </p>
            </div>
 
-           <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+           <div className="max-w-4xl mx-auto space-y-6 relative z-[60]">
               <div className="relative group">
                  <div className="absolute inset-0 bg-primary/20 blur-3xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-1000" />
                  <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -193,9 +219,9 @@ const Gallery = () => {
                    value={query}
                    onChange={(e) => setQuery(e.target.value)}
                    placeholder="Search the global discovery matrix..."
-                   className="h-20 pl-16 pr-24 text-xl font-bold bg-secondary/30 border-border/40 focus-visible:ring-primary/20 rounded-[2rem] shadow-elevated"
+                   className="h-20 pl-16 pr-24 text-xl font-bold bg-secondary/80 backdrop-blur-xl border-border/40 focus-visible:ring-primary/20 rounded-[2rem] shadow-2xl relative z-10"
                  />
-                 <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-muted border border-border/40 text-[10px] font-black text-muted-foreground pointer-events-none group-focus-within:border-primary/40 group-focus-within:text-primary transition-all shadow-sm">
+                 <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-muted border border-border/40 text-[10px] font-black text-muted-foreground pointer-events-none group-focus-within:border-primary/40 group-focus-within:text-primary transition-all shadow-sm z-20">
                     <span className="opacity-50">⌘</span><span>K</span>
                  </div>
               </div>
@@ -266,6 +292,39 @@ const Gallery = () => {
               <Button onClick={() => { setQuery(""); setFilterType("all"); }} variant="outline" className="rounded-2xl font-black">RESET FILTERS</Button>
            </div>
         )}
+      </div>
+
+      {/* Discovery Compass / Warp Button */}
+      <div className="fixed bottom-10 right-10 z-[100]">
+         <motion.button
+           whileHover={{ scale: 1.1, rotate: 5 }}
+           whileTap={{ scale: 0.9 }}
+           onClick={handleWarp}
+           disabled={warpLoading}
+           className="relative h-20 w-20 rounded-full bg-primary shadow-glow shadow-primary/40 flex items-center justify-center group overflow-hidden border-4 border-background"
+         >
+            <AnimatePresence mode="wait">
+               {warpLoading ? (
+                 <motion.div
+                   key="loading"
+                   initial={{ rotate: 0 }}
+                   animate={{ rotate: 360 }}
+                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                 >
+                    <Shuffle className="h-8 w-8 text-white" />
+                 </motion.div>
+               ) : (
+                 <motion.div key="icon" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+                    <Compass className="h-10 w-10 text-white fill-current animate-pulse" />
+                 </motion.div>
+               )}
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+         </motion.button>
+         
+         <div className="absolute -top-12 right-0 bg-surface border border-border px-4 py-2 rounded-2xl shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary">Discovery Warp Engine</span>
+         </div>
       </div>
 
       <AnimatePresence>
