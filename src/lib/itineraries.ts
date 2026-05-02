@@ -131,6 +131,87 @@ export const ITINERARIES: Itinerary[] = [
     ]
   },
   {
+    slug: "ladakh-high-altitude-roadtrip-12d",
+    title: "Ladakh: The High-Altitude Pulse",
+    countrySlug: "india",
+    region: "Leh & Ladakh, India",
+    flag: "🇮🇳",
+    days: 12,
+    bestMonths: [6, 7, 8, 9],
+    difficulty: "hard",
+    terrains: ["mountains", "snow", "road-trip"],
+    type: "road-trip",
+    blurb: "A high-velocity ascent into the moonscapes of Ladakh. Intense high-altitude road-tripping for the goated adventurer.",
+    totalUsd: 1400,
+    highlights: ["Pangong Tso Sunrise", "Khardung La Pass", "Nubra Valley Meditation"],
+    category: "Road Trip",
+    tags: ["High-Alt", "Peaks", "Intensity"],
+    plan: [
+      {
+        day: 1, title: "Leh Acclimatization", base: "Leh",
+        stayUsd: 60,
+        stops: [
+          { place: "Leh Airport", activity: "High-altitude entry & transfer", hours: 1, km: 5, mode: "car", costUsd: 10, lat: 34.1438, lng: 77.5501 },
+          { place: "Shanti Stupa", activity: "Sunset pulse meditation", hours: 2, km: 3, mode: "walk", costUsd: 0, lat: 34.1702, lng: 77.5847 }
+        ]
+      }
+    ]
+  },
+  {
+    slug: "tokyo-cyber-city-loop-4d",
+    title: "Tokyo: The Cyber-City Loop",
+    countrySlug: "japan",
+    region: "Tokyo, Japan",
+    flag: "🇯🇵",
+    days: 4,
+    bestMonths: [4, 5, 10, 11],
+    difficulty: "easy",
+    terrains: ["city", "food", "technology"],
+    type: "base-camp",
+    blurb: "Tokyo in overdrive. From ancient shrines to neon intersections and Michelin-star ramen.",
+    totalUsd: 1200,
+    highlights: ["Shibuya Crossing", "Akihabara Tech Pulse", "Tsukiji Sushi Dawn"],
+    category: "Classic",
+    tags: ["Cyber", "Neon", "Gourmet"],
+    plan: [
+      {
+        day: 1, title: "Neon Entry", base: "Shinjuku",
+        stayUsd: 150,
+        stops: [
+          { place: "Narita Airport", activity: "Narita Express to City", hours: 1, km: 60, mode: "train", costUsd: 30, lat: 35.772, lng: 140.3929 },
+          { place: "Shinjuku Gyoen", activity: "Evening park decompression", hours: 2, km: 1, mode: "walk", costUsd: 5, lat: 35.6852, lng: 139.7101 }
+        ]
+      }
+    ]
+  },
+  {
+    slug: "swiss-peaks-glaciers-7d",
+    title: "Swiss Peaks & Glaciers",
+    countrySlug: "switzerland",
+    region: "Bernese Oberland, Switzerland",
+    flag: "🇨🇭",
+    days: 7,
+    bestMonths: [6, 7, 8, 12, 1, 2],
+    difficulty: "moderate",
+    terrains: ["mountains", "snow", "lakes"],
+    type: "road-trip",
+    blurb: "High-fidelity mountain immersion. Glacial lakes, alpine peaks, and world-class rail dynamics.",
+    totalUsd: 2200,
+    highlights: ["Jungfraujoch Peak", "Lauterbrunnen Valley", "Lake Brienz Pulse"],
+    category: "Luxury",
+    tags: ["Alpine", "Glacial", "Pristine"],
+    plan: [
+      {
+        day: 1, title: "Interlaken Base Camp", base: "Interlaken",
+        stayUsd: 180,
+        stops: [
+          { place: "Zurich Airport", activity: "Rail to Interlaken", hours: 2, km: 120, mode: "train", costUsd: 60, lat: 47.4582, lng: 8.5555 },
+          { place: "Lake Thun", activity: "Dusk boat pulse", hours: 2, km: 5, mode: "boat", costUsd: 20, lat: 46.6881, lng: 7.7885 }
+        ]
+      }
+    ]
+  },
+  {
     slug: "kashmir-lineage-scholarly-3d",
     title: "Kashmir Lineage & Scholarly Path — 3 days",
     countrySlug: "india",
