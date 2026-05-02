@@ -18,6 +18,7 @@ import Itineraries from "./pages/Itineraries";
 import ItineraryDetail from "./pages/ItineraryDetail";
 import CustomItinerary from "./pages/CustomItinerary";
 import Planner from "./pages/Planner";
+import Gallery from "./pages/Gallery";
 import NotFound from "./pages/NotFound";
 import { CustomItineraryProvider } from "@/hooks/useCustomItineraries";
 import { AiAdvisor } from "@/components/AiAdvisor";
@@ -57,6 +58,7 @@ const AnimatedRoutes = () => {
         <Route path="/itinerary/:slug" element={<PageWrapper><ItineraryDetail /></PageWrapper>} />
         <Route path="/itinerary/edit/:slug" element={<PageWrapper><CustomItinerary /></PageWrapper>} />
         <Route path="/planner" element={<PageWrapper><Planner /></PageWrapper>} />
+        <Route path="/gallery" element={<PageWrapper><Gallery /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>

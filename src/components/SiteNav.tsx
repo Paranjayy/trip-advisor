@@ -1,5 +1,5 @@
-import { Link, NavLink } from "react-router-dom";
-import { Menu, X, Globe2, Heart, Map as MapIcon, Route, ChevronRight, Zap } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Menu, X, Globe2, Heart, Map as MapIcon, Route, ChevronRight, Zap, Image as ImageIcon, Shuffle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { TranslateMenu } from "@/components/TranslateMenu";
@@ -9,18 +9,32 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GlobalPulse } from "./GlobalPulse";
+import { ITINERARIES } from "@/lib/itineraries";
+import { useToast } from "@/hooks/use-toast";
 
 const links = [
+  { to: "/", label: "Home", end: true },
   { to: "/explore", label: "Explore" },
   { to: "/map", label: "Map", icon: MapIcon },
   { to: "/itinerary", label: "Trips", icon: Route },
+  { to: "/gallery", label: "Gallery", icon: ImageIcon },
   { to: "/planner", label: "Planner" },
-  { to: "/compare", label: "Compare" },
-  { to: "/timing", label: "Timing" },
 ];
 
 export function SiteNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleRandomTrip = () => {
+    const random = ITINERARIES[Math.floor(Math.random() * ITINERARIES.length)];
+    toast({ 
+      title: "Taking you anywhere...", 
+      description: `Exploring: ${random.title}`,
+      className: "bg-primary text-white font-black"
+    });
+    navigate(`/itinerary/${random.slug}`);
+  };
 
   return (
     <header className="sticky top-0 z-50">
@@ -39,6 +53,7 @@ export function SiteNav() {
                 <NavLink
                   key={l.to}
                   to={l.to}
+                  end={l.end}
                   className={({ isActive }) =>
                     cn(
                       "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
@@ -57,6 +72,13 @@ export function SiteNav() {
 
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-2 border-r border-border/40 pr-3 mr-1">
+               <button 
+                  onClick={handleRandomTrip}
+                  title="Take me anywhere (Randomize)"
+                  className="h-10 w-10 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+               >
+                  <Shuffle className="h-4 w-4" />
+               </button>
                <SettingsMenu />
                <ThemeToggle />
                <TranslateMenu />
@@ -119,6 +141,7 @@ export function SiteNav() {
                   <NavLink
                     key={l.to}
                     to={l.to}
+                    end={l.end}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
                       cn(
@@ -134,6 +157,16 @@ export function SiteNav() {
                     <ChevronRight className={cn("h-5 w-5 transition-transform", isActive ? "rotate-90" : "opacity-20")} />
                   </NavLink>
                 ))}
+                <button 
+                  onClick={() => { setIsOpen(false); handleRandomTrip(); }}
+                  className="flex items-center justify-between p-4 rounded-2xl text-base font-black transition-all text-accent hover:bg-accent/5 w-full"
+                >
+                   <div className="flex items-center gap-4">
+                      <Shuffle className="h-5 w-5" />
+                      Take me anywhere
+                   </div>
+                   <Zap className="h-4 w-4 animate-pulse" />
+                </button>
               </div>
 
               <div className="mt-auto space-y-6">

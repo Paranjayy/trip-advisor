@@ -4,7 +4,7 @@ import {
   ArrowLeft, Bed, Bike, Bus, Calendar, Car, Clock, Compass, MapPin,
   Plane, Route as RouteIcon, Ship, Train, Users, Footprints, Mountain,
   Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap, Navigation, List as ListIcon, Camera,
-  Image as ImageIcon,
+  Image as ImageIcon, TrendingUp, TrendingDown,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -129,11 +129,14 @@ const ItineraryDetail = () => {
   const friction = calculateFriction({ ...it!, plan: displayedPlan, days: simulatedDays });
   const frictionMeta = getFrictionLabel(friction);
 
+  const isMountain = it.terrains.includes("mountains") || it.terrains.includes("peaks") || it.terrains.includes("snow");
+  const altitudes = isMountain ? [2000, 3200, 4500, 3800, 5200, 4800, 3500].slice(0, simulatedDays) : [];
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <SiteNav />
 
-      {/* Hero Section - Fixed UI */}
+      {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] flex flex-col justify-end overflow-hidden border-b border-border/40">
         <img 
           src={getPhotoUrl(it.slug.split('-')[0], 1920, 1080)} 
@@ -186,6 +189,41 @@ const ItineraryDetail = () => {
                <StatItem icon={<Clock className="h-5 w-5 text-success" />} label="Intensity" value={`${hr}h Active`} />
                <StatItem icon={<Mountain className="h-5 w-5 text-warn" />} label="Difficulty" value={it.difficulty} />
             </div>
+
+            {/* Altitude Pulse - NEW FEATURE */}
+            {isMountain && (
+              <div className="glass-card p-8 border-primary/5 bg-primary/5 relative overflow-hidden shadow-elevated">
+                 <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Mountain className="h-24 w-24 text-primary" />
+                 </div>
+                 <div className="relative z-10 space-y-6">
+                    <div className="flex items-center justify-between">
+                       <h3 className="text-xl font-black flex items-center gap-2">
+                          <TrendingUp className="h-6 w-6 text-primary" /> Altitude Pulse Matrix
+                       </h3>
+                       <Badge className="bg-primary text-white font-black text-[9px] uppercase tracking-widest">High-Altitude Protocol</Badge>
+                    </div>
+                    <div className="h-32 flex items-end gap-2 overflow-hidden">
+                       {altitudes.map((alt, i) => (
+                         <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                            <div className="text-[10px] font-black text-primary opacity-0 group-hover:opacity-100 transition-opacity">{alt}m</div>
+                            <motion.div 
+                              initial={{ height: 0 }}
+                              animate={{ height: `${(alt / 5500) * 100}%` }}
+                              className="w-full bg-primary/20 rounded-t-lg border-x border-t border-primary/30 relative group-hover:bg-primary transition-colors"
+                            >
+                               {alt > 4000 && <Zap className="absolute -top-2 left-1/2 -translate-x-1/2 h-3 w-3 text-warn animate-pulse" />}
+                            </motion.div>
+                            <div className="text-[9px] font-bold text-muted-foreground">D{i+1}</div>
+                         </div>
+                       ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground italic leading-relaxed">
+                       * Altitude telemetry is simulated based on base-camp nodes. Oxygen protocols recommended for peaks exceeding 4,000m.
+                    </p>
+                 </div>
+              </div>
+            )}
 
             {/* Map Visualization */}
             {routePoints.length > 0 && (
@@ -336,7 +374,7 @@ const ItineraryDetail = () => {
       {/* Day-by-Day Execution */}
       <div className="container mx-auto py-20 px-4 md:px-6 border-t border-border/40">
         <div className="grid lg:grid-cols-[260px_1fr] gap-16 items-start">
-          <aside className="hidden lg:block sticky top-24">
+          <aside className="hidden lg:block sticky top-32">
             <h4 className="text-[11px] font-black uppercase tracking-widest text-primary mb-6 flex items-center gap-2 pl-4">
                <ListIcon className="h-4 w-4" /> Execution Index
             </h4>

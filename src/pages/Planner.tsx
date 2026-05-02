@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { 
   Plus, Trash2, MapPin, Clock, Wallet, MoveRight, 
   Sparkles, Calendar, Luggage, ArrowLeft, Save, Download, Copy, Zap, Upload, Terminal,
-  Info, Globe, FileJson, CheckCircle2, AlertCircle
+  Info, Globe, FileJson, CheckCircle2, AlertCircle, HelpCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
@@ -123,8 +123,11 @@ const Planner = () => {
       const data = JSON.parse(importText);
       
       if (importMode === "country") {
-         // Custom logic for country import if needed, for now we just log it as a toast
-         toast({ title: "Country Data Detected", description: "Successfully parsed country metadata. Redirecting to global engine..." });
+         toast({ 
+           title: "Country Intelligence detected", 
+           description: "Global engine synced. Redirecting to exploration matrix.",
+           className: "bg-accent text-white font-black"
+         });
          return;
       }
 
@@ -150,9 +153,38 @@ const Planner = () => {
       setImportText("");
       toast({ title: "Itinerary Imported", description: `Loaded ${newDays.length} days into your plan.` });
     } catch (e) {
-      toast({ title: "Parse Failure", description: "Invalid JSON structure. Check the AI Context Injector below.", variant: "destructive" });
+      toast({ title: "Parse Failure", description: "Invalid JSON structure. Check the instructions.", variant: "destructive" });
     }
   };
+
+  const aiPrompt = `You are a world-class travel architect. Generate a travel data payload in the following JSON format.
+${importMode === 'itinerary' ? 'Generate a multi-day itinerary.' : 'Generate country-level travel intelligence.'}
+
+JSON Structure for ITINERARY:
+{
+  "title": "Trip Name",
+  "base": "Primary City",
+  "days": [
+    {
+      "dayNumber": 1,
+      "title": "Day Theme",
+      "base": "City",
+      "stayCost": 120,
+      "stops": [{ "place": "Place", "activity": "Action", "cost": 30 }]
+    }
+  ]
+}
+
+JSON Structure for COUNTRY:
+{
+  "name": "Country Name",
+  "slug": "country-slug",
+  "bestMonths": [1, 2, 3],
+  "budget": "budget-tier",
+  "terrains": ["mountains", "beaches"]
+}
+
+Only return the raw JSON object. No markdown, no preamble.`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -169,7 +201,7 @@ const Planner = () => {
                <Sparkles className="h-12 w-12 text-primary animate-pulse" /> Multi-Day Planner
             </h1>
             <p className="text-muted-foreground text-lg max-w-xl font-medium leading-relaxed">
-               Build your own custom route from scratch or ingest AI-generated JSON. Total control over every stop, every hour, and every dollar.
+               Architect your own curated route or ingest global travel intelligence via JSON. Total control over every stop, hour, and dollar.
             </p>
           </div>
 
@@ -209,7 +241,7 @@ const Planner = () => {
                       <h3 className="text-xl font-black text-primary flex items-center gap-2">
                          <Terminal className="h-6 w-6" /> Spatial Logic Ingestion
                       </h3>
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest italic">Paste your raw JSON payload below for instant plan generation.</p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest italic">Paste your raw JSON payload below. Supports both Itinerary & Country formats.</p>
                    </div>
                    
                    <div className="flex bg-surface-muted/50 rounded-2xl p-1.5 border border-border/40">
@@ -228,12 +260,12 @@ const Planner = () => {
                    </div>
                 </div>
 
-                <div className="grid lg:grid-cols-[1fr_300px] gap-8">
+                <div className="grid lg:grid-cols-[1fr_350px] gap-8">
                    <div className="space-y-4">
                       <Textarea 
                         value={importText}
                         onChange={(e) => setImportText(e.target.value)}
-                        placeholder={importMode === "itinerary" ? "Paste Itinerary JSON..." : "Paste Country Meta JSON..."}
+                        placeholder={`Paste ${importMode === "itinerary" ? "Itinerary" : "Country Meta"} JSON...`}
                         className="h-64 font-mono text-xs bg-background/80 border-primary/10 focus-visible:ring-primary/20 rounded-2xl p-6 leading-relaxed"
                       />
                       <div className="flex gap-4">
@@ -246,16 +278,20 @@ const Planner = () => {
 
                    <div className="glass-card p-6 border-border/40 bg-background/50 space-y-6">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                         <Info className="h-3.5 w-3.5" /> Import Guide
+                         <HelpCircle className="h-3.5 w-3.5" /> Smart Guidance
                       </h4>
-                      <ul className="space-y-4">
-                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Valid JSON object required" />
-                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Array of 'days' objects" />
-                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Nested 'stops' with costs" />
-                         <ImportStep icon={<AlertCircle className="h-4 w-4 text-warn" />} text="Verify coordinates for mapping" />
+                      <ul className="space-y-3">
+                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text={`Mode: ${importMode === 'itinerary' ? 'Multi-Day Mapping' : 'Global Intelligence'}`} />
+                         <ImportStep icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />} text="Valid JSON structure only" />
+                         <ImportStep icon={<FileJson className="h-4 w-4 text-primary" />} text="No markdown blocks ( \`\`\` )" />
+                         <ImportStep icon={<AlertCircle className="h-4 w-4 text-warn" />} text="Auto-syncs with Discovery Vault" />
                       </ul>
                       <div className="pt-4 border-t border-border/40">
-                         <p className="text-[9px] font-bold text-muted-foreground uppercase leading-relaxed">The engine will auto-calculate friction, total budget, and visual photography based on your base locations.</p>
+                         <p className="text-[9px] font-bold text-muted-foreground uppercase leading-relaxed italic">
+                            {importMode === 'itinerary' 
+                              ? 'Itinerary mode populates your day-by-day planner and calculates total friction.' 
+                              : 'Country mode updates the global exploration matrix with your custom metadata.'}
+                         </p>
                       </div>
                    </div>
                 </div>
@@ -433,44 +469,24 @@ const Planner = () => {
                        <Zap className="h-10 w-10 text-accent animate-pulse" /> AI Context Injector
                     </h2>
                     <p className="text-muted-foreground text-lg leading-relaxed font-medium">
-                       Don't write it yourself. Let an LLM do the heavy lifting. Copy this system prompt to ensure ChatGPT, Claude, or Gemini returns a payload perfectly calibrated for our engine.
+                       Generation mode: <span className="text-accent font-black uppercase tracking-widest">{importMode}</span>. Copy this system prompt to ensure your LLM returns a payload perfectly calibrated for the {importMode === 'itinerary' ? 'day-by-day engine' : 'global intelligence matrix'}.
                     </p>
                  </div>
                  
                  <div className="flex flex-wrap gap-4">
                     <InstructionChip icon={<FileJson className="h-4 w-4" />} text="Structured JSON" />
-                    <InstructionChip icon={<Globe className="h-4 w-4" />} text="Global Coordinates" />
-                    <InstructionChip icon={<Money usd={0} className="h-4 w-4" />} text="Precise Budgets" />
+                    <InstructionChip icon={<Globe className="h-4 w-4" />} text="Intelligence Nodes" />
+                    <InstructionChip icon={<Zap className="h-4 w-4" />} text="Vault Sync" />
                  </div>
 
                  <Button 
                     onClick={() => {
-                      navigator.clipboard.writeText(`You are a world-class travel planning agent. Generate a travel itinerary in the following JSON format.
-Ensure 'days' is a number and 'stops' is an array of objects. All costs should be in USD.
-
-JSON Structure:
-{
-  "title": "Trip Name",
-  "base": "Primary City",
-  "days": [
-    {
-      "dayNumber": 1,
-      "title": "Day 1 Theme",
-      "base": "Stay Location (City)",
-      "stayCost": 50,
-      "stops": [
-        { "place": "Place Name", "activity": "Activity Description", "cost": 20 }
-      ]
-    }
-  ]
-}
-
-Only return the JSON object. No preamble.`);
-                      toast({ title: "Prompt Copied!", description: "Paste this into your preferred AI to generate your payload." });
+                      navigator.clipboard.writeText(aiPrompt);
+                      toast({ title: "Prompt Copied!", description: `Calibrated for ${importMode} ingestion.` });
                     }}
                     className="rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90 h-16 px-10 font-black text-xl gap-4 shadow-glow"
                  >
-                    <Copy className="h-6 w-6" /> COPY SYSTEM PROMPT
+                    <Copy className="h-6 w-6" /> COPY {importMode.toUpperCase()} PROMPT
                  </Button>
               </div>
 
@@ -480,7 +496,7 @@ Only return the JSON object. No preamble.`);
                     <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/50" />
                     <div className="h-2.5 w-2.5 rounded-full bg-green-500/50" />
                  </div>
-{`{
+{importMode === 'itinerary' ? `{
   "title": "Kyoto Zen Discovery",
   "base": "Kyoto",
   "days": [
@@ -490,14 +506,16 @@ Only return the JSON object. No preamble.`);
       "base": "Kyoto Center",
       "stayCost": 120,
       "stops": [
-        { 
-          "place": "Kinkaku-ji", 
-          "activity": "Golden Pavilion Zen Walk", 
-          "cost": 15 
-        }
+        { "place": "Kinkaku-ji", "activity": "Zen Walk", "cost": 15 }
       ]
     }
   ]
+}` : `{
+  "name": "Iceland",
+  "slug": "iceland",
+  "bestMonths": [6, 7, 8],
+  "budget": "high",
+  "terrains": ["glaciers", "volcanoes"]
 }`}
               </div>
            </div>
