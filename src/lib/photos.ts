@@ -18,7 +18,9 @@ const PHOTO_MAPPING: Record<string, string> = {
   "Lake Brienz": "lake brienz turquoise water",
 };
 
-export const getPhotoUrl = (query: string, width: number = 800, height: number = 600) => {
+export type PhotoProvider = 'lorem' | 'unsplash' | 'picsum' | 'art';
+
+export const getPhotoUrl = (query: string, width: number = 800, height: number = 600, provider: PhotoProvider = 'lorem') => {
   // Check mapping first for precision
   const preciseQuery = PHOTO_MAPPING[query] || query;
   
@@ -38,16 +40,34 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
   
   const fallbackId = fallbacks[seed % fallbacks.length];
   
-  // Using a more reliable "featured" search via a redirect-friendly service or direct fallback
-  // We use LoremFlickr as it's more stable for tag-based discovery now
+  if (provider === 'unsplash') {
+    return `https://images.unsplash.com/${fallbackId}?q=80&w=${width}&h=${height}&auto=format&fit=crop`;
+  }
+
+  if (provider === 'picsum') {
+    return `https://picsum.photos/seed/${seed}/${width}/${height}`;
+  }
+
+  if (provider === 'art') {
+    return `https://loremflickr.com/g/${width}/${height}/${encodeURIComponent(cleanQuery)},abstract/all?lock=${seed}`;
+  }
+
+  // Default: LoremFlickr (The "Nice" one the user likes)
   return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},travel/all?lock=${seed}`;
 };
 
 /**
  * Returns a collection of diverse photos for a given place
  */
-export const getPhotoPulse = (place: string, count: number = 5) => {
+export const getPhotoPulse = (place: string, count: number = 8, provider: PhotoProvider = 'lorem') => {
+  const modifiers = [
+    "view", "detail", "architecture", "street", 
+    "landscape", "lifestyle", "mood", "candid",
+    "aerial", "interior", "texture", "culture"
+  ];
+
   return Array.from({ length: count }).map((_, i) => {
-    return getPhotoUrl(`${place} detail ${i}`, 800, 800);
+    const mod = modifiers[i % modifiers.length];
+    return getPhotoUrl(`${place} ${mod}`, 800, 800, provider);
   });
 };

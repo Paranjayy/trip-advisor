@@ -132,6 +132,23 @@ const ItineraryDetail = () => {
   const isMountain = it.terrains.includes("mountains") || it.terrains.includes("peaks") || it.terrains.includes("snow");
   const altitudes = isMountain ? [2000, 3200, 4500, 3800, 5200, 4800, 3500].slice(0, simulatedDays) : [];
 
+  const pulsePhotos = useMemo(() => {
+    if (!it) return [];
+    // Combine base cities, specific stops, and general trip vibe
+    const seeds = [it.title, ...displayedPlan.map(d => d.base), ...allStops.map(s => s.place)];
+    const uniqueSeeds = Array.from(new Set(seeds)).slice(0, 16);
+    
+    // For each unique place, get a varied selection
+    return uniqueSeeds.flatMap((place, idx) => {
+      // Get 1 varied photo per place to ensure wide coverage
+      const mods = ["view", "mood", "detail", "street", "landscape", "culture"];
+      return {
+        url: getPhotoUrl(`${place} ${mods[idx % mods.length]}`, 800, 800),
+        place
+      };
+    });
+  }, [it, displayedPlan, allStops]);
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <SiteNav />
@@ -502,27 +519,27 @@ const ItineraryDetail = () => {
                    </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setShowPhotos(false)} className="rounded-full h-12 w-12 hover:bg-white/10">
-                   <Zap className="h-6 w-6 rotate-90" />
+                   <X className="h-6 w-6" />
                 </Button>
              </div>
 
              <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
                 <div className="columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
-                   {[...displayedPlan.map(d => d.base), ...allStops.map(s => s.place), it.title].slice(0, 12).map((place, i) => (
+                   {pulsePhotos.map((p, i) => (
                      <motion.div 
-                        key={`${place}-${i}`}
+                        key={`${p.place}-${i}`}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.05 }}
                         className="break-inside-avoid relative group rounded-3xl overflow-hidden shadow-elevated border border-white/5"
                      >
                         <img 
-                          src={getPhotoUrl(place, 800, 800)} 
-                          alt={place} 
+                          src={p.url} 
+                          alt={p.place} 
                           className="w-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                           <p className="text-white font-black text-sm uppercase tracking-widest">{place}</p>
+                           <p className="text-white font-black text-sm uppercase tracking-widest">{p.place}</p>
                         </div>
                      </motion.div>
                    ))}
