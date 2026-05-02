@@ -1138,9 +1138,25 @@ export const ITINERARIES: Itinerary[] = [
   },
 ];
 
-export function getItinerary(slug: string) {
-  return ITINERARIES.find((i) => i.slug === slug);
+/**
+ * Normalize an itinerary so the declared `days` always equals the
+ * number of real planned days. Prevents "ghost stats" — stops/altitudes/
+ * cost rendering for days that have no curated content (the cricket-
+ * scoreboard "1 ball played by a player who didn't bat" bug).
+ */
+function normalize(it: Itinerary): Itinerary {
+  const realDays = it.plan.length;
+  if (realDays === 0 || realDays === it.days) return it;
+  return { ...it, days: realDays };
 }
+
+export function getItinerary(slug: string) {
+  const found = ITINERARIES.find((i) => i.slug === slug);
+  return found ? normalize(found) : undefined;
+}
+
+/** Public list with normalized day counts. */
+export const ITINERARIES_NORMALIZED: Itinerary[] = ITINERARIES.map(normalize);
 
 /** Helpers for summary stats */
 export function totalKm(it: Itinerary): number {

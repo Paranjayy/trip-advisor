@@ -8,7 +8,10 @@ import type { Country } from "@/data/countries";
 export type Terrain =
   | "mountains" | "beaches" | "city" | "jungle" | "snow" | "desert"
   | "food" | "nightlife" | "history" | "wildlife" | "diving" | "surf"
-  | "ski" | "wellness" | "lakes" | "islands" | "volcanoes" | "wine";
+  | "ski" | "wellness" | "lakes" | "islands" | "volcanoes" | "wine"
+  // Extended tags used by curated itineraries — rendered via fallback meta.
+  | "culture" | "rural" | "road-trip" | "technology" | "tech"
+  | "peaks" | "rivers" | "boulders" | "beach";
 
 export const TERRAIN_LIST: Terrain[] = [
   "mountains","beaches","city","jungle","snow","desert","food","nightlife",
@@ -35,6 +38,16 @@ export const TERRAIN_META: Record<Terrain, { label: string; icon: LucideIcon; to
   islands:   { label: "Islands",   icon: Compass,    tone: "bg-success-soft text-success" },
   volcanoes: { label: "Volcanoes", icon: Flame,      tone: "bg-accent-soft text-accent" },
   wine:      { label: "Wine",      icon: GlassWater, tone: "bg-accent-soft text-accent" },
+  // Extended (curated itinerary tags)
+  culture:    { label: "Culture",    icon: Landmark,   tone: "bg-warn-soft text-warn" },
+  rural:      { label: "Rural",      icon: Trees,      tone: "bg-success-soft text-success" },
+  "road-trip":{ label: "Road Trip",  icon: Compass,    tone: "bg-primary-soft text-primary" },
+  technology: { label: "Tech",       icon: Sparkles,   tone: "bg-secondary text-secondary-foreground" },
+  tech:       { label: "Tech",       icon: Sparkles,   tone: "bg-secondary text-secondary-foreground" },
+  peaks:      { label: "Peaks",      icon: Mountain,   tone: "bg-primary-soft text-primary" },
+  rivers:     { label: "Rivers",     icon: GlassWater, tone: "bg-primary-soft text-primary" },
+  boulders:   { label: "Boulders",   icon: Mountain,   tone: "bg-warn-soft text-warn" },
+  beach:      { label: "Beach",      icon: Waves,      tone: "bg-success-soft text-success" },
 };
 
 export type Difficulty = "easy" | "moderate" | "hard";
