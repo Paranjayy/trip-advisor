@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, TrendingUp, Wallet } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
