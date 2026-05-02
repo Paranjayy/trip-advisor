@@ -143,11 +143,28 @@ const Gallery = () => {
   };
 
   const recommendations = useMemo(() => {
-    if (!query) return ["Switzerland", "Japan", "Iceland", "Bali", "Patagonia", "Dubai"];
-    if (query.toLowerCase().includes("junagadh") || query.toLowerCase().includes("girnar")) {
-       return ["Uparkot Caves", "Mahabat Maqbara", "Somnath Temple", "Sasan Gir", "Diü Island", "Rann of Kutch"];
-    }
-    return [`${query} Aerial`, `${query} Night`, `${query} Culture`, `${query} Architecture`, `${query} Nature` ];
+    const defaultRecos = ["Switzerland", "Japan", "Iceland", "Bali", "Patagonia", "Dubai", "New Zealand", "Norway"];
+    if (!query) return defaultRecos;
+    
+    const q = query.toLowerCase();
+    
+    // Regional Pulse Matrix: Maps clusters to high-fidelity nodes
+    const pulseMatrix: Record<string, string[]> = {
+      "india": ["Varanasi Ghats", "Hampi Ruins", "Munnar Tea Estates", "Ladakh Passes", "Udaipur Palaces", "Goa Beaches"],
+      "junagadh": ["Uparkot Caves", "Mahabat Maqbara", "Somnath Temple", "Sasan Gir", "Diü Island", "Rann of Kutch"],
+      "japan": ["Kyoto Temples", "Shibuya Night", "Mt Fuji Vista", "Osaka Street Food", "Nara Deer Park", "Hokkaido Snow"],
+      "swiss": ["Interlaken Lakes", "Matterhorn Peak", "Lucerne Bridge", "Grindelwald Valley", "St Moritz Luxury"],
+      "bali": ["Ubud Jungles", "Uluwatu Cliffs", "Seminyak Sunsets", "Mount Batur Trek", "Nusa Penida Views"],
+      "nature": ["Amazon Rainforest", "Grand Canyon", "Great Barrier Reef", "Sahara Dunes", "Antarctica Ice"],
+    };
+
+    const match = Object.keys(pulseMatrix).find(key => q.includes(key));
+    if (match) return pulseMatrix[match];
+
+    return [
+       `${query} Aerial`, `${query} Night`, `${query} Heritage`, 
+       `${query} Architecture`, `${query} Hidden Gem`, `${query} Local Vibe`
+    ];
   }, [query]);
 
   return (
