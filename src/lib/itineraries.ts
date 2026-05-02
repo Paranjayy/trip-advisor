@@ -949,6 +949,8 @@ export const ITINERARIES: Itinerary[] = [
         stops: [
           { place: "Sapporo → CTS", activity: "Final transfer", hours: 1, km: 45, mode: "train", costUsd: 15 },
         ] },
+      ],
+    },
   {
     slug: "india-rajasthan-5d",
     title: "Rajasthan: Forts & Palaces — 5 days",

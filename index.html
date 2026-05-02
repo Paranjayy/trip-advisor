@@ -19,25 +19,6 @@
 
     <meta name="author" content="TripAdvisor" />
     <link rel="canonical" href="/" />
-    <script>
-      if (window.location.hostname.includes("github.io")) {
-        window.location.href = "https://trip-advisor-jade.vercel.app" + window.location.pathname;
-      }
-    </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta property="og:title" content="TripAdvisor — Plan smarter trips by budget, weather &amp; vibe" />
-    <meta name="twitter:title" content="TripAdvisor — Plan smarter trips by budget, weather &amp; vibe" />
-    <meta property="og:description" content="Compare 79+ destinations on cost, terrain, vibe and Japan-likeness." />
-    <meta name="twitter:description" content="Compare 79+ destinations on cost, terrain, vibe and Japan-likeness." />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta property="og:image" content="/ogimage.png" />
-    <meta name="twitter:image" content="/ogimage.png" />
 
     <style>
       /* Hide Google Translate's top banner & tooltip while keeping translation active */
@@ -50,10 +31,32 @@
       body { top: 0 !important; }
       /* Don't translate brand chips / numbers */
       .notranslate { unicode-bidi: isolate; }
+      /* Page Progress Bar */
+      #scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+        z-index: 10000;
+        transition: width 0.1s ease-out;
+        box-shadow: 0 0 10px rgba(var(--primary), 0.5);
+      }
     </style>
+    <script>
+      window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        const bar = document.getElementById("scroll-progress");
+        if (bar) bar.style.width = scrolled + "%";
+      });
+    </script>
   </head>
 
   <body>
+    <div id="scroll-progress"></div>
     <div id="root"></div>
     <div id="google_translate_element" style="display:none"></div>
     <script type="text/javascript">
