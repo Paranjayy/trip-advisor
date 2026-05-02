@@ -123,12 +123,14 @@ const Planner = () => {
 
   const handleImport = () => {
     try {
-      const data = JSON.parse(importText);
+      const raw = JSON.parse(importText);
+      // Smart Unwrap: handle nested 'itinerary' or 'country' keys
+      const data = raw.itinerary ? raw.itinerary : (raw.country ? raw : raw);
       
-      if (importMode === "country") {
+      if (raw.country || data.name) {
          toast({ 
            title: "Country Intelligence detected", 
-           description: "Global engine synced. Redirecting to exploration matrix.",
+           description: `Global engine synced for ${raw.country?.name || data.name}. Redirecting to exploration matrix.`,
            className: "bg-accent text-white font-black"
          });
          return;

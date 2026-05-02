@@ -73,7 +73,15 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
      return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},monument/all?lock=${seed}`;
   }
 
-  // Default: LoremFlickr with explicit lock for variety
+  // Default: Use a more robust chain. If it's a specific local node, mix in some Unsplash high-res seeds
+  if (seed % 3 === 0) {
+    return `https://images.unsplash.com/${fallbackId}?q=80&w=${width}&h=${height}&auto=format&fit=crop`;
+  }
+  
+  if (seed % 3 === 1) {
+    return `https://picsum.photos/seed/${seed}/${width}/${height}`;
+  }
+
   return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},travel/all?lock=${seed}`;
 };
 
