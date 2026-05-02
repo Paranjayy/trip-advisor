@@ -65,28 +65,29 @@ const Gallery = () => {
         });
       });
     });
-/* ... rest of useMemo ... */
 
-    const seen = new Set();
+    // 1. Initial filter by type and query
     let filtered = photos.filter(p => {
-      if (seen.has(p.place)) return false;
-      seen.add(p.place);
-      return true;
-    });
-
-    filtered = filtered.filter(p => {
       const matchQuery = !query || p.place.toLowerCase().includes(query.toLowerCase()) || p.country.toLowerCase().includes(query.toLowerCase());
       const matchType = filterType === "all" || p.type === filterType;
       return matchQuery && matchType;
     });
 
+    // 2. Deduplicate after filtering so types don't mask each other
+    const seen = new Set();
+    filtered = filtered.filter(p => {
+      const key = `${p.type}-${p.place}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
     if (sortBy === "name") {
       filtered.sort((a, b) => a.place.localeCompare(b.place));
     }
-    // "Recent" is just the default order or we could shuffle
     
     return filtered;
-  }, [query, filterType, sortBy]);
+  }, [query, filterType, sortBy, provider]);
 
   const grouped = useMemo(() => {
     if (!isGrouped) return { "Global Stream": allPhotos };
