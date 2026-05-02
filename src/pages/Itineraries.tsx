@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, Clock, MapPin, Mountain, Search, Route as RouteIcon, Plus } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";

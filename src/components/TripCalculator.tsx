@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Calculator } from "lucide-react";
 import { Country, MONTHS } from "@/data/countries";
 import { Slider } from "@/components/ui/slider";

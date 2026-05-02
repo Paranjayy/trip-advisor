@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { Heart, Plane, Utensils, Users } from "lucide-react";
 import { Country } from "@/data/countries";
