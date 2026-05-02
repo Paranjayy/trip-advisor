@@ -38,8 +38,12 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
   const dynamicQuery = `${cleanQuery} ${discoveryKeywords[seed % discoveryKeywords.length]}`;
 
   if (provider === 'satellite') {
-    const coords = COORDINATES[query] || "0,0";
-    return `https://api.maptiler.com/maps/satellite/static/${coords},13/${width}x${height}.png?key=get-your-own-key-fallback&fallback=true`;
+    const coords = COORDINATES[query] || "70.4579,21.5222"; // Default to Junagadh if unknown
+    // Robust, key-less topographic/satellite proxy
+    return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/${Math.floor(Math.random() * 10)}/${Math.floor(Math.random() * 10)}`;
+    // Actually, let's use a better static map URL format
+    const [lon, lat] = coords.split(',').map(Number);
+    return `https://static-maps.yandex.ru/1.x/?ll=${lon},${lat}&z=13&l=sat&size=${width},${height}`;
   }
 
   const fallbacks = [

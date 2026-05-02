@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { SiteNav } from "@/components/SiteNav";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -26,7 +26,18 @@ type PhotoNode = {
 };
 
 const Gallery = () => {
-  useEffect(() => { document.title = "Global Gallery — TripAdvisor"; }, []);
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { 
+    document.title = "Global Gallery — TripAdvisor"; 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const [query, setQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "country" | "itinerary">("all");
@@ -156,16 +167,20 @@ const Gallery = () => {
               </p>
            </div>
 
-           <div className="max-w-4xl mx-auto space-y-6">
+           <div className="max-w-4xl mx-auto space-y-6 relative z-10">
               <div className="relative group">
                  <div className="absolute inset-0 bg-primary/20 blur-3xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-1000" />
                  <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
                  <Input 
+                   ref={searchRef}
                    value={query}
                    onChange={(e) => setQuery(e.target.value)}
-                   placeholder="Search the global discovery matrix (e.g. 'Kyoto night', 'Swiss Alps vista')..."
-                   className="h-20 pl-16 pr-8 text-xl font-bold bg-secondary/30 border-border/40 focus-visible:ring-primary/20 rounded-[2rem] shadow-elevated"
+                   placeholder="Search the global discovery matrix..."
+                   className="h-20 pl-16 pr-24 text-xl font-bold bg-secondary/30 border-border/40 focus-visible:ring-primary/20 rounded-[2rem] shadow-elevated"
                  />
+                 <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-muted border border-border/40 text-[10px] font-black text-muted-foreground pointer-events-none group-focus-within:border-primary/40 group-focus-within:text-primary transition-all shadow-sm">
+                    <span className="opacity-50">⌘</span><span>K</span>
+                 </div>
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-3">
