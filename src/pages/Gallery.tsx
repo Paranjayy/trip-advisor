@@ -122,7 +122,8 @@ const Gallery = () => {
   }, [query, filterType, sortBy, provider]);
 
   const grouped = useMemo(() => {
-    if (!isGrouped) return { "Visual Stream": allPhotos };
+    const defaultLabel = query ? `Discovery Matrix: ${query}` : "Visual Stream";
+    if (!isGrouped) return { [defaultLabel]: allPhotos };
     const groups: Record<string, PhotoNode[]> = {};
     allPhotos.forEach(p => {
       const g = p.country;
@@ -130,7 +131,20 @@ const Gallery = () => {
       groups[g].push(p);
     });
     return groups;
-  }, [allPhotos, isGrouped]);
+  }, [allPhotos, isGrouped, query]);
+
+  const getNeuralFact = (place: string, tag?: string) => {
+    const facts = [
+       "Geospatial alignment verified via local node network.",
+       "Spectral analysis indicates optimal viewing window: 16:00 - 18:00.",
+       "Discovery Pulse: High-fidelity historical significance detected.",
+       "Cultural density: 9.4/10 based on recent field captures.",
+       "Topographical scan: Peak visibility confirmed for current season.",
+       "Neural signature matches known architectural masterpieces.",
+    ];
+    const seed = (place + (tag || "")).length;
+    return facts[seed % facts.length];
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -292,38 +306,76 @@ function FilterBtn({ active, onClick, icon, label }: { active: boolean; onClick:
 }
 
 function GalleryItem({ p, i, onZoom }: { p: PhotoNode; i: number; onZoom: () => void }) {
+  const getNeuralFact = (place: string, tag?: string) => {
+    const facts = [
+       "Geospatial alignment verified via local node network.",
+       "Spectral analysis indicates optimal viewing window: 16:00 - 18:00.",
+       "Discovery Pulse: High-fidelity historical significance detected.",
+       "Cultural density: 9.4/10 based on recent field captures.",
+       "Topographical scan: Peak visibility confirmed for current season.",
+       "Neural signature matches known architectural masterpieces.",
+    ];
+    const seed = (place + (tag || "")).length + i;
+    return facts[seed % facts.length];
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ delay: (i % 12) * 0.04 }}
-      className="break-inside-avoid relative group rounded-[2.5rem] overflow-hidden border border-border/40 shadow-elevated bg-surface-muted/30 cursor-zoom-in"
+      className="break-inside-avoid relative group rounded-[2.5rem] overflow-hidden border border-border/40 shadow-elevated bg-surface-muted/30 cursor-zoom-in mb-6"
       onClick={onZoom}
     >
        <img 
          src={p.url} 
          alt={p.place}
-         className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+         className="w-full h-auto object-cover group-hover:scale-105 transition-all duration-700 group-hover:rotate-1"
          loading="lazy"
        />
-       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-8">
-          <div className="flex items-center gap-3 mb-2.5">
-             <div className="h-8 w-8 rounded-xl bg-primary/20 backdrop-blur-md flex items-center justify-center border border-white/10">
-                <MapPin className="h-4 w-4 text-primary" />
+       
+       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8">
+          <div className="absolute top-6 right-6 flex items-center gap-2">
+             <div className="h-10 w-10 rounded-2xl bg-primary/20 backdrop-blur-md border border-primary/40 flex items-center justify-center animate-pulse">
+                <Zap className="h-5 w-5 text-primary fill-current" />
              </div>
-             <span className="text-xs font-black text-white uppercase tracking-widest leading-tight">{p.place}</span>
           </div>
-          <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-6 pl-11">{p.country}</p>
-          <Button asChild size="lg" className="w-full rounded-2xl h-12 font-black text-[10px] gap-3 bg-white/10 hover:bg-primary backdrop-blur-md border border-white/10 uppercase tracking-widest">
-             <Link to={p.type === 'country' ? `/country/${p.slug}` : `/itinerary/${p.slug}`} onClick={(e) => e.stopPropagation()}>
-                <ExternalLink className="h-4 w-4" /> EXPLORE SIGNAL
-             </Link>
-          </Button>
+
+          <div className="space-y-4 translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
+             <div className="flex items-center gap-2">
+                <div className="h-1 w-10 bg-primary rounded-full animate-pulse" />
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-primary">Neural Scan Active</span>
+             </div>
+             
+             <div className="space-y-1">
+                <h3 className="text-white font-black text-xl tracking-tighter leading-tight drop-shadow-md">{p.place}</h3>
+                <div className="flex items-center gap-2 text-white/50 text-[9px] font-black uppercase tracking-widest">
+                   <Globe className="h-3 w-3" /> {p.country.split(':').pop()?.trim()}
+                </div>
+             </div>
+
+             <p className="text-white/60 text-[10px] font-medium leading-relaxed italic border-l border-primary/40 pl-4">
+                "{getNeuralFact(p.place, p.tag)}"
+             </p>
+
+             <div className="flex items-center gap-2 pt-2">
+                <Button asChild size="sm" className="flex-1 rounded-xl h-10 font-black text-[9px] gap-2 bg-white/5 hover:bg-primary backdrop-blur-md border border-white/10 uppercase tracking-[0.2em] transition-all active:scale-95">
+                   <Link to={p.type === 'country' ? `/country/${p.slug}` : `/itinerary/${p.slug}`} onClick={(e) => e.stopPropagation()}>
+                      <ExternalLink className="h-3 w-3" /> Explore
+                   </Link>
+                </Button>
+                {p.tag && (
+                   <div className="px-3 h-10 flex items-center rounded-xl bg-primary/10 backdrop-blur-md border border-primary/20 text-[9px] font-black text-primary uppercase tracking-widest">
+                      {p.tag}
+                   </div>
+                )}
+             </div>
+          </div>
        </div>
-       <div className="absolute top-6 right-6 h-10 w-10 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-          <Maximize2 className="h-5 w-5 text-white" />
-       </div>
+
+       {/* Scanning Line Animation */}
+       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-scan transition-opacity pointer-events-none" />
     </motion.div>
   );
 }

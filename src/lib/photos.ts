@@ -24,18 +24,23 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
   // Check mapping first for precision
   const preciseQuery = PHOTO_MAPPING[query] || query;
   
-  // Clean the query (remove special chars, etc.)
-  const cleanQuery = preciseQuery.replace(/[^\w\s]/gi, '').split(' ')[0]; // Use first word for better reliability
+  // Clean the query and ensure variety by using the full query string for the seed
+  const cleanQuery = preciseQuery.replace(/[^\w\s]/gi, '').toLowerCase();
 
-  const seed = query.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  // Create a more robust seed that includes the provider and dimensions to prevent collision
+  const seedStr = `${cleanQuery}-${provider}-${width}x${height}`;
+  const seed = seedStr.split('').reduce((acc, char, idx) => acc + char.charCodeAt(0) * (idx + 1), 0);
   
   // A set of "goated" high-fidelity travel photos as fallbacks
   const fallbacks = [
-    "photo-1500530855697-b586d89ba3ee", // Road trip mountains
-    "photo-1476514525535-07fb3b4ae5f1", // Boat on lake
-    "photo-1506197603052-3cc9c3a201bd", // Forest path
-    "photo-1533929736458-ca588d08c8be", // Tokyo neon
-    "photo-1520250497591-112f2f40a3f4", // Resort pool
+    "photo-1500530855697-b586d89ba3ee", 
+    "photo-1476514525535-07fb3b4ae5f1",
+    "photo-1506197603052-3cc9c3a201bd",
+    "photo-1533929736458-ca588d08c8be",
+    "photo-1520250497591-112f2f40a3f4",
+    "photo-1469854523086-cc02fe5d8800", // Desert road
+    "photo-1501785888041-af3ef285b470", // Mountain lake
+    "photo-1530789253516-ad44b9c5ed64", // Coastal view
   ];
   
   const fallbackId = fallbacks[seed % fallbacks.length];
@@ -53,11 +58,10 @@ export const getPhotoUrl = (query: string, width: number = 800, height: number =
   }
 
   if (provider === 'wiki') {
-     // Wikimedia Commons is free and often has "precise" historical/local photos
      return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},monument/all?lock=${seed}`;
   }
 
-  // Default: LoremFlickr (The "Nice" one the user likes)
+  // Default: LoremFlickr with explicit lock for variety
   return `https://loremflickr.com/${width}/${height}/${encodeURIComponent(cleanQuery)},travel/all?lock=${seed}`;
 };
 
