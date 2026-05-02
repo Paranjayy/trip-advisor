@@ -194,11 +194,31 @@
   }
 
   .animate-slide-left {
-    animation: slide-left 20s linear infinite;
+    animation: slide-left 40s linear infinite;
   }
 
   @keyframes slide-left {
     from { transform: translateX(0); }
     to { transform: translateX(-100%); }
+  }
+
+  .animate-scan-x {
+    animation: scan-x 8s linear infinite;
+  }
+  @keyframes scan-x {
+    0%, 100% { transform: translateX(0); opacity: 0; }
+    50% { transform: translateX(100%); opacity: 1; }
+  }
+
+  .animate-scan-y {
+    animation: scan-y 12s linear infinite;
+  }
+  @keyframes scan-y {
+    0%, 100% { transform: translateY(0); opacity: 0; }
+    50% { transform: translateY(100%); opacity: 1; }
+  }
+
+  .animate-spin-slow {
+    animation: spin 8s linear infinite;
   }
 }

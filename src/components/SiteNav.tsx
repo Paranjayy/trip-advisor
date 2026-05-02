@@ -4,6 +4,10 @@ import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { TranslateMenu } from "@/components/TranslateMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SettingsMenu } from "@/components/SettingsMenu";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const links = [
   { to: "/", label: "Home", end: true },
@@ -16,57 +20,95 @@ const links = [
 ];
 
 export function SiteNav() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <nav className="container mx-auto flex h-16 items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
-            <Globe2 className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="font-display text-lg font-bold tracking-tight notranslate" translate="no">TripAdvisor</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary shadow-glow group-hover:scale-105 transition-transform">
+              <Globe2 className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="font-display text-lg font-bold tracking-tight notranslate" translate="no">TripAdvisor</span>
+          </Link>
+        </div>
 
         <div className="hidden md:flex items-center gap-1">
-          {links.map((l) => {
-            const Icon = l.icon;
-            return (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                end={l.end}
-                className={({ isActive }) =>
-                  `inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-primary-soft text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  }`
-                }
-              >
-                {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
-                {l.label}
-              </NavLink>
-            );
-          })}
+          {links.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.end}
+              className={({ isActive }) =>
+                cn(
+                  "inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary-soft text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                )
+              }
+            >
+              {l.icon && <l.icon className="h-3.5 w-3.5" />}
+              {l.label}
+            </NavLink>
+          ))}
         </div>
 
         <div className="flex items-center gap-2">
-          <SettingsMenu />
-          <ThemeToggle />
-          <TranslateMenu />
-          <CurrencySwitcher />
+          <div className="hidden sm:flex items-center gap-2">
+             <SettingsMenu />
+             <ThemeToggle />
+             <TranslateMenu />
+             <CurrencySwitcher />
+          </div>
           <NavLink
             to="/favorites"
             className={({ isActive }) =>
-              `inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              cn(
+                "inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                 isActive ? "bg-accent-soft text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent-soft"
-              }`
+              )
             }
           >
             <Heart className="h-4 w-4" />
-            <span className="hidden sm:inline">Saved</span>
+            <span className="hidden lg:inline">Saved</span>
           </NavLink>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <div className={cn(
+        "md:hidden fixed inset-x-0 top-16 bg-background border-b border-border/60 p-4 space-y-2 transition-all duration-300 origin-top z-50",
+        isOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0 pointer-events-none"
+      )}>
+        {links.map((l) => (
+          <NavLink
+            key={l.to}
+            to={l.to}
+            end={l.end}
+            onClick={() => setIsOpen(false)}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 p-3 rounded-xl text-sm font-bold transition-all",
+                isActive ? "bg-primary text-primary-foreground shadow-glow" : "text-muted-foreground hover:bg-secondary"
+              )
+            }
+          >
+            {l.icon && <l.icon className="h-4 w-4" />}
+            {l.label}
+          </NavLink>
+        ))}
+        <div className="pt-4 mt-4 border-t border-border/60 grid grid-cols-4 gap-2">
+           <div className="flex justify-center"><SettingsMenu /></div>
+           <div className="flex justify-center"><ThemeToggle /></div>
+           <div className="flex justify-center"><TranslateMenu /></div>
+           <div className="flex justify-center"><CurrencySwitcher /></div>
+        </div>
+      </div>
     </header>
   );
 }

@@ -35,12 +35,14 @@ export function Flag({
   const code = emojiToTwemojiCode(emoji);
   const [errored, setErrored] = useState(false);
 
+  // Fallback for Windows Chrome where native flags are just letters
   if (!code || errored) {
     return (
       <span
-        className={cn("inline-block leading-none", className)}
-        style={{ fontSize: size }}
-        aria-hidden
+        className={cn("inline-block font-mono font-bold leading-none select-none", className)}
+        style={{ fontSize: size * 0.8 }}
+        title={emoji}
+        aria-label={emoji}
       >
         {emoji}
       </span>
@@ -49,15 +51,20 @@ export function Flag({
 
   const url = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${code}.svg`;
   return (
-    <img
-      src={url}
-      width={size}
-      height={Math.round(size * 0.72)}
-      alt=""
-      onError={() => setErrored(true)}
-      className={cn("inline-block object-cover", rounded && "rounded-[3px]", className)}
+    <div 
+      className={cn("inline-flex items-center justify-center shrink-0 overflow-hidden bg-muted/20", rounded && "rounded-[4px]", className)}
       style={{ width: size, height: Math.round(size * 0.72) }}
-      loading="lazy"
-    />
+      title={emoji}
+    >
+      <img
+        src={url}
+        width={size}
+        height={Math.round(size * 0.72)}
+        alt={emoji}
+        onError={() => setErrored(true)}
+        className="block w-full h-full object-cover"
+        loading="lazy"
+      />
+    </div>
   );
 }

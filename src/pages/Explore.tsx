@@ -41,6 +41,7 @@ const Explore = () => {
   const [view, setView] = useState<View>("grid");
   const [sort, setSort] = useState<Sort>("jp");
   const [isGrouped, setIsGrouped] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   const filtered = useMemo(() => {
     const arr = filterCountries(COUNTRIES, filters);
@@ -68,17 +69,34 @@ const Explore = () => {
         </header>
 
         <div className="grid lg:grid-cols-[300px_1fr] gap-8">
-          <aside className="lg:sticky lg:top-20 self-start h-fit space-y-6">
+          <aside className={cn(
+            "lg:sticky lg:top-24 self-start h-fit lg:h-[calc(100vh-8rem)] lg:overflow-y-auto space-y-6 pr-2 scrollbar-hide hover:scrollbar-default transition-all pb-12",
+            !showFilters && "hidden lg:block"
+          )}>
+            <div className="lg:hidden flex items-center justify-between mb-4">
+               <h2 className="font-display font-bold">Filters</h2>
+               <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)}>Close</Button>
+            </div>
             <VibeMatcher />
             <div className="glass-card p-5">
-              <h2 className="font-display font-bold text-sm uppercase tracking-wide mb-4 text-muted-foreground">Filters</h2>
+              <h2 className="font-display font-bold text-sm uppercase tracking-wide mb-4 text-muted-foreground">Main Filters</h2>
               <FilterPanel filters={filters} setFilters={setFilters} layout="sidebar" />
             </div>
           </aside>
 
           <div>
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-              <p className="text-sm text-muted-foreground">{filtered.length} of {COUNTRIES.length} match</p>
+              <div className="flex items-center gap-3">
+                 <Button 
+                   variant="outline" 
+                   size="sm" 
+                   className="lg:hidden rounded-xl h-9 font-bold"
+                   onClick={() => setShowFilters(!showFilters)}
+                 >
+                    <Layers className="h-4 w-4 mr-2" /> Filters
+                 </Button>
+                 <p className="text-sm text-muted-foreground">{filtered.length} of {COUNTRIES.length} match</p>
+              </div>
               <div className="flex items-center gap-2">
                 <Select value={sort} onValueChange={(v) => setSort(v as Sort)}>
                   <SelectTrigger className="h-9 w-[180px] bg-surface"><SelectValue /></SelectTrigger>
