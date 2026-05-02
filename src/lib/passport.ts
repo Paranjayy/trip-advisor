@@ -33,6 +33,12 @@ export const PASSPORTS: Record<string, PassportPower> = {
       "switzerland": { status: "visa-required", stay: 90, validity: 6, entries: "multiple" },
       "france": { status: "visa-required", stay: 90, validity: 6, entries: "multiple" },
       "usa": { status: "visa-required", stay: 180, validity: 120, entries: "multiple" },
+      "iceland": { status: "visa-required", stay: 90, validity: 6, entries: "multiple" },
+      "norway": { status: "visa-required", stay: 90, validity: 6, entries: "multiple" },
+      "singapore": { status: "e-visa", stay: 30, validity: 1, entries: "multiple" },
+      "georgia": { status: "visa-free", stay: 360, validity: 0, entries: "multiple" },
+      "bhutan": { status: "visa-free", stay: 14, validity: 0, entries: "single" },
+      "nepal": { status: "visa-free", stay: 365, validity: 0, entries: "multiple" },
     }
   },
   "usa": {

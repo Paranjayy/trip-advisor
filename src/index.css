@@ -202,23 +202,34 @@
     to { transform: translateX(-100%); }
   }
 
-  .animate-scan-x {
-    animation: scan-x 8s linear infinite;
-  }
   @keyframes scan-x {
-    0%, 100% { transform: translateX(0); opacity: 0; }
-    50% { transform: translateX(100%); opacity: 1; }
-  }
-
-  .animate-scan-y {
-    animation: scan-y 12s linear infinite;
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(500%); }
   }
   @keyframes scan-y {
-    0%, 100% { transform: translateY(0); opacity: 0; }
-    50% { transform: translateY(100%); opacity: 1; }
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(500%); }
+  }
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes cyber-glitch {
+    0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, -2px); }
+    20% { clip-path: inset(92% 0 1% 0); transform: translate(2px, 2px); }
+    40% { clip-path: inset(43% 0 1% 0); transform: translate(-2px, 2px); }
+    60% { clip-path: inset(25% 0 58% 0); transform: translate(2px, -2px); }
+    80% { clip-path: inset(54% 0 7% 0); transform: translate(-2px, -2px); }
+    100% { clip-path: inset(58% 0 43% 0); transform: translate(2px, 2px); }
+  }
+  @keyframes telemetry-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; transform: scale(1.05); }
   }
 
-  .animate-spin-slow {
-    animation: spin 8s linear infinite;
-  }
+  .animate-scan-x { animation: scan-x 3s linear infinite; }
+  .animate-scan-y { animation: scan-y 3s linear infinite; }
+  .animate-spin-slow { animation: spin-slow 12s linear infinite; }
+  .animate-glitch { animation: cyber-glitch 1s infinite linear alternate-reverse; }
+  .animate-telemetry { animation: telemetry-pulse 2s infinite; }
 }

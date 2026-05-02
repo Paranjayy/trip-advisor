@@ -16,6 +16,7 @@ const Itineraries = () => {
   useEffect(() => { document.title = "Trip itineraries — TripAdvisor"; }, []);
 
   const [query, setQuery] = useState("");
+  const [maxDays, setMaxDays] = useState(14);
   const [sort, setSort] = useState<"days" | "budget" | "km">("days");
   const [diff, setDiff] = useState<"all" | "easy" | "moderate" | "hard">("all");
   const [filterType, setFilterType] = useState<"all" | "base-camp" | "road-trip">("all");
@@ -26,6 +27,7 @@ const Itineraries = () => {
       (i) =>
         (diff === "all" || i.difficulty === diff) &&
         (filterType === "all" || i.type === filterType) &&
+        (i.days <= maxDays) &&
         (!q || `${i.title} ${i.region} ${i.blurb}`.toLowerCase().includes(q)),
     );
     arr = [...arr].sort((a, b) => {
@@ -57,11 +59,20 @@ const Itineraries = () => {
           </div>
         </header>
 
-        <div className="glass-card p-4 mb-6 flex flex-wrap items-center gap-3">
+        <div className="glass-card p-4 mb-6 flex flex-wrap items-center gap-6">
           <div className="relative flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search Srinagar, Japan, beaches…" className="pl-9 bg-surface" />
           </div>
+          
+          <div className="flex-1 min-w-[200px] space-y-2">
+             <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Max Duration</span>
+                <span className="text-xs font-bold text-primary">{maxDays} Days</span>
+             </div>
+             <Slider value={[maxDays]} min={1} max={14} step={1} onValueChange={(v) => setMaxDays(v[0])} />
+          </div>
+
           <div className="flex bg-surface rounded-xl p-1 border border-border/40">
              {(["all", "base-camp", "road-trip"] as const).map((t) => (
                <button

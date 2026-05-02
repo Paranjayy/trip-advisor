@@ -291,6 +291,73 @@ const Planner = () => {
           ))}
         </div>
 
+        {/* AI Context Injector */}
+        <div className="mt-12 glass-card p-8 border-accent/20 bg-accent/5 relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-4">
+              <Sparkles className="h-12 w-12 text-accent opacity-20" />
+           </div>
+           <div className="relative z-10 space-y-6">
+              <div>
+                 <h2 className="font-display text-2xl font-black flex items-center gap-2">
+                    <Zap className="h-6 w-6 text-accent" /> AI Context Injector
+                 </h2>
+                 <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
+                    Want an AI to write your whole itinerary for you? Copy the prompt below and paste it into ChatGPT, Claude, or Gemini. It tells them exactly how to format the JSON for this platform.
+                 </p>
+              </div>
+              
+              <div className="bg-black/40 rounded-2xl p-6 font-mono text-xs text-accent/80 border border-accent/10 whitespace-pre-wrap leading-relaxed">
+{`Generate a travel itinerary in the following JSON format.
+Ensure 'days' is a number and 'stops' is an array of objects.
+
+JSON Structure:
+{
+  "title": "Trip Name",
+  "base": "Primary City",
+  "days": [
+    {
+      "dayNumber": 1,
+      "title": "Day 1 Theme",
+      "base": "Stay Location",
+      "stayCost": 50,
+      "stops": [
+        { "place": "Place Name", "activity": "Activity", "cost": 20 }
+      ]
+    }
+  ]
+}`}
+              </div>
+
+              <Button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`Generate a travel itinerary in the following JSON format.
+Ensure 'days' is a number and 'stops' is an array of objects.
+
+JSON Structure:
+{
+  "title": "Trip Name",
+  "base": "Primary City",
+  "days": [
+    {
+      "dayNumber": 1,
+      "title": "Day 1 Theme",
+      "base": "Stay Location",
+      "stayCost": 50,
+      "stops": [
+        { "place": "Place Name", "activity": "Activity", "cost": 20 }
+      ]
+    }
+  ]
+}`);
+                  toast({ title: "Prompt Copied!", description: "Paste this into your preferred AI to generate your itinerary JSON." });
+                }}
+                className="rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 font-bold gap-2"
+              >
+                 <Copy className="h-4 w-4" /> Copy Prompt for AI
+              </Button>
+           </div>
+        </div>
+
         {/* Final CTA */}
         <div className="mt-20 py-20 border-t border-border/60 text-center space-y-8">
            <h2 className="font-display text-4xl font-black">Plan locked in?</h2>

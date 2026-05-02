@@ -21,6 +21,8 @@ import { japanVibe } from "@/lib/japanVibe";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { WorldClockMap } from "@/components/WorldClockMap";
+import { useUserSettings } from "@/lib/user-settings";
+import { getVisaStatus } from "@/lib/passport";
 
 function costColor(daily: number): string {
   if (daily <= 60) return "hsl(var(--success))";
@@ -44,6 +46,7 @@ function FlyTo({ country }: { country: Country | null }) {
 
 const MapPage = () => {
   useEffect(() => { document.title = "World map — TripAdvisor"; }, []);
+  const { citizenship } = useUserSettings();
   const { theme } = useTheme();
   const tileUrl = theme === "dark"
     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
@@ -219,7 +222,11 @@ const MapPage = () => {
                             }}
                           >
                             <Tooltip direction="top" offset={[0, -6]} opacity={1}>
-                              <span className="font-semibold inline-flex items-center gap-1"><Flag emoji={c.flag} size={16} /> {c.name}</span> · <Money usd={c.dailyCost} />/day · JP {japanVibe(c.slug)}
+                              <span className="font-semibold inline-flex items-center gap-1"><Flag emoji={c.flag} size={16} /> {c.name}</span> · <span className={cn(
+                                "font-bold",
+                                getVisaStatus(citizenship, c.slug).status === "visa-free" ? "text-emerald-500" : 
+                                getVisaStatus(citizenship, c.slug).status === "visa-required" ? "text-red-500" : "text-accent"
+                              )}>{getVisaStatus(citizenship, c.slug).status.replace("-", " ")}</span>
                             </Tooltip>
                             <Popup minWidth={240} maxWidth={280}>
                               <div className="space-y-2">
@@ -236,7 +243,13 @@ const MapPage = () => {
                                 <div className="grid grid-cols-2 gap-1.5 text-xs pt-1">
                                   <Pop label="7 days"><MoneyRange range={c.costRange} /></Pop>
                                   <Pop label="Daily"><Money usd={c.dailyCost} /></Pop>
-                                  <Pop label="Flights"><MoneyRange range={c.flightCostRange} /></Pop>
+                                  <Pop label="Visa Status">
+                                    <span className={cn(
+                                      "font-bold",
+                                      getVisaStatus(citizenship, c.slug).status === "visa-free" ? "text-emerald-500" : 
+                                      getVisaStatus(citizenship, c.slug).status === "visa-required" ? "text-red-500" : "text-accent"
+                                    )}>{getVisaStatus(citizenship, c.slug).status.replace("-", " ")}</span>
+                                  </Pop>
                                   <Pop label="JP vibe">{japanVibe(c.slug)}/100</Pop>
                                 </div>
                                 <div className="flex items-center justify-between pt-1">

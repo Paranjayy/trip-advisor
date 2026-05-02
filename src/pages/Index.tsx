@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, TrendingUp, Wallet } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles, TrendingUp, Wallet } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CountryCard } from "@/components/CountryCard";
 import { FilterPanel } from "@/components/FilterPanel";
@@ -8,7 +8,8 @@ import { Flag } from "@/components/Flag";
 import { Button } from "@/components/ui/button";
 import { COUNTRIES } from "@/data/countries";
 import { Filters, filterCountries, recommend } from "@/lib/recommend";
-import { WorldClockMap } from "@/components/WorldClockMap";
+import { CyberGlobe } from "@/components/CyberGlobe";
+import { cn } from "@/lib/utils";
 
 const Index = () => {
   const [filters, setFilters] = useState<Filters>({
@@ -74,8 +75,43 @@ const Index = () => {
 
           <div className="relative animate-fade-in delay-200">
             <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full opacity-50" />
-            <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-border/40">
-               <WorldClockMap />
+            <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-border/40 bg-[#0a0a0c] aspect-[4/3] lg:aspect-auto lg:h-[450px]">
+               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(var(--primary),0.1)_0%,_transparent_70%)]" />
+               <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+               
+               {/* Simplified Discovery Map SVG */}
+               <svg viewBox="0 0 800 500" className="absolute inset-0 w-full h-full p-8 opacity-60">
+                 <path d="M150,150 Q200,100 250,150 T350,150" className="fill-none stroke-primary/20 stroke-[0.5] stroke-dash-2" />
+                 <g className="fill-primary/10 stroke-primary/20 stroke-[0.5]">
+                    {/* Abstract Continent Shapes */}
+                    <path d="M100,100 L250,80 L300,150 L200,250 L80,200 Z" />
+                    <path d="M400,120 L550,100 L600,200 L450,300 L380,220 Z" />
+                    <path d="M150,300 L250,320 L220,420 L120,400 Z" />
+                    <path d="M500,320 L650,350 L600,450 L480,420 Z" />
+                 </g>
+                 {/* Discovery Pins */}
+                 {[
+                   { x: 180, y: 150, color: "fill-primary" },
+                   { x: 480, y: 180, color: "fill-accent" },
+                   { x: 220, y: 350, color: "fill-success" },
+                   { x: 550, y: 380, color: "fill-warn" },
+                   { x: 300, y: 220, color: "fill-primary" }
+                 ].map((p, i) => (
+                   <g key={i}>
+                      <circle cx={p.x} cy={p.y} r="12" className={cn(p.color, "opacity-10 animate-ping")} style={{ animationDelay: `${i * 0.5}s` }} />
+                      <circle cx={p.x} cy={p.y} r="4" className={cn(p.color, "shadow-glow")} />
+                   </g>
+                 ))}
+               </svg>
+
+               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="text-center space-y-2">
+                     <div className="h-16 w-16 rounded-2xl bg-background/50 backdrop-blur-md border border-white/10 flex items-center justify-center mx-auto shadow-elevated">
+                        <MapPin className="h-8 w-8 text-primary animate-bounce" />
+                     </div>
+                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Discovery Radar Active</p>
+                  </div>
+               </div>
             </div>
             <div className="absolute -bottom-6 -right-6 glass-card p-4 shadow-elevated animate-float">
                <div className="flex items-center gap-3">

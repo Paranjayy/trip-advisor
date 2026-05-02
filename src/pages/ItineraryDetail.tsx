@@ -61,6 +61,11 @@ const ItineraryDetail = () => {
 
   const [travelers, setTravelers] = useState(2);
   const [activeDay, setActiveDay] = useState(1);
+  const [simulatedDays, setSimulatedDays] = useState<number>(it?.days || 0);
+
+  useEffect(() => {
+    if (it) setSimulatedDays(it.days);
+  }, [it]);
 
   useEffect(() => {
     if (it) document.title = `${it.title} — TripAdvisor`;
@@ -125,6 +130,11 @@ const ItineraryDetail = () => {
     }
   };
 
+  const displayedPlan = useMemo(() => {
+    if (!it) return [];
+    return it.plan.slice(0, simulatedDays);
+  }, [it, simulatedDays]);
+
   if (!it) {
     return (
       <div className="min-h-screen bg-background">
@@ -137,15 +147,16 @@ const ItineraryDetail = () => {
     );
   }
 
-  const allStops = it.plan.flatMap((d) => d.stops);
+  const allStops = displayedPlan.flatMap((d) => d.stops);
   const routePoints = allStops
     .filter((s) => s.lat !== undefined && s.lng !== undefined)
     .map((s) => [s.lat!, s.lng!] as [number, number]);
 
-  const km = Math.round(totalKm(it));
-  const hr = Math.round(totalHours(it));
-  const cost = totalCost(it);
-  const friction = calculateFriction(it);
+  const km = Math.round(allStops.reduce((s, st) => s + st.km, 0));
+  const hr = Math.round(allStops.reduce((s, st) => s + st.hours, 0));
+  const cost = displayedPlan.reduce((s, d) => s + d.stayUsd + d.stops.reduce((ss, st) => ss + st.costUsd, 0), 0);
+  
+  const friction = calculateFriction({ ...it!, plan: displayedPlan, days: simulatedDays });
   const frictionMeta = getFrictionLabel(friction);
 
   return (
@@ -171,7 +182,7 @@ const ItineraryDetail = () => {
                     {it.type || "Road-Trip"}
                   </Badge>
                   <div className="h-1 w-1 rounded-full bg-border" />
-                  <span className="text-xs font-bold text-muted-foreground">{it.days} Days</span>
+                  <span className="text-xs font-bold text-muted-foreground">{simulatedDays} Days</span>
                   <div className="h-1 w-1 rounded-full bg-border" />
                   <span className={cn("text-xs font-bold", DIFFICULTY_META[it.difficulty].tone)}>{DIFFICULTY_META[it.difficulty].label}</span>
                 </div>
@@ -268,7 +279,7 @@ const ItineraryDetail = () => {
                    <Info className="h-4 w-4 text-primary" /> Quick Summary
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <StatItem icon={<Calendar className="h-4 w-4 text-primary" />} label="Duration" value={`${it.days} Days`} />
+                  <StatItem icon={<Calendar className="h-4 w-4 text-primary" />} label="Duration" value={`${simulatedDays} Days`} />
                   <StatItem icon={<RouteIcon className="h-4 w-4 text-accent" />} label="Travel" value={`${km} km`} />
                   <StatItem icon={<Clock className="h-4 w-4 text-success" />} label="Intensity" value={`${hr}h Active`} />
                   <StatItem icon={<Mountain className="h-4 w-4 text-warn" />} label="Difficulty" value={it.difficulty} />
@@ -300,6 +311,14 @@ const ItineraryDetail = () => {
                 </div>
                 
                 <div className="mt-6 pt-6 border-t border-border/40 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter flex items-center gap-1.5">
+                       <Clock className="h-3.5 w-3.5" /> Duration
+                    </span>
+                    <span className="text-sm font-black text-primary">{simulatedDays} Days</span>
+                  </div>
+                  <Slider value={[simulatedDays]} min={1} max={it.days} step={1} onValueChange={(v) => setSimulatedDays(v[0])} className="py-2" />
+
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter flex items-center gap-1.5">
                        <Users className="h-3.5 w-3.5" /> Group Size
@@ -361,7 +380,7 @@ const ItineraryDetail = () => {
                     height: "28px" 
                   }}
                />
-               {it.plan.map((day) => (
+               {displayedPlan.map((day) => (
                  <button
                    key={day.day}
                    onClick={() => scrollToDay(day.day)}
@@ -408,7 +427,7 @@ const ItineraryDetail = () => {
                </h2>
 
                <div className="space-y-8">
-                 {it.plan.map((day) => {
+                 {displayedPlan.map((day) => {
                     const dayKm = day.stops.reduce((s, st) => s + st.km, 0);
                     const dayHr = day.stops.reduce((s, st) => s + st.hours, 0);
                     const dayCost = day.stayUsd + day.stops.reduce((s, st) => s + st.costUsd, 0);

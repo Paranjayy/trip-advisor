@@ -18,6 +18,7 @@ import ItineraryDetail from "./pages/ItineraryDetail";
 import CustomItinerary from "./pages/CustomItinerary";
 import Planner from "./pages/Planner";
 import NotFound from "./pages/NotFound";
+import { CustomItineraryProvider } from "@/hooks/useCustomItineraries";
 import { AiAdvisor } from "@/components/AiAdvisor";
 
 const queryClient = new QueryClient();
@@ -27,28 +28,30 @@ const App = () => (
     <ThemeProvider>
       <UserSettingsProvider>
         <CurrencyProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/map" element={<MapPage />} />
-              <Route path="/country/:slug" element={<CountryDetail />} />
-              <Route path="/compare" element={<Compare />} />
-              <Route path="/timing" element={<Timing />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/trips" element={<Navigate to="/itinerary" replace />} />
-              <Route path="/itinerary" element={<Itineraries />} />
-              <Route path="/itinerary/:slug" element={<ItineraryDetail />} />
-              <Route path="/itinerary/edit/:slug" element={<CustomItinerary />} />
-              <Route path="/planner" element={<Planner />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <AiAdvisor />
-          </BrowserRouter>
-        </TooltipProvider>
+          <CustomItineraryProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/explore" element={<Explore />} />
+                  <Route path="/map" element={<MapPage />} />
+                  <Route path="/country/:slug" element={<CountryDetail />} />
+                  <Route path="/compare" element={<Compare />} />
+                  <Route path="/timing" element={<Timing />} />
+                  <Route path="/favorites" element={<Favorites />} />
+                  <Route path="/trips" element={<Navigate to="/itinerary" replace />} />
+                  <Route path="/itinerary" element={<Itineraries />} />
+                  <Route path="/itinerary/:slug" element={<ItineraryDetail />} />
+                  <Route path="/itinerary/edit/:slug" element={<CustomItinerary />} />
+                  <Route path="/planner" element={<Planner />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <AiAdvisor />
+              </BrowserRouter>
+            </TooltipProvider>
+          </CustomItineraryProvider>
         </CurrencyProvider>
       </UserSettingsProvider>
     </ThemeProvider>

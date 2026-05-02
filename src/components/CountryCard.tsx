@@ -38,13 +38,36 @@ export function CountryCard({ country }: { country: Country }) {
       </button>
 
       <Link to={`/country/${country.slug}`} className="flex flex-col gap-4 flex-1">
-        <div className="flex items-start gap-3">
-          <Flag emoji={country.flag} size={36} />
-          <div className="min-w-0">
-            <h3 className="font-display text-lg font-bold leading-tight truncate">{country.name}</h3>
-            <p className="text-xs text-muted-foreground">{country.region}</p>
+        <div className="relative aspect-[16/10] overflow-hidden">
+        <img
+          src={country.image || `https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800`}
+          alt={country.name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-60" />
+        
+        {/* Cyber Overlay on Hover */}
+        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+           <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--primary),0.1)_1px,transparent_1px)] bg-[size:100%_4px] animate-scan-y" />
+           <div className="absolute top-2 right-2">
+              <span className="text-[8px] font-black uppercase tracking-widest text-primary bg-background/80 px-1.5 py-0.5 rounded border border-primary/20 animate-pulse">Telemetry Active</span>
+           </div>
+        </div>
+
+        <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+          <div className="flex items-center gap-3">
+             <Flag emoji={country.flag} size={32} className="shadow-lg border border-white/20" />
+             <div>
+                <h3 className="font-display font-black text-lg text-white drop-shadow-md">{country.name}</h3>
+                <p className="text-[10px] font-bold text-white/70 uppercase tracking-tighter drop-shadow-sm">{country.region}</p>
+             </div>
+          </div>
+          <div className="text-right">
+             <div className="text-[8px] font-black text-primary uppercase tracking-widest">Base Cost</div>
+             <div className="text-sm font-black text-white"><Money usd={country.dailyCost} /></div>
           </div>
         </div>
+      </div>
 
         <p className="text-sm text-muted-foreground line-clamp-2">{country.blurb}</p>
 

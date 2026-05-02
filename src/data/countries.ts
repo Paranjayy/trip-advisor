@@ -42,6 +42,7 @@ export type Country = {
     processingDays: number;
     notes?: string;
   };
+  image?: string;
 };
 
 const mp = (peak: number[], cheap: number[]): number[] => {
@@ -57,6 +58,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "japan", name: "Japan", region: "East Asia", flag: "🇯🇵", lat: 36.2, lng: 138.25,
     costRange: [1800, 3200], dailyCost: 180, flightCostRange: [900, 1500],
+    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=1200",
     vegScore: "medium", similarityScore: 100, predictability: 10, mentalLoad: 2, baseCampSuitability: 9, touristCount: 25,
     bestMonths: [3, 4, 10, 11], cheapestMonths: [1, 2, 6], peakMonths: [3, 4, 10, 11],
     highlights: [
@@ -80,6 +82,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "taiwan", name: "Taiwan", region: "East Asia", flag: "🇹🇼", lat: 23.7, lng: 120.96,
     costRange: [900, 1600], dailyCost: 80, flightCostRange: [800, 1300],
+    image: "https://images.unsplash.com/photo-1552912811-56167db8232c?auto=format&fit=crop&q=80&w=1200",
     vegScore: "easy", similarityScore: 78, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 11,
     bestMonths: [3, 4, 10, 11], cheapestMonths: [5, 6, 9], peakMonths: [1, 2, 7, 8],
     highlights: [
@@ -103,6 +106,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "vietnam", name: "Vietnam", region: "Southeast Asia", flag: "🇻🇳", lat: 14.06, lng: 108.28,
     costRange: [600, 1200], dailyCost: 50, flightCostRange: [700, 1200],
+    image: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&q=80&w=1200",
     vegScore: "medium", similarityScore: 55, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 12,
     bestMonths: [2, 3, 4, 11], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 7],
     highlights: [
@@ -119,6 +123,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "thailand", name: "Thailand", region: "Southeast Asia", flag: "🇹🇭", lat: 15.87, lng: 100.99,
     costRange: [800, 1600], dailyCost: 65, flightCostRange: [800, 1400],
+    image: "https://images.unsplash.com/photo-1528181304800-259b08bb73d5?auto=format&fit=crop&q=80&w=1200",
     vegScore: "medium", similarityScore: 50, predictability: 5, mentalLoad: 5, baseCampSuitability: 5, touristCount: 28,
     bestMonths: [11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1, 2],
     highlights: [
@@ -439,6 +444,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "india", name: "India", region: "South Asia", flag: "🇮🇳", lat: 20.59, lng: 78.96,
     costRange: [600, 1300], dailyCost: 45, flightCostRange: [900, 1500],
+    image: "https://images.unsplash.com/photo-1524492707941-5f369c414902?auto=format&fit=crop&q=80&w=1200",
     vegScore: "easy", similarityScore: 25, predictability: 3, mentalLoad: 9, baseCampSuitability: 6, touristCount: 9,
     bestMonths: [10, 11, 12, 1, 2], cheapestMonths: [5, 6, 9], peakMonths: [12, 1],
     highlights: [
@@ -625,6 +631,7 @@ export const COUNTRIES: Country[] = [
   {
     slug: "switzerland", name: "Switzerland", region: "Europe", flag: "🇨🇭", lat: 46.82, lng: 8.23,
     costRange: [2200, 3800], dailyCost: 220, flightCostRange: [700, 1300],
+    image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=1200",
     vegScore: "medium", similarityScore: 55, predictability: 10, mentalLoad: 3, baseCampSuitability: 8, touristCount: 12,
     bestMonths: [6, 7, 8, 9], cheapestMonths: [4, 5, 11], peakMonths: [7, 8, 12],
     highlights: [

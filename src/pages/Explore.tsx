@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/ui/toggle";
 import { VibeMatcher } from "@/components/VibeMatcher";
 
-type View = "grid" | "list" | "table";
+type View = "grid" | "list" | "table" | "matrix";
 type Sort = "name" | "daily-asc" | "daily-desc" | "week-asc" | "week-desc" | "tourists" | "jp";
 
 const SORTERS: Record<Sort, (a: Country, b: Country) => number> = {
@@ -70,7 +70,7 @@ const Explore = () => {
 
         <div className="grid lg:grid-cols-[300px_1fr] gap-8">
           <aside className={cn(
-            "lg:sticky lg:top-24 self-start h-fit lg:h-[calc(100vh-8rem)] lg:overflow-y-auto space-y-6 pr-2 scrollbar-hide hover:scrollbar-default transition-all pb-12",
+            "lg:sticky lg:top-24 self-start h-fit lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-6 pr-2 transition-all pb-12",
             !showFilters && "hidden lg:block"
           )}>
             <div className="lg:hidden flex items-center justify-between mb-4">
@@ -114,6 +114,7 @@ const Explore = () => {
                    <ViewBtn icon={<LayoutGrid className="h-4 w-4" />} active={view === "grid"} onClick={() => setView("grid")} label="Grid" />
                    <ViewBtn icon={<ListIcon className="h-4 w-4" />} active={view === "list"} onClick={() => setView("list")} label="List" />
                    <ViewBtn icon={<TableIcon className="h-4 w-4" />} active={view === "table"} onClick={() => setView("table")} label="Table" />
+                   <ViewBtn icon={<Zap className="h-4 w-4" />} active={view === "matrix"} onClick={() => setView("matrix")} label="Vibe Matrix" />
                 </div>
                 <Toggle 
                    pressed={isGrouped} 
@@ -149,6 +150,10 @@ const Explore = () => {
                     {view === "grid" ? (
                       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
                         {groupItems.map((c) => <CountryCard key={c.slug} country={c} />)}
+                      </div>
+                    ) : view === "matrix" ? (
+                      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {groupItems.map((c) => <VibeCell key={c.slug} country={c} />)}
                       </div>
                     ) : view === "list" ? (
                       <div className="space-y-2">
@@ -216,6 +221,51 @@ function Cell({ label, children }: { label: string; children: React.ReactNode })
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="font-semibold tabular-nums">{children}</div>
     </div>
+  );
+}
+
+function VibeCell({ country: c }: { country: Country }) {
+  const jp = japanVibe(c.slug);
+  return (
+    <Link to={`/country/${c.slug}`} className="glass-card p-4 hover-lift group border-primary/10">
+       <div className="flex items-center justify-between mb-3">
+          <Flag emoji={c.flag} size={24} />
+          <span className="text-[10px] font-black uppercase text-muted-foreground">{c.region.split(',')[0]}</span>
+       </div>
+       <h3 className="font-display font-bold text-sm mb-4 truncate group-hover:text-primary transition-colors">{c.name}</h3>
+       
+       <div className="space-y-3">
+          <div className="space-y-1">
+             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                <span>Daily Cost</span>
+                <Money usd={c.dailyCost} />
+             </div>
+             <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: `${Math.min(100, (c.dailyCost / 300) * 100)}%` }} />
+             </div>
+          </div>
+          
+          <div className="space-y-1">
+             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                <span>Japan Similarity</span>
+                <span>{jp}%</span>
+             </div>
+             <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+                <div className="h-full bg-accent" style={{ width: `${jp}%` }} />
+             </div>
+          </div>
+
+          <div className="space-y-1">
+             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                <span>Variety</span>
+                <span>{terrainsFor(c).length}/8</span>
+             </div>
+             <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+                <div className="h-full bg-success" style={{ width: `${(terrainsFor(c).length / 8) * 100}%` }} />
+             </div>
+          </div>
+       </div>
+    </Link>
   );
 }
 
