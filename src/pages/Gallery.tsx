@@ -146,6 +146,11 @@ const Gallery = () => {
     return facts[seed % facts.length];
   };
 
+  const isHeritage = (place: string) => {
+    const landmarks = ["Junagadh", "Girnar", "Uparkot", "Kyoto", "Rome", "Paris", "Athens", "Giza", "Agra", "Jaipur"];
+    return landmarks.some(l => place.toLowerCase().includes(l.toLowerCase()));
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SiteNav />
@@ -241,7 +246,13 @@ const Gallery = () => {
                 
                 <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 space-y-6">
                    {photos.map((p, i) => (
-                     <GalleryItem key={`${p.place}-${i}`} p={p} i={i} onZoom={() => setSelected(p.url)} />
+                     <GalleryItem 
+                        key={`${p.place}-${i}`} 
+                        p={p} 
+                        i={i} 
+                        onZoom={() => setSelected(p.url)} 
+                        isHeritage={isHeritage(p.place)}
+                     />
                    ))}
                 </div>
               </div>
@@ -309,7 +320,7 @@ function FilterBtn({ active, onClick, icon, label }: { active: boolean; onClick:
   );
 }
 
-function GalleryItem({ p, i, onZoom }: { p: PhotoNode; i: number; onZoom: () => void }) {
+function GalleryItem({ p, i, onZoom, isHeritage }: { p: PhotoNode; i: number; onZoom: () => void; isHeritage?: boolean }) {
   const getNeuralFact = (place: string, tag?: string) => {
     const facts = [
        "Geospatial alignment verified via local node network.",
@@ -340,7 +351,13 @@ function GalleryItem({ p, i, onZoom }: { p: PhotoNode; i: number; onZoom: () => 
        />
        
        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8">
-          <div className="absolute top-6 right-6 flex items-center gap-2">
+          <div className="absolute top-6 right-6 flex items-center gap-3">
+             {isHeritage && (
+               <div className="h-10 px-4 rounded-2xl bg-amber-500/20 backdrop-blur-md border border-amber-500/40 flex items-center gap-2 shadow-glow shadow-amber-500/20">
+                  <Library className="h-4 w-4 text-amber-500 fill-current" />
+                  <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Heritage</span>
+               </div>
+             )}
              <div className="h-10 w-10 rounded-2xl bg-primary/20 backdrop-blur-md border border-primary/40 flex items-center justify-center animate-pulse">
                 <Zap className="h-5 w-5 text-primary fill-current" />
              </div>

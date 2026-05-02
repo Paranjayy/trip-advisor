@@ -15,7 +15,11 @@ const PHOTO_MAPPING: Record<string, string> = {
   "Tsukiji": "tsukiji fish market sushi",
   "Jungfraujoch": "jungfraujoch top of europe",
   "Lauterbrunnen": "lauterbrunnen valley waterfalls",
+  "Gantok": "gangtok mountains clouds",
   "Lake Brienz": "lake brienz turquoise water",
+  "Junagadh": "mahabat maqbara junagadh palace architecture",
+  "Girnar": "girnar mountains temple gujarat",
+  "Uparkot": "uparkot fort junagadh caves",
 };
 
 export type PhotoProvider = 'lorem' | 'unsplash' | 'picsum' | 'art' | 'wiki' | 'satellite';
