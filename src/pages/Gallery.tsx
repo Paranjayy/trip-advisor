@@ -37,7 +37,7 @@ const Gallery = () => {
   const allPhotos = useMemo(() => {
     let photos: PhotoNode[] = [];
     
-    const providers: PhotoProvider[] = provider === "all" ? ["lorem", "unsplash", "wiki", "art"] : [provider];
+    const providers: PhotoProvider[] = provider === "all" ? ["lorem", "unsplash", "wiki", "satellite", "art"] : [provider];
     
     // Check if query is a general search (not matching known places)
     const knownPlaces = new Set([
@@ -52,7 +52,7 @@ const Gallery = () => {
       // If search query is present, prioritize search results
       if (query && query.length > 1) {
         // Generate a large pulse for search
-        const mods = ["view", "mood", "vista", "detail", "street", "architecture", "landscape", "interior", "night", "candid", "aerial", "culture", "landmark", "hotel", "food", "vibe"];
+        const mods = p === 'satellite' ? ["sat", "topo", "terrain", "ortho"] : ["view", "mood", "vista", "detail", "street", "architecture", "landscape", "interior", "night", "candid", "aerial", "culture", "landmark", "hotel", "food", "vibe"];
         mods.forEach((mod) => {
            photos.push({
              url: getPhotoUrl(`${query} ${mod}`, 800, 800, p),
@@ -194,14 +194,18 @@ const Gallery = () => {
                      onClick={() => setProvider("unsplash")}
                      className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "unsplash" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
                    >Cinematic</button>
-                   <button 
-                     onClick={() => setProvider("wiki")}
-                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "wiki" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
-                   >Precision</button>
-                   <button 
-                     onClick={() => setProvider("art")}
-                     className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "art" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
-                   >Abstract</button>
+                    <button 
+                      onClick={() => setProvider("wiki")}
+                      className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "wiki" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                    >Precision</button>
+                    <button 
+                      onClick={() => setProvider("satellite")}
+                      className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "satellite" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                    >Orbital</button>
+                    <button 
+                      onClick={() => setProvider("art")}
+                      className={cn("px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", provider === "art" ? "bg-accent text-white shadow-glow" : "text-muted-foreground hover:text-accent")}
+                    >Abstract</button>
                  </div>
 
                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as never)}>

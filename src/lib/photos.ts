@@ -18,29 +18,41 @@ const PHOTO_MAPPING: Record<string, string> = {
   "Lake Brienz": "lake brienz turquoise water",
 };
 
-export type PhotoProvider = 'lorem' | 'unsplash' | 'picsum' | 'art' | 'wiki';
+export type PhotoProvider = 'lorem' | 'unsplash' | 'picsum' | 'art' | 'wiki' | 'satellite';
+
+const COORDINATES: Record<string, string> = {
+  "Junagadh": "70.4579,21.5222",
+  "Girnar": "70.5284,21.5273",
+  "Kyoto": "135.7681,35.0116",
+  "Swiss Alps": "8.5417,47.3769",
+  "Bali": "115.1889,-8.4095",
+  "Tokyo": "139.6503,35.6762",
+  "London": "-0.1278,51.5074",
+  "Paris": "2.3522,48.8566",
+};
 
 export const getPhotoUrl = (query: string, width: number = 800, height: number = 600, provider: PhotoProvider = 'lorem') => {
-  // Check mapping first for precision
   const preciseQuery = PHOTO_MAPPING[query] || query;
-  
-  // Clean the query and ensure variety by using the full query string for the seed
   const cleanQuery = preciseQuery.replace(/[^\w\s]/gi, '').toLowerCase();
-
-  // Create a more robust seed that includes the provider and dimensions to prevent collision
   const seedStr = `${cleanQuery}-${provider}-${width}x${height}`;
   const seed = seedStr.split('').reduce((acc, char, idx) => acc + char.charCodeAt(0) * (idx + 1), 0);
   
-  // A set of "goated" high-fidelity travel photos as fallbacks
+  if (provider === 'satellite') {
+    const coords = COORDINATES[query] || COORDINATES[preciseQuery] || "0,0";
+    // Using a public-access Mapbox-style static map proxy (or similar high-fidelity tile server)
+    // For production, the user would provide their Mapbox token
+    return `https://api.maptiler.com/maps/satellite/static/${coords},13/${width}x${height}.png?key=get-your-own-key-fallback&fallback=true`;
+  }
+
   const fallbacks = [
     "photo-1500530855697-b586d89ba3ee", 
     "photo-1476514525535-07fb3b4ae5f1",
     "photo-1506197603052-3cc9c3a201bd",
     "photo-1533929736458-ca588d08c8be",
     "photo-1520250497591-112f2f40a3f4",
-    "photo-1469854523086-cc02fe5d8800", // Desert road
-    "photo-1501785888041-af3ef285b470", // Mountain lake
-    "photo-1530789253516-ad44b9c5ed64", // Coastal view
+    "photo-1469854523086-cc02fe5d8800",
+    "photo-1501785888041-af3ef285b470",
+    "photo-1530789253516-ad44b9c5ed64",
   ];
   
   const fallbackId = fallbacks[seed % fallbacks.length];
