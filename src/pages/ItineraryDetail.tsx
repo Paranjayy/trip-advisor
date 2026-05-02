@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft, Bed, Bike, Bus, Calendar, Car, Clock, Compass, MapPin,
   Plane, Route as RouteIcon, Ship, Train, Users, Footprints, Mountain,
-  Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap, Navigation, List,
+  Share2, Printer, ChevronRight, Info, Luggage, Wallet, Zap, Navigation, List as ListIcon,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -350,12 +350,12 @@ const ItineraryDetail = () => {
           {/* Sticky Day-Nav */}
           <aside className="hidden lg:block sticky top-24 space-y-1">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 pl-4 flex items-center gap-2">
-               <List className="h-3 w-3" /> Itinerary Index
+               <ListIcon className="h-3 w-3" /> Itinerary Index
             </h4>
             <div className="relative pl-4 space-y-1">
                <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-border/40 rounded-full" />
                <div 
-                  className="absolute left-0 w-0.5 bg-primary rounded-full transition-all duration-300 ease-in-out shadow-[0_0_8px_rgba(var(--primary),0.4)]"
+                  className="absolute left-0 w-0.5 bg-primary rounded-full transition-all duration-300 ease-in-out shadow-[0_0_8px_hsl(var(--primary)/0.4)]"
                   style={{ 
                     top: `${(activeDay - 1) * 44 + 8}px`, 
                     height: "28px" 

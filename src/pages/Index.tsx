@@ -66,9 +66,9 @@ const Index = () => {
             </div>
 
             <div className="flex flex-wrap gap-6 pt-4 text-sm">
-              <Stat icon={<Wallet className="h-4 w-4 text-primary" />} value="79+" label="Countries" />
-              <Stat icon={<TrendingUp className="h-4 w-4 text-accent" />} value="12-mo" label="Price trends" />
-              <Stat icon={<Sparkles className="h-4 w-4 text-success" />} value="Smart" label="Recommendations" />
+              <HeroStat icon={<Wallet className="h-4 w-4 text-primary" />} value="79+" label="Countries" />
+              <HeroStat icon={<TrendingUp className="h-4 w-4 text-accent" />} value="12-mo" label="Price trends" />
+              <HeroStat icon={<Sparkles className="h-4 w-4 text-success" />} value="Smart" label="Recommendations" />
             </div>
           </div>
 
@@ -155,7 +155,7 @@ const Index = () => {
   );
 };
 
-function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+function HeroStat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div className="flex items-center gap-2">
       {icon}

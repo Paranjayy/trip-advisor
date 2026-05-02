@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Passport, Globe, Clock, CheckCircle, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Contact, Globe, Clock, CheckCircle, AlertTriangle, ShieldCheck } from "lucide-react";
 import { Country } from "@/data/countries";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +34,7 @@ export function VisaIntelligence({ country }: { country: Country }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <Passport className="h-5 w-5 text-primary" />
+            <Contact className="h-5 w-5 text-primary" />
           </div>
           <div>
             <h3 className="font-display font-bold leading-none">Passport Power</h3>

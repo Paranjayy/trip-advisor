@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Network, ArrowRight, Sparkles, MapPin } from "lucide-react";
 import { getCountry } from "@/data/countries";
@@ -31,7 +32,7 @@ export function DegreesOfSeparation({ slug }: { slug: string }) {
        </div>
 
        {lineage && (
-         <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.05)]">
+         <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 shadow-[0_0_20px_hsl(var(--primary)/0.05)]">
             <div className="flex items-center gap-2 mb-2">
                <Sparkles className="h-4 w-4 text-primary animate-pulse" />
                <p className="text-[10px] font-black uppercase text-primary tracking-widest">Lineage Detected</p>

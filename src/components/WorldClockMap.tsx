@@ -9,7 +9,7 @@ type City = {
   timezone: string;
 };
 
-const CITIES: City[] = [
+const WORLD_CITIES: City[] = [
   { name: "Srinagar", lat: 34.0837, lng: 74.7973, timezone: "Asia/Kolkata" },
   { name: "New York", lat: 40.7128, lng: -74.0060, timezone: "America/New_York" },
   { name: "London", lat: 51.5074, lng: -0.1278, timezone: "Europe/London" },
@@ -28,7 +28,7 @@ export function WorldClockMap() {
     return () => clearInterval(timer);
   }, []);
 
-  const project = (lat: number, lng: number) => {
+  const projectCoordinates = (lat: number, lng: number) => {
     const x = ((lng + 180) * 100) / 360;
     const y = ((90 - lat) * 100) / 180;
     return { x, y };
@@ -82,8 +82,8 @@ export function WorldClockMap() {
       />
 
       {/* City Markers */}
-      {CITIES.map((city) => {
-        const { x, y } = project(city.lat, city.lng);
+      {WORLD_CITIES.map((city) => {
+        const { x, y } = projectCoordinates(city.lat, city.lng);
         const cityTime = new Intl.DateTimeFormat("en-US", {
           timeZone: city.timezone,
           hour: "2-digit",
@@ -142,7 +142,7 @@ export function WorldClockMap() {
       {/* Ticker Tape */}
       <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between pointer-events-none">
          <div className="flex gap-8 overflow-hidden whitespace-nowrap mask-fade-edges">
-            {CITIES.map((c, i) => (
+            {WORLD_CITIES.map((c, i) => (
               <div key={i} className="flex items-center gap-2 animate-slide-left">
                  <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">{c.name}</span>
                  <span className="text-[10px] font-mono text-emerald-400">{(Math.random() * 2 + 1).toFixed(1)}s LATENCY</span>

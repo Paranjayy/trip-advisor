@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LayoutGrid, List, Table as TableIcon, Layers } from "lucide-react";
+import { LayoutGrid, List as ListIcon, Table as TableIcon, Layers } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CountryCard } from "@/components/CountryCard";
 import { CountryTable } from "@/components/CountryTable";
@@ -94,7 +94,7 @@ const Explore = () => {
                 </Select>
                 <div className="inline-flex rounded-lg border border-border/60 bg-surface p-1 gap-0.5">
                    <ViewBtn icon={<LayoutGrid className="h-4 w-4" />} active={view === "grid"} onClick={() => setView("grid")} label="Grid" />
-                   <ViewBtn icon={<List className="h-4 w-4" />} active={view === "list"} onClick={() => setView("list")} label="List" />
+                   <ViewBtn icon={<ListIcon className="h-4 w-4" />} active={view === "list"} onClick={() => setView("list")} label="List" />
                    <ViewBtn icon={<TableIcon className="h-4 w-4" />} active={view === "table"} onClick={() => setView("table")} label="Table" />
                 </div>
                 <Toggle 
