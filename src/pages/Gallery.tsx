@@ -40,11 +40,52 @@ const Gallery = () => {
   }, []);
 
   const [query, setQuery] = useState("");
+  const [wikiResults, setWikiResults] = useState<any[]>([]);
+  const [isSearchingWiki, setIsSearchingWiki] = useState(false);
   const [filterType, setFilterType] = useState<"all" | "country" | "itinerary">("all");
   const [sortBy, setSortBy] = useState<"recent" | "name">("recent");
   const [selected, setSelected] = useState<string | null>(null);
   const [isGrouped, setIsGrouped] = useState(false);
   const [provider, setProvider] = useState<PhotoProvider | "all">("all");
+
+  useEffect(() => {
+    const fetchWiki = async () => {
+      if (query.length < 3) {
+        setWikiResults([]);
+        return;
+      }
+      
+      setIsSearchingWiki(true);
+      try {
+        // 1. Search for pages
+        const searchRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`
+        );
+        const searchData = await searchRes.json();
+        const pages = searchData.query?.search || [];
+
+        if (pages.length > 0) {
+          // 2. Get images and snippets for the top results
+          const titles = pages.slice(0, 4).map((p: any) => p.title).join('|');
+          const detailsRes = await fetch(
+            `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages|extracts&exintro&explaintext&exchars=200&piprop=thumbnail&pithumbsize=1000&titles=${encodeURIComponent(titles)}&format=json&origin=*`
+          );
+          const detailsData = await detailsRes.json();
+          const pageDetails = Object.values(detailsData.query?.pages || {});
+          setWikiResults(pageDetails);
+        } else {
+          setWikiResults([]);
+        }
+      } catch (e) {
+        console.error("Wiki search failed", e);
+      } finally {
+        setIsSearchingWiki(false);
+      }
+    };
+
+    const timer = setTimeout(fetchWiki, 800);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const allPhotos = useMemo(() => {
     const photos: PhotoNode[] = [];
@@ -259,6 +300,67 @@ const Gallery = () => {
               </Toggle>
            </div>
         </header>
+
+        <AnimatePresence>
+          {query.length >= 3 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              exit={{ opacity: 0, y: 20 }}
+              className="mb-16 space-y-8"
+            >
+              <div className="flex items-center gap-4">
+                 <div className="h-8 w-8 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center">
+                    <Globe className={cn("h-4 w-4 text-accent", isSearchingWiki && "animate-spin")} />
+                 </div>
+                 <h2 className="text-2xl font-black tracking-tight uppercase tracking-[0.1em]">Global Web Intelligence</h2>
+                 <div className="h-px bg-gradient-to-r from-accent/40 to-transparent flex-1" />
+                 {isSearchingWiki && <span className="text-[10px] font-black text-accent animate-pulse">Scanning Neural Network...</span>}
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                 {wikiResults.length > 0 ? wikiResults.map((res: any) => (
+                    <motion.div 
+                      key={res.pageid} 
+                      whileHover={{ y: -5 }}
+                      className="glass-card p-4 space-y-4 group cursor-pointer border-accent/10 hover:border-accent/40 transition-colors"
+                      onClick={() => setSelected(res.thumbnail?.source || null)}
+                    >
+                       <div className="aspect-square rounded-2xl overflow-hidden bg-muted relative">
+                          {res.thumbnail ? (
+                             <img src={res.thumbnail.source} alt={res.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                          ) : (
+                             <div className="w-full h-full flex items-center justify-center text-muted-foreground/20">
+                                <Landmark className="h-12 w-12" />
+                             </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute top-3 right-3 h-6 w-6 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
+                             <Maximize2 className="h-3 w-3 text-white" />
+                          </div>
+                       </div>
+                       <div className="space-y-2">
+                          <h3 className="font-bold text-sm tracking-tight leading-tight group-hover:text-accent transition-colors">{res.title}</h3>
+                          <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-3 font-medium">
+                             {res.extract || "No description available for this coordinate."}
+                          </p>
+                          <div className="pt-2 flex items-center justify-between">
+                             <span className="text-[9px] font-black uppercase tracking-widest text-accent/60">Source: Wikipedia</span>
+                             <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase group-hover:text-primary transition-colors">
+                                EXPLORE <ExternalLink className="h-2.5 w-2.5" />
+                             </div>
+                          </div>
+                       </div>
+                    </motion.div>
+                 )) : !isSearchingWiki && query.length >= 3 && (
+                    <div className="col-span-full py-12 text-center glass-card border-dashed border-accent/20 bg-accent/5">
+                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent/40">No real-world intelligence matching this signature was found.</p>
+                    </div>
+                 )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="space-y-24">
           {Object.entries(grouped).map(([groupName, photos]) => (

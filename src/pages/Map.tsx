@@ -181,10 +181,23 @@ const MapPage = () => {
           <div>
             <Tabs defaultValue="map">
               <TabsList className="mb-4">
-                <TabsTrigger value="map">🗺️ Map</TabsTrigger>
+                <TabsTrigger value="map">🗺️ 2D Map</TabsTrigger>
+                <TabsTrigger value="globe">🌍 3D Globe</TabsTrigger>
                 <TabsTrigger value="temporal">🕒 Temporal Pulse</TabsTrigger>
                 <TabsTrigger value="table">📊 Table view</TabsTrigger>
               </TabsList>
+
+              <TabsContent value="globe" className="m-0">
+                <div className="glass-card overflow-hidden p-0 bg-black flex items-center justify-center relative rounded-[2rem] border-white/5 h-[70vh] min-h-[480px]">
+                  <CobeGlobe />
+                  <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white/50 pointer-events-none z-50">
+                     <span className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                        Orbital Scanning Engine
+                     </span>
+                     <span className="text-[10px] font-mono">v1.0.0</span>
+                  </div>
+                </div>
+              </TabsContent>
 
               <TabsContent value="map" className="m-0">
                 <div className="glass-card overflow-hidden p-0">
