@@ -184,7 +184,7 @@ const MapPage = () => {
               <TabsList className="mb-4">
                 <TabsTrigger value="map">🗺️ 2D Map</TabsTrigger>
                 <TabsTrigger value="globe">🌍 3D Globe</TabsTrigger>
-                <TabsTrigger value="temporal">🕒 Temporal Pulse</TabsTrigger>
+                <TabsTrigger value="temporal">🕒 Timezone Awareness</TabsTrigger>
                 <TabsTrigger value="table">📊 Table view</TabsTrigger>
               </TabsList>
 

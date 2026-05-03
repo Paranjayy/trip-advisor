@@ -23,12 +23,12 @@ export function CobeGlobe() {
       diffuse: 1.2,
       mapSamples: 16000,
       mapBrightness: 6,
-      baseColor: [0.5, 0.5, 0.5],
+      baseColor: [0.6, 0.6, 0.6],
       markerColor: [0.1, 0.8, 1], // Primary color
       glowColor: [1, 1, 1],
       markers: COUNTRIES.map(c => ({
          location: [c.lat, c.lng],
-         size: 0.015 // Tiny pinpoint markers
+         size: 0.008 // Surgical precision markers
       })),
       onRender: (state) => {
         if (!pointerInteracting.current) {

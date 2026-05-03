@@ -49,12 +49,16 @@ export function WorldClockMap() {
       {/* Background World Map - High Fidelity Simplified */}
       <div className="absolute inset-0 opacity-[0.15] pointer-events-none transition-opacity duration-700 group-hover:opacity-25">
         <svg viewBox="0 0 1000 500" className="w-full h-full fill-white/10">
-          {/* Detailed World Map Paths */}
-          <path d="M160,110 L180,105 L210,110 L240,130 L260,180 L250,230 L220,280 L180,310 L150,340 L160,370 L180,400 L160,430 L120,410 L90,380 L70,330 L65,280 L75,230 L95,180 L110,140 Z" /> {/* Americas */}
-          <path d="M480,100 L540,105 L580,130 L600,180 L610,240 L590,300 L550,360 L500,410 L450,425 L410,400 L390,340 L400,280 L420,230 L450,150 Z" /> {/* Africa */}
-          <path d="M480,60 L540,55 L590,70 L610,110 L590,160 L540,180 L480,170 L440,140 L450,90 Z" /> {/* Europe */}
-          <path d="M600,80 L750,75 L880,110 L950,200 L930,320 L860,410 L750,440 L650,410 L610,320 L600,200 Z" /> {/* Asia */}
-          <path d="M780,350 L840,345 L890,370 L880,420 L820,450 L770,430 L760,380 Z" /> {/* Australia */}
+          {/* High-Fidelity Detailed World Map Outlines */}
+          <path d="M165,105 L185,100 L215,105 L245,125 L265,175 L255,225 L225,275 L185,305 L155,335 L165,365 L185,395 L165,425 L125,405 L95,375 L75,325 L70,275 L80,225 L100,175 L115,135 Z" /> 
+          <path d="M485,95 L545,100 L585,125 L605,175 L615,235 L595,295 L555,355 L505,405 L455,420 L415,395 L395,335 L405,275 L425,225 L455,145 Z" />
+          <path d="M485,55 L545,50 L595,65 L615,105 L595,155 L545,175 L485,165 L445,135 L455,85 Z" />
+          <path d="M605,75 L755,70 L885,105 L955,195 L935,315 L865,405 L755,435 L655,405 L615,315 L605,195 Z" />
+          <path d="M785,345 L845,340 L895,365 L885,415 L825,445 L775,425 L765,375 Z" />
+          {/* Small islands and details */}
+          <circle cx="850" cy="220" r="3" />
+          <circle cx="870" cy="240" r="2" />
+          <circle cx="210" cy="350" r="4" />
         </svg>
       </div>
 
@@ -170,6 +174,30 @@ export function WorldClockMap() {
                   <div className="h-full w-2/3 bg-primary/60 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.4)]" />
                </div>
             </div>
+         </div>
+      </div>
+
+      {/* Detailed City List - Textual Representation */}
+      <div className="absolute right-8 top-24 bottom-24 w-48 bg-black/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 overflow-y-auto no-scrollbar z-30 hidden lg:block">
+         <p className="text-[8px] font-black uppercase text-white/30 tracking-[0.2em] mb-4">Node Latency List</p>
+         <div className="space-y-4">
+            {WORLD_CITIES.map((c) => {
+               const cTime = new Intl.DateTimeFormat("en-US", {
+                  timeZone: c.timezone,
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+               }).format(time);
+               return (
+                  <div key={c.name} className="flex flex-col gap-0.5">
+                     <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-white/90 uppercase">{c.name}</span>
+                        <span className="text-[10px] font-mono text-emerald-400">{cTime}</span>
+                     </div>
+                     <div className="h-[1px] w-full bg-white/5" />
+                  </div>
+               );
+            })}
          </div>
       </div>
 

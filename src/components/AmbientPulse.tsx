@@ -7,8 +7,8 @@ export function AmbientPulse() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // A high-quality stable ambient track
-  const ambientUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3";
+  // A high-quality stable ambient track with cache buster
+  const ambientUrl = `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3?v=${Date.now()}`;
 
   useEffect(() => {
     if (!audioRef.current) {
