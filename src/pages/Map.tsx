@@ -23,6 +23,7 @@ import { useTheme } from "@/lib/theme";
 import { WorldClockMap } from "@/components/WorldClockMap";
 import { useUserSettings } from "@/lib/user-settings";
 import { getVisaStatus } from "@/lib/passport";
+import { CobeGlobe } from "@/components/CobeGlobe";
 
 function costColor(daily: number): string {
   if (daily <= 60) return "hsl(var(--success))";
