@@ -7,8 +7,8 @@ export function AmbientPulse() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // A high-quality public domain ambient travel sound (wind/chimes/drone)
-  const ambientUrl = "https://cdn.pixabay.com/download/audio/2022/02/07/audio_651a2e7c10.mp3?filename=ambient-piano-amp-strings-10711.mp3";
+  // A high-quality stable ambient track
+  const ambientUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3";
 
   useEffect(() => {
     if (!audioRef.current) {

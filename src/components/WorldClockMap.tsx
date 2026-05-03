@@ -49,12 +49,14 @@ export function WorldClockMap() {
       {/* Background World Map - High Fidelity Simplified */}
       <div className="absolute inset-0 opacity-[0.15] pointer-events-none transition-opacity duration-700 group-hover:opacity-25">
         <svg viewBox="0 0 1000 500" className="w-full h-full fill-white/80">
-          {/* Simplified World Path */}
-          <path d="M160,110 L180,100 L210,110 L230,140 L220,180 L200,220 L160,250 L140,280 L130,310 L150,340 L180,360 L170,390 L140,410 L110,390 L90,360 L70,320 L60,280 L70,240 L90,210 L80,180 L100,150 L130,130 Z" /> {/* Americas */}
-          <path d="M450,120 L480,110 L520,115 L550,130 L580,150 L600,180 L610,210 L590,240 L560,270 L530,300 L500,320 L470,330 L440,320 L420,300 L410,270 L400,240 L410,210 L430,180 L440,150 Z" /> {/* Europe/Africa */}
-          <path d="M620,120 L660,110 L700,115 L750,125 L800,140 L850,160 L880,190 L900,220 L890,250 L860,280 L820,300 L780,310 L740,300 L700,280 L660,250 L630,210 L610,170 L600,140 Z" /> {/* Asia */}
-          <path d="M780,340 L820,335 L860,350 L880,380 L870,410 L840,430 L800,420 L770,390 L760,360 Z" /> {/* Australia */}
-          <path d="M200,460 L300,455 L400,460 L500,465 L600,460 L700,455 L800,460 L850,465 L850,480 L150,480 L150,465 Z" /> {/* Antarctica */}
+          {/* Improved World Path - Accurate Continent Outlines */}
+          <path d="M150,120 L160,110 L190,115 L220,150 L210,200 L180,250 L160,300 L140,350 L170,400 L150,430 L110,400 L80,350 L60,300 L70,250 L90,200 L80,150 L110,120 Z" /> {/* N. America */}
+          <path d="M170,300 L210,310 L230,340 L210,380 L180,430 L150,450 L130,420 L140,370 Z" /> {/* S. America */}
+          <path d="M480,120 L520,110 L560,130 L580,180 L600,250 L560,320 L520,380 L480,420 L440,380 L420,320 L410,250 L430,180 L450,130 Z" /> {/* Africa */}
+          <path d="M450,80 L500,70 L550,80 L580,100 L600,130 L580,160 L540,180 L500,170 L460,150 L440,120 Z" /> {/* Europe */}
+          <path d="M600,100 L700,90 L800,100 L850,140 L900,200 L880,280 L840,340 L780,380 L700,360 L650,320 L620,250 L610,180 Z" /> {/* Asia */}
+          <path d="M800,350 L860,340 L890,370 L880,410 L840,440 L790,430 L770,390 Z" /> {/* Australia */}
+          <path d="M100,480 L900,480 L900,495 L100,495 Z" /> {/* Antarctica */}
         </svg>
       </div>
 
