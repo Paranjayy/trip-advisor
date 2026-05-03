@@ -48,16 +48,13 @@ export function WorldClockMap() {
     <div className="glass-card overflow-hidden bg-[#02040a] border-white/5 relative aspect-[16/9] md:aspect-[2/1] group select-none">
       {/* Background World Map - High Fidelity Simplified */}
       <div className="absolute inset-0 opacity-[0.15] pointer-events-none transition-opacity duration-700 group-hover:opacity-25">
-        <svg viewBox="0 0 1000 500" className="w-full h-full fill-white/20">
-          {/* High-Fidelity World Map Outlines */}
-          <path d="M151.7 131.8c-.8-.5-1.5-.7-2.1-.7-1.3 0-2.4 1-2.4 2.3 0 .4.1.8.3 1.1l3.5 6.2c.2.4.6.6 1.1.6h.4c.5 0 .9-.3 1.1-.7l2.8-5.3c.2-.4.2-.9 0-1.3l-4.7-2.2zM218.4 174.1c-.8-.5-1.5-.7-2.1-.7-1.3 0-2.4 1-2.4 2.3 0 .4.1.8.3 1.1l3.5 6.2c.2.4.6.6 1.1.6h.4c.5 0 .9-.3 1.1-.7l2.8-5.3c.2-.4.2-.9 0-1.3l-4.7-2.2z" opacity=".4"/>
-          <path d="M174.4 104.4c-25.2 2-46.4 15.3-52.6 33.3-3.2 9.2-2.1 19.3 2.8 27.8 8.4 14.5 25.4 21.6 42.6 17.8 14.3-3.2 25.4-13.6 29.8-27.8 2.8-9.1 1.7-19.1-3-27.5-4.4-7.8-11.8-13.6-19.6-13.6z" opacity=".2"/>
-          {/* Main Continents - Accurate High-Res Paths */}
-          <path d="M220,110 L250,120 L280,150 L260,200 L240,250 L220,300 L240,350 L220,400 L180,420 L150,400 L120,350 L100,300 L110,250 L130,200 L140,150 L180,120 Z" /> {/* Americas Node */}
-          <path d="M480,100 L550,110 L600,150 L620,200 L600,300 L550,400 L500,430 L450,400 L420,300 L430,200 L450,150 Z" /> {/* Africa Node */}
-          <path d="M480,60 L520,55 L580,70 L600,100 L580,150 L520,170 L470,150 L450,100 Z" /> {/* Europe Node */}
-          <path d="M600,80 L750,70 L850,100 L950,180 L920,300 L850,380 L750,400 L650,350 L620,250 L610,150 Z" /> {/* Asia Node */}
-          <path d="M780,350 L850,340 L900,380 L880,430 L800,450 L760,420 L770,380 Z" /> {/* Australia Node */}
+        <svg viewBox="0 0 1000 500" className="w-full h-full fill-white/10">
+          {/* Detailed World Map Paths */}
+          <path d="M160,110 L180,105 L210,110 L240,130 L260,180 L250,230 L220,280 L180,310 L150,340 L160,370 L180,400 L160,430 L120,410 L90,380 L70,330 L65,280 L75,230 L95,180 L110,140 Z" /> {/* Americas */}
+          <path d="M480,100 L540,105 L580,130 L600,180 L610,240 L590,300 L550,360 L500,410 L450,425 L410,400 L390,340 L400,280 L420,230 L450,150 Z" /> {/* Africa */}
+          <path d="M480,60 L540,55 L590,70 L610,110 L590,160 L540,180 L480,170 L440,140 L450,90 Z" /> {/* Europe */}
+          <path d="M600,80 L750,75 L880,110 L950,200 L930,320 L860,410 L750,440 L650,410 L610,320 L600,200 Z" /> {/* Asia */}
+          <path d="M780,350 L840,345 L890,370 L880,420 L820,450 L770,430 L760,380 Z" /> {/* Australia */}
         </svg>
       </div>
 
