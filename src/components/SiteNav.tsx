@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GlobalPulse } from "./GlobalPulse";
 import { CommandPalette } from "./CommandPalette";
+import { AmbientPulse } from "./AmbientPulse";
 import { ITINERARIES } from "@/lib/itineraries";
 import { useToast } from "@/hooks/use-toast";
 
@@ -117,6 +118,8 @@ export function SiteNav() {
                >
                   <Shuffle className="h-3.5 w-3.5" />
                </button>
+               <div className="h-3 w-px bg-border/40 mx-1" />
+               <AmbientPulse />
                <div className="h-3 w-px bg-border/40 mx-1" />
                <SettingsMenu />
                <ThemeToggle />
